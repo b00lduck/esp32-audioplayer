@@ -17,5 +17,5 @@ Used hardware components:
 
 Used software:
 * Arduino IDE 1.8.3
-* ESP8266 for Arduino IDE (Board manager URL: https://arduino.esp8266.com/stable/package_esp8266com_index.json)
-
+* ESP8266 board manager installed (Board manager URL: https://arduino.esp8266.com/stable/package_esp8266com_index.json)
+* MFRC522 library in arduino library folder (https://github.com/miguelbalboa/rfid)
