@@ -22,11 +22,11 @@
  /**
   * External libraries used: 
   *   https://github.com/b00lduck/SdFat (stripped version of SdFat to use CS mux with ESP8266)
-  * 
   */
 #include <stdio.h>
 #include <string.h>
-#include "SdFat.h"
+#include <SdFat.h>
+#include <MFRC522.h>
 
 #include "tools.h"
 #include "VS1053.h"
@@ -45,6 +45,11 @@ extern "C" {
 // GPIO for SD card
 #define SD_CS_ADDRESS          3
 
+// GPIO for MFRC522
+#define MFRC522_CS_ADDRESS          4
+#define MFRC522_RST_ADDRESS         5
+
+
 SdFat sd;
 
 void printDirectory();
@@ -56,6 +61,7 @@ File            dataFile;
 CSMultiplexer   csMux(2, 4, 5);
 RingBuffer      ringBuffer(20000);
 VS1053          vs1053player(&csMux, VS1053_XCS_ADDRESS, VS1053_XDCS_ADDRESS, VS1053_DREQ, VS1053_XRESET_ADDRESS);
+MFRC522         mfrc522(NULL, NULL);
 
 void setup() {
 
@@ -84,20 +90,92 @@ void setup() {
      }
   }    
 
-  vs1053player.begin();  
-  vs1053player.printDetails();
+  mfrc522.PCD_Init(
+        [](bool state){
+          if (state) {
+            csMux.chipSelect(MFRC522_CS_ADDRESS);  
+          } else {
+            csMux.chipDeselect();  
+          }          
+        },
+        [](bool state){
+          if (state) {
+            csMux.chipSelect(MFRC522_RST_ADDRESS);  
+          } else {
+            csMux.chipDeselect();  
+          }
+        });
 
-  playerState = PLAYREQ;
+  vs1053player.begin();  
+  vs1053player.printDetails();  
+
+  playerState = STOPPED;
+}
+
+bool cardPresent = false;
+byte currentCard[32];
+uint8_t cardFailCount = 0;
+
+bool cardChanged(byte *buffer, byte bufferSize) {
+  for (uint8_t i = 0; i < bufferSize; i++) {
+    if (buffer[i] != currentCard[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void newCard(byte *buffer, byte bufferSize) {
+  cardPresent = true;
+  if (bufferSize > sizeof(currentCard)) {
+    bufferSize = sizeof(currentCard);
+  }
+  memcpy(currentCard, buffer, bufferSize);
+  Serial.print(F("New Card UID:"));
+  dump_byte_array(mfrc522.uid.uidByte, mfrc522.uid.size);
+  Serial.println();  
 }
 
 void loop() {
+   
+  if (mfrc522.PICC_IsNewCardPresent()) {
+    if (mfrc522.PICC_ReadCardSerial()) {
+      cardFailCount = 0;    
+      if (cardChanged(mfrc522.uid.uidByte, mfrc522.uid.size)) {
+        newCard(mfrc522.uid.uidByte, mfrc522.uid.size);
+        playerState = PLAYREQ;      
+      }      
+    } else {
+        Serial.print(F("Error reading card"));
+        cardPresent = false;   
+        playerState = STOPREQ;                    
+    }
+  } else {
+    if (cardPresent) {
+      cardFailCount++;
+      if (cardFailCount > 1) {
+          Serial.println(F("Card removed"));
+          cardPresent = false;   
+          memset(currentCard, 0, sizeof(currentCard));
+          playerState = STOPREQ;                    
+      }     
+    }
+  }
 
   uint32_t maxfilechunk;
 
   switch (playerState) {
 
     case PLAYREQ:
-     dataFile.open("tune1.mp3", FILE_READ);
+
+      if (mfrc522.uid.uidByte[0] == 0xf0) {
+        dataFile.open("tune1.mp3", FILE_READ);   
+      }    
+
+      if (mfrc522.uid.uidByte[0] == 0xb0) {
+        dataFile.open("sams.mp3", FILE_READ);   
+      }          
+     
       if (!dataFile) {
         Serial.println("open failed");
         playerState = STOPREQ;
@@ -171,42 +249,4 @@ void printDirectory() {
 
   dirFile.close();
 }
-
-/*
- 
-#include <SPI.h>
-//#include <MFRC522.h>
-
-//#define RST_PIN	5  // RST-PIN für RC522 - RFID - SPI - Modul GPIO5 
-//#define SS_PIN	4  // SDA-PIN für RC522 - RFID - SPI - Modul GPIO4 
-
-//MFRC522 mfrc522(SS_PIN, RST_PIN);	// Create MFRC522 instance
-
-void setup() {
-  Serial.begin(115200);    // Initialize serial communications
-  delay(250);
-  Serial.println(F("Booting...."));
-  
-  SPI.begin();	         // Init SPI bus
-  //mfrc522.PCD_Init();    // Init MFRC522   
-}
-
-void loop() { 
-  
-  // Look for new cards
-  if ( ! mfrc522.PICC_IsNewCardPresent()) {
-    delay(50);
-    return;
-  }
-  // Select one of the cards
-  if ( ! mfrc522.PICC_ReadCardSerial()) {
-    delay(50);
-    return;
-  }
-  // Show some details of the PICC (that is: the tag/card)
-  Serial.print(F("Card UID:"));
-  dump_byte_array(mfrc522.uid.uidByte, mfrc522.uid.size);
-  Serial.println();
-}
-*/
 

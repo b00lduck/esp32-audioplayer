@@ -21,4 +21,4 @@ Used software:
 * ESP8266 board manager installed (Board manager URL: https://arduino.esp8266.com/stable/package_esp8266com_index.json)
 * MFRC522 library in arduino library folder (https://github.com/miguelbalboa/rfid)
 * Heavily stripped and modified SdFat library in arduino library folder (https://github.com/b00lduck/SdFat)
-
+* Heavily stripped and modified mrfc522 library in arduino library folder (https://github.com/b00lduck/rfid)
