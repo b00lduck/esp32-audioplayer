@@ -20,7 +20,6 @@
  * along with esp8266-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-
 #include <SPI.h>
 #include "VS1053.h"
 #include "tools.h"

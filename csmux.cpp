@@ -18,7 +18,6 @@
  * along with esp8266-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-
 #include "csmux.h"
 
 CSMultiplexer::CSMultiplexer(uint8_t _gpio_a0, uint8_t _gpio_a1, uint8_t _gpio_a2) : 

@@ -18,7 +18,6 @@
  * along with esp8266-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
- 
 #include "Arduino.h"
 
 class RingBuffer {

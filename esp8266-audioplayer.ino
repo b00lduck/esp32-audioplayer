@@ -19,13 +19,11 @@
  *  
  */
 
-
  /**
   * External libraries used: 
   *   https://github.com/b00lduck/SdFat (stripped version of SdFat to use CS mux with ESP8266)
   * 
   */
-
 #include <stdio.h>
 #include <string.h>
 #include "SdFat.h"
@@ -45,7 +43,7 @@ extern "C" {
 #define VS1053_XRESET_ADDRESS  7
 
 // GPIO for SD card
-#define SD_CS_ADDRESS        3
+#define SD_CS_ADDRESS          3
 
 SdFat sd;
 
