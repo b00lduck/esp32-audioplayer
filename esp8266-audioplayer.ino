@@ -37,17 +37,17 @@ extern "C" {
 }
 
 // GPIO for VS1053 
-#define VS1053_XCS_ADDRESS     1
-#define VS1053_XDCS_ADDRESS    2
+#define VS1053_XCS_ADDRESS     0
+#define VS1053_XDCS_ADDRESS    1
 #define VS1053_DREQ           16
-#define VS1053_XRESET_ADDRESS  7
+#define VS1053_XRESET_ADDRESS  5 
 
 // GPIO for SD card
-#define SD_CS_ADDRESS          3
+#define SD_CS_ADDRESS          2
 
 // GPIO for MFRC522
-#define MFRC522_CS_ADDRESS          4
-#define MFRC522_RST_ADDRESS         5
+#define MFRC522_CS_ADDRESS     3
+#define MFRC522_RST_ADDRESS    4
 
 
 SdFat sd;
@@ -58,7 +58,7 @@ enum playerState_t {PLAYREQ, PLAYING, STOPREQ, STOPPED};
 
 playerState_t   playerState;
 File            dataFile;
-CSMultiplexer   csMux(2, 4, 5);
+CSMultiplexer   csMux(2, 4);
 RingBuffer      ringBuffer(20000);
 VS1053          vs1053player(&csMux, VS1053_XCS_ADDRESS, VS1053_XDCS_ADDRESS, VS1053_DREQ, VS1053_XRESET_ADDRESS);
 MFRC522         mfrc522(NULL, NULL);

@@ -18,34 +18,56 @@
  * along with esp8266-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
+#include <Wire.h>
 #include "csmux.h"
 
-CSMultiplexer::CSMultiplexer(uint8_t _gpio_a0, uint8_t _gpio_a1, uint8_t _gpio_a2) : 
-  gpio_a0(_gpio_a0), 
-  gpio_a1(_gpio_a1),
-  gpio_a2(_gpio_a2),
-  selected(0) {}
+CSMultiplexer::CSMultiplexer(uint8_t _sda, uint8_t _scl) : 
+  sda(_sda), 
+  scl(_scl),
+  selected(255) {}
 
 void CSMultiplexer::init() {
-  pinMode(gpio_a0, OUTPUT);
-  pinMode(gpio_a1, OUTPUT);
-  pinMode(gpio_a2, OUTPUT);
-  digitalWrite (gpio_a0, LOW);
-  digitalWrite (gpio_a1, LOW);
-  digitalWrite (gpio_a2, LOW);
+  Wire.begin(sda, scl);
+  Wire.setClock(600000L);
+  
+  Wire.beginTransmission(0x20);
+  Wire.write(0x00); // IODIRA 
+  Wire.write(0x00); // PORTA output
+  Wire.endTransmission();
+  
+  //Wire.beginTransmission(0x20);
+  //Wire.write(0x01); // IODIRB
+  //Wire.write(0x00); // PORTB output
+  //Wire.endTransmission();  
+
+  Wire.beginTransmission(0x20);
+  Wire.write(0x12); // PORTA
+  Wire.write(0xff); // value
+  Wire.endTransmission();    
+  
+  //Wire.beginTransmission(0x20);
+  //Wire.write(0x13); // PORTB
+  //Wire.write(0b11000000); // value
+  //Wire.endTransmission();    
 }
 
-void CSMultiplexer::chipSelect(uint8_t address) {  
+void CSMultiplexer::chipSelect(uint8_t address) {    
   if (selected != address) {
-    digitalWrite (gpio_a0, address & 1 ? HIGH : LOW);        
-    digitalWrite (gpio_a1, address & 2 ? HIGH : LOW);        
-    digitalWrite (gpio_a2, address & 4 ? HIGH : LOW);        
+    uint8_t value = 0xff - (1 << address);    
+    Wire.beginTransmission(0x20);
+    Wire.write(0x12);
+    Wire.write(value);
+    Wire.endTransmission();    
     selected = address;
   }
 }
 
 void CSMultiplexer::chipDeselect() {
-  chipSelect(0); 
+    Wire.beginTransmission(0x20);
+    Wire.write(0x12);
+    Wire.write(0xff);
+    Wire.endTransmission();
+    selected = 255;
 }
     
 

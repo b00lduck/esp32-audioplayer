@@ -23,14 +23,13 @@
 class CSMultiplexer {
 
   private:
-    uint8_t gpio_a0;
-    uint8_t gpio_a1;
-    uint8_t gpio_a2;
+    uint8_t sda;
+    uint8_t scl;
 
     uint8_t selected;
 
   public:
-    CSMultiplexer(uint8_t gpio_a0, uint8_t gpio_a1, uint8_t gpio_a2);
+    CSMultiplexer(uint8_t sdl, uint8_t scl);
     void init();
     void chipSelect(uint8_t address);
     void chipDeselect();
