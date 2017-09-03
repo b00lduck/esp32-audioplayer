@@ -19,10 +19,6 @@
  *  
  */
 
- /**
-  * External libraries used: 
-  *   https://github.com/b00lduck/SdFat (stripped version of SdFat to use CS mux with ESP8266)
-  */
 #include <stdio.h>
 #include <string.h>
 #include <SdFat.h>

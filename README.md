@@ -11,7 +11,7 @@ Used hardware components:
 * 5V to 3.3V voltage regulator (i.e. https://www.ebay.de/itm/232329075820)
 * VS1053B module with SD-slot (i.e. http://www.ebay.de/itm/272761135002)
 * Mifare classic 13.56MHz RFID cards (clones will do the job too, i.e. http://www.ebay.de/itm/122525501095)
-* 74HC138 as 3-to-8 multiplexer for CS and RESET lines of SPI devices
+* MCP23017 I2C GPIO expander for CS and RESET lines of SPI devices
 * Breadboard
 * Breadboard wires
 * Reset and GPIO0 momentary switch for breadboard use (i.e. http://www.ebay.de/itm/382172938811)
@@ -19,5 +19,6 @@ Used hardware components:
 Used software:
 * Arduino IDE 1.8.3
 * ESP8266 board manager installed (Board manager URL: https://arduino.esp8266.com/stable/package_esp8266com_index.json)
+* 
 * Heavily stripped and modified SdFat library in arduino library folder (https://github.com/b00lduck/SdFat)
 * Heavily stripped and modified mrfc522 library in arduino library folder (https://github.com/b00lduck/rfid)
