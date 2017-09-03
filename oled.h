@@ -19,17 +19,20 @@
  *  
  */
 #include "Arduino.h"
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-class CSMultiplexer {
+class Oled {
 
   private:
     uint8_t i2cAddress;
-    uint8_t selectedSpiAddress;
+    Adafruit_SSD1306 ssd1306;
 
   public:
-    CSMultiplexer(uint8_t _i2cAddress);
+    Oled(uint8_t i2cAddress);
     void init();
-    void chipSelect(uint8_t spiAddr);
-    void chipDeselect();
+    void clear();
+    void trackName(char* trackName);
+    void cardId(byte *card, uint8_t len);
     
 };

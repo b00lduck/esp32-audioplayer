@@ -23,9 +23,11 @@
 #include <string.h>
 #include <SdFat.h>
 #include <MFRC522.h>
+#include <Wire.h>
 
 #include "tools.h"
 #include "VS1053.h"
+#include "oled.h"
 #include "ringbuffer.h"
 
 extern "C" {
@@ -54,10 +56,11 @@ enum playerState_t {PLAYREQ, PLAYING, STOPREQ, STOPPED};
 
 playerState_t   playerState;
 File            dataFile;
-CSMultiplexer   csMux(2, 4);
+CSMultiplexer   csMux(0x20);
 RingBuffer      ringBuffer(20000);
 VS1053          vs1053player(&csMux, VS1053_XCS_ADDRESS, VS1053_XDCS_ADDRESS, VS1053_DREQ, VS1053_XRESET_ADDRESS);
 MFRC522         mfrc522(NULL, NULL);
+Oled            oled(0x3c);
 
 void setup() {
 
@@ -65,7 +68,13 @@ void setup() {
   Serial.println();
   system_update_cpu_freq(160);
 
+  Wire.begin(2, 4);
+  Wire.setClock(600000L);
+
   csMux.init();
+  oled.init();
+
+  Wire.setClock(600000L);
 
   SPI.begin();
 
@@ -106,6 +115,8 @@ void setup() {
   vs1053player.printDetails();  
 
   playerState = STOPPED;
+
+  oled.clear();
 }
 
 bool cardPresent = false;
@@ -129,6 +140,7 @@ void newCard(byte *buffer, byte bufferSize) {
   memcpy(currentCard, buffer, bufferSize);
   Serial.print(F("New Card UID:"));
   dump_byte_array(mfrc522.uid.uidByte, mfrc522.uid.size);
+  oled.cardId(mfrc522.uid.uidByte, mfrc522.uid.size);
   Serial.println();  
 }
 
@@ -151,6 +163,7 @@ void loop() {
       cardFailCount++;
       if (cardFailCount > 1) {
           Serial.println(F("Card removed"));
+          oled.cardId(NULL, 0);
           cardPresent = false;   
           memset(currentCard, 0, sizeof(currentCard));
           playerState = STOPREQ;                    
@@ -166,10 +179,12 @@ void loop() {
 
       if (mfrc522.uid.uidByte[0] == 0xf0) {
         dataFile.open("tune1.mp3", FILE_READ);   
+        oled.trackName("tune1.mp3");
       }    
 
       if (mfrc522.uid.uidByte[0] == 0xb0) {
         dataFile.open("sams.mp3", FILE_READ);   
+        oled.trackName("sams.mp3");
       }          
      
       if (!dataFile) {
@@ -212,6 +227,7 @@ void loop() {
       break;
 
     case STOPPED:
+      oled.trackName("");
       break;    
     
   }

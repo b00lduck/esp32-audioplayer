@@ -21,16 +21,13 @@
 #include <Wire.h>
 #include "csmux.h"
 
-CSMultiplexer::CSMultiplexer(uint8_t _sda, uint8_t _scl) : 
-  sda(_sda), 
-  scl(_scl),
-  selected(255) {}
+CSMultiplexer::CSMultiplexer(uint8_t _i2cAddress) : 
+  i2cAddress(_i2cAddress), 
+  selectedSpiAddress(255) {}
 
 void CSMultiplexer::init() {
-  Wire.begin(sda, scl);
-  Wire.setClock(600000L);
-  
-  Wire.beginTransmission(0x20);
+ 
+  Wire.beginTransmission(i2cAddress);
   Wire.write(0x00); // IODIRA 
   Wire.write(0x00); // PORTA output
   Wire.endTransmission();
@@ -40,7 +37,7 @@ void CSMultiplexer::init() {
   //Wire.write(0x00); // PORTB output
   //Wire.endTransmission();  
 
-  Wire.beginTransmission(0x20);
+  Wire.beginTransmission(i2cAddress);
   Wire.write(0x12); // PORTA
   Wire.write(0xff); // value
   Wire.endTransmission();    
@@ -51,23 +48,23 @@ void CSMultiplexer::init() {
   //Wire.endTransmission();    
 }
 
-void CSMultiplexer::chipSelect(uint8_t address) {    
-  if (selected != address) {
-    uint8_t value = 0xff - (1 << address);    
-    Wire.beginTransmission(0x20);
+void CSMultiplexer::chipSelect(uint8_t spiAddress) {    
+  if (selectedSpiAddress != spiAddress) {
+    uint8_t value = 0xff - (1 << spiAddress);    
+    Wire.beginTransmission(i2cAddress);
     Wire.write(0x12);
     Wire.write(value);
     Wire.endTransmission();    
-    selected = address;
+    selectedSpiAddress = spiAddress;
   }
 }
 
 void CSMultiplexer::chipDeselect() {
-    Wire.beginTransmission(0x20);
+    Wire.beginTransmission(i2cAddress);
     Wire.write(0x12);
     Wire.write(0xff);
     Wire.endTransmission();
-    selected = 255;
+    selectedSpiAddress = 255;
 }
     
 
