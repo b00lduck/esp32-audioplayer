@@ -1,0 +1,6 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP ESP-12E
+K MODULE ESP8266 ESP-8266
+$ENDCMP
+#End Doc Library

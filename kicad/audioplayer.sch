@@ -1,0 +1,402 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:audioplayer
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L MCP23017 U?
+U 1 1 59B6E8A3
+P 4400 5800
+F 0 "U?" H 3850 6900 50  0000 C CNN
+F 1 "MCP23017" H 4850 4700 50  0000 C CNN
+F 2 "MODULE" H 3900 4700 50  0001 C CNN
+F 3 "DOCUMENTATION" H 4400 5750 50  0001 C CNN
+	1    4400 5800
+	1    0    0    -1  
+$EndComp
+$Comp
+L ESP-12E U?
+U 1 1 59B6E95A
+P 4350 2600
+F 0 "U?" H 4350 2500 50  0000 C CNN
+F 1 "ESP-12E" H 4350 2700 50  0000 C CNN
+F 2 "" H 4350 2600 50  0001 C CNN
+F 3 "" H 4350 2600 50  0001 C CNN
+	1    4350 2600
+	0    1    1    0   
+$EndComp
+$Comp
+L RC-552_breakout U?
+U 1 1 59B6EF99
+P 8400 3450
+F 0 "U?" H 8250 3350 50  0000 C CNN
+F 1 "RC-552_breakout" V 8400 3350 50  0000 C CNN
+F 2 "" V 8500 3350 50  0001 C CNN
+F 3 "" V 8500 3350 50  0001 C CNN
+	1    8400 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L VS1053/SD_breakout U?
+U 1 1 59B6EFEA
+P 8400 1950
+F 0 "U?" H 8250 1850 50  0000 C CNN
+F 1 "VS1053/SD_breakout" V 8400 1850 50  0000 C CNN
+F 2 "" V 8500 1850 50  0001 C CNN
+F 3 "" V 8500 1850 50  0001 C CNN
+	1    8400 1950
+	1    0    0    -1  
+$EndComp
+Wire Bus Line
+	6400 1100 6400 3350
+Entry Wire Line
+	6400 2050 6500 1950
+Entry Wire Line
+	6400 2150 6500 2050
+Entry Wire Line
+	6400 2250 6500 2150
+Entry Wire Line
+	6400 3350 6500 3450
+Wire Wire Line
+	7500 1950 6500 1950
+Wire Wire Line
+	7500 2050 6500 2050
+Wire Wire Line
+	7500 2150 6500 2150
+Wire Wire Line
+	7500 3350 6500 3350
+Wire Wire Line
+	7500 3250 6500 3250
+Wire Wire Line
+	7500 3450 6500 3450
+Text Label 6500 1950 0    60   ~ 0
+MISO
+Text Label 6500 2050 0    60   ~ 0
+MOSI
+Text Label 6500 2150 0    60   ~ 0
+SCK
+Text Label 6500 3250 0    60   ~ 0
+SCK
+Text Label 6500 3350 0    60   ~ 0
+MOSI
+Text Label 6500 3450 0    60   ~ 0
+MISO
+Wire Bus Line
+	2900 4100 2900 6100
+Entry Wire Line
+	2900 6200 3000 6300
+Entry Wire Line
+	2900 6300 3000 6400
+Wire Bus Line
+	2900 6050 2900 6300
+Wire Wire Line
+	3450 6400 3000 6400
+Wire Wire Line
+	3450 6300 3000 6300
+Text Label 3000 6300 0    60   ~ 0
+SDA
+Text Label 3000 6400 0    60   ~ 0
+SCL
+Wire Wire Line
+	3400 5550 3450 5550
+Wire Wire Line
+	3400 5350 3400 5600
+Wire Wire Line
+	3400 5350 3450 5350
+Wire Wire Line
+	3450 5450 3400 5450
+Connection ~ 3400 5450
+$Comp
+L GND #PWR?
+U 1 1 59B70419
+P 3400 5600
+F 0 "#PWR?" H 3400 5350 50  0001 C CNN
+F 1 "GND" H 3400 5450 50  0000 C CNN
+F 2 "" H 3400 5600 50  0000 C CNN
+F 3 "" H 3400 5600 50  0000 C CNN
+	1    3400 5600
+	1    0    0    -1  
+$EndComp
+Connection ~ 3400 5550
+$Comp
+L +3.3V #PWR?
+U 1 1 59B7046D
+P 3400 4850
+F 0 "#PWR?" H 3400 4700 50  0001 C CNN
+F 1 "+3.3V" H 3400 4990 50  0000 C CNN
+F 2 "" H 3400 4850 50  0000 C CNN
+F 3 "" H 3400 4850 50  0000 C CNN
+	1    3400 4850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3450 4900 3400 4900
+Wire Wire Line
+	3400 4900 3400 4850
+$Comp
+L +3.3V #PWR?
+U 1 1 59B704A8
+P 4400 4450
+F 0 "#PWR?" H 4400 4300 50  0001 C CNN
+F 1 "+3.3V" H 4400 4590 50  0000 C CNN
+F 2 "" H 4400 4450 50  0000 C CNN
+F 3 "" H 4400 4450 50  0000 C CNN
+	1    4400 4450
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 59B7054C
+P 4400 7150
+F 0 "#PWR?" H 4400 6900 50  0001 C CNN
+F 1 "GND" H 4400 7000 50  0000 C CNN
+F 2 "" H 4400 7150 50  0000 C CNN
+F 3 "" H 4400 7150 50  0000 C CNN
+	1    4400 7150
+	1    0    0    -1  
+$EndComp
+$Comp
+L +3.3V #PWR?
+U 1 1 59B70858
+P 3950 1700
+F 0 "#PWR?" H 3950 1550 50  0001 C CNN
+F 1 "+3.3V" H 3950 1840 50  0000 C CNN
+F 2 "" H 3950 1700 50  0000 C CNN
+F 3 "" H 3950 1700 50  0000 C CNN
+	1    3950 1700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 59B70890
+P 3950 3550
+F 0 "#PWR?" H 3950 3300 50  0001 C CNN
+F 1 "GND" H 3950 3400 50  0000 C CNN
+F 2 "" H 3950 3550 50  0000 C CNN
+F 3 "" H 3950 3550 50  0000 C CNN
+	1    3950 3550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3950 3550 3950 3500
+Wire Wire Line
+	7500 2250 6750 2250
+Wire Wire Line
+	6750 2250 6750 4900
+Wire Wire Line
+	6750 4900 5350 4900
+Wire Wire Line
+	5350 5000 6800 5000
+Wire Wire Line
+	6800 5000 6800 2450
+Wire Wire Line
+	6800 2450 7500 2450
+Wire Wire Line
+	7500 1850 6850 1850
+Wire Wire Line
+	6850 1850 6850 5100
+Wire Wire Line
+	6850 5100 5350 5100
+Wire Wire Line
+	7500 3150 6900 3150
+Wire Wire Line
+	6900 3150 6900 5200
+Wire Wire Line
+	6900 5200 5350 5200
+Wire Wire Line
+	7500 3750 6950 3750
+Wire Wire Line
+	6950 3750 6950 5300
+Wire Wire Line
+	6950 5300 5350 5300
+Wire Wire Line
+	7500 2350 7000 2350
+Wire Wire Line
+	7000 2350 7000 5400
+Wire Wire Line
+	7000 5400 5350 5400
+$Comp
+L GND #PWR?
+U 1 1 59B71063
+P 7500 1750
+F 0 "#PWR?" H 7500 1500 50  0001 C CNN
+F 1 "GND" H 7500 1600 50  0000 C CNN
+F 2 "" H 7500 1750 50  0000 C CNN
+F 3 "" H 7500 1750 50  0000 C CNN
+	1    7500 1750
+	0    1    1    0   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 59B7109F
+P 7500 3650
+F 0 "#PWR?" H 7500 3400 50  0001 C CNN
+F 1 "GND" H 7500 3500 50  0000 C CNN
+F 2 "" H 7500 3650 50  0000 C CNN
+F 3 "" H 7500 3650 50  0000 C CNN
+	1    7500 3650
+	0    1    1    0   
+$EndComp
+$Comp
+L +3.3V #PWR?
+U 1 1 59B7117B
+P 7500 3850
+F 0 "#PWR?" H 7500 3700 50  0001 C CNN
+F 1 "+3.3V" H 7500 3990 50  0000 C CNN
+F 2 "" H 7500 3850 50  0000 C CNN
+F 3 "" H 7500 3850 50  0000 C CNN
+	1    7500 3850
+	-1   0    0    1   
+$EndComp
+$Comp
+L +5V #PWR?
+U 1 1 59B71283
+P 7500 1650
+F 0 "#PWR?" H 7500 1500 50  0001 C CNN
+F 1 "+5V" H 7500 1790 50  0000 C CNN
+F 2 "" H 7500 1650 50  0000 C CNN
+F 3 "" H 7500 1650 50  0000 C CNN
+	1    7500 1650
+	1    0    0    -1  
+$EndComp
+Wire Bus Line
+	4150 1100 6400 1100
+Entry Wire Line
+	4050 1200 4150 1100
+Entry Wire Line
+	4150 1200 4250 1100
+Entry Wire Line
+	4250 1200 4350 1100
+Wire Wire Line
+	4050 1700 4050 1200
+Wire Wire Line
+	4150 1200 4150 1700
+Wire Wire Line
+	4250 1700 4250 1200
+Entry Wire Line
+	6400 3150 6500 3250
+Entry Wire Line
+	6400 3250 6500 3350
+Wire Bus Line
+	2900 4100 4250 4100
+Entry Wire Line
+	4250 4100 4350 4000
+Entry Wire Line
+	4050 4100 4150 4000
+Wire Wire Line
+	4150 4000 4150 3500
+Wire Wire Line
+	4350 3500 4350 4000
+Text Label 4150 4000 1    60   ~ 0
+SDA
+Text Label 4350 4000 1    60   ~ 0
+SCL
+Text Label 4250 1200 3    60   ~ 0
+SCK
+Wire Wire Line
+	7500 2550 5250 2550
+Wire Wire Line
+	5250 2550 5250 1500
+Wire Wire Line
+	5250 1500 4350 1500
+Wire Wire Line
+	4350 1500 4350 1700
+Wire Wire Line
+	4250 3500 4250 3800
+Wire Wire Line
+	4250 3800 2800 3800
+Wire Wire Line
+	2800 3800 2800 3200
+$Comp
+L SPST SW?
+U 1 1 59B7229A
+P 2800 2700
+F 0 "SW?" H 2800 2800 50  0000 C CNN
+F 1 "PRG" H 2800 2600 50  0000 C CNN
+F 2 "" H 2800 2700 50  0000 C CNN
+F 3 "" H 2800 2700 50  0000 C CNN
+	1    2800 2700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 59B7235D
+P 2800 2200
+F 0 "#PWR?" H 2800 1950 50  0001 C CNN
+F 1 "GND" H 2800 2050 50  0000 C CNN
+F 2 "" H 2800 2200 50  0000 C CNN
+F 3 "" H 2800 2200 50  0000 C CNN
+	1    2800 2200
+	-1   0    0    1   
+$EndComp
+$Comp
+L SPST SW?
+U 1 1 59B72385
+P 2450 2700
+F 0 "SW?" H 2450 2800 50  0000 C CNN
+F 1 "RESET" H 2450 2600 50  0000 C CNN
+F 2 "" H 2450 2700 50  0000 C CNN
+F 3 "" H 2450 2700 50  0000 C CNN
+	1    2450 2700
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2450 2200 2800 2200
+Connection ~ 2800 2200
+Wire Wire Line
+	4650 1700 4650 1400
+Wire Wire Line
+	4650 1400 2000 1400
+Wire Wire Line
+	2000 1400 2000 3200
+Wire Wire Line
+	2000 3200 2450 3200
+Wire Wire Line
+	4550 1700 4550 900 
+Wire Wire Line
+	4550 900  9350 900 
+Wire Wire Line
+	9350 900  9350 1400
+Wire Wire Line
+	9350 1400 9300 1400
+$EndSCHEMATC
