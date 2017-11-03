@@ -12,6 +12,7 @@ Used hardware components:
 * VS1053B module with SD-slot (i.e. http://www.ebay.de/itm/272761135002)
 * Mifare classic 13.56MHz RFID cards (clones will do the job too, i.e. http://www.ebay.de/itm/122525501095)
 * MCP23017 I2C GPIO expander for CS and RESET lines of SPI devices
+* 0.96 inch I2C OLED display
 * Breadboard
 * Breadboard wires
 * Reset and GPIO0 momentary switch for breadboard use (i.e. http://www.ebay.de/itm/382172938811)
