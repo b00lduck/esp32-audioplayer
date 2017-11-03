@@ -99,7 +99,7 @@ class VS1053 {
   
     VS1053(CSMultiplexer *csMux, uint8_t _xcs_address, uint8_t _xdcs_address, uint8_t _dreq_pin, uint8_t _xreset_address);
     
-    void     begin() ;                                   // Sets pins correctly and prepares SPI bus.
+    void     begin();                                     // Sets pins correctly and prepares SPI bus.
     void     startSong() ;                               // Prepare to start playing. Call this each time a new song starts.
     void     playChunk ( uint8_t* data, size_t len ) ;   // Play a chunk of data.  Copies the data to
     // the chip.  Blocks until complete.

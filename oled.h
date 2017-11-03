@@ -34,5 +34,6 @@ class Oled {
     void clear();
     void trackName(char* trackName);
     void cardId(byte *card, uint8_t len);
-    
+    void fatalErrorMessage(char* error, char* info);
+    void loadingBar(uint8_t percent);
 };

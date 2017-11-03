@@ -69,14 +69,13 @@ void setup() {
   system_update_cpu_freq(160);
 
   Wire.begin(2, 4);
-  Wire.setClock(600000L);
-
   csMux.init();
   oled.init();
-
+  oled.loadingBar(0);  
   Wire.setClock(600000L);
 
   SPI.begin();
+  oled.loadingBar(25);
 
   if (sd.begin(
         [](){
@@ -90,11 +89,10 @@ void setup() {
      printDirectory();
   } else {
      Serial.println("SD Card initialization failed.");   
-     while(1) {
-       delay(100);  
-     }
+     oled.fatalErrorMessage("SD card error", "init failed");
   }    
-
+  oled.loadingBar(50);
+  
   mfrc522.PCD_Init(
         [](bool state){
           if (state) {
@@ -110,12 +108,15 @@ void setup() {
             csMux.chipDeselect();  
           }
         });
+  oled.loadingBar(75);        
 
   vs1053player.begin();  
   vs1053player.printDetails();  
 
   playerState = STOPPED;
 
+  oled.loadingBar(100);
+  
   oled.clear();
 }
 
@@ -178,13 +179,13 @@ void loop() {
     case PLAYREQ:
 
       if (mfrc522.uid.uidByte[0] == 0xf0) {
-        dataFile.open("tune1.mp3", FILE_READ);   
-        oled.trackName("tune1.mp3");
+        dataFile.open("VBR-id3v1+id3v2+cover.mp3", FILE_READ);   
+        oled.trackName("VBR V1 V2 C");
       }    
 
       if (mfrc522.uid.uidByte[0] == 0xb0) {
-        dataFile.open("sams.mp3", FILE_READ);   
-        oled.trackName("sams.mp3");
+        dataFile.open("256kbps-id3v1-id3v2+cover.mp3", FILE_READ);   
+        oled.trackName("256 V1 V2 C");
       }          
      
       if (!dataFile) {
