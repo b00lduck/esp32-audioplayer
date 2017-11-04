@@ -20,6 +20,7 @@
  */
 void dbgprint(const char* format, ...);
 void dump_byte_array(byte *buffer, byte bufferSize);
+void uid_to_string(byte *uid, char output[9]);
 
 #define DEBUG
 

@@ -47,6 +47,9 @@ extern "C" {
 #define MFRC522_CS_ADDRESS     3
 #define MFRC522_RST_ADDRESS    4
 
+#define MAPPING_FILE "mapping.txt"
+#define MAX_FILENAME_LENGTH 50
+#define MAX_MAPPING_LINE_LENGTH (MAX_FILENAME_LENGTH + 10)
 
 SdFat sd;
 
@@ -133,16 +136,78 @@ bool cardChanged(byte *buffer, byte bufferSize) {
   return false;
 }
 
+void extract_id_from_line(char found_id[9], char line[MAX_MAPPING_LINE_LENGTH]) {
+  for(uint8_t i=0; i<8; i++) {
+    // to lowercase
+    if (line[i] >= 65 && line[i] <= 70) {
+      line[i] +=32;
+    }      
+    if ((line[i] < 97 || line[i] > 102) && (line[i] < 48 && line[i] > 57)) {
+      sprintf(found_id,"00000000"); 
+      return;
+    }
+    found_id[i] = line[i];
+  }
+  found_id[8] = 0;
+}
+
+
+/**
+ * try to read mapping file line by line and try to match the first 8 characters,
+ * which are interpreted as uppercase hex.
+ */
+boolean resolveIdToFilename(byte id[4], char filename[MAX_FILENAME_LENGTH]) {
+
+  SdFile mappingFile;
+  if (!mappingFile.open(MAPPING_FILE, O_READ)) {
+    oled.fatalErrorMessage("SD card error", "mapping.txt not found");    
+  }
+
+  // convert id to string
+  char id_string[9];
+  uid_to_string(id, id_string);
+
+  Serial.print("ID string: ");
+  Serial.println(id_string);
+
+  char line[MAX_MAPPING_LINE_LENGTH];
+  size_t n;
+  while ((n = mappingFile.fgets(line, sizeof(line))) > 0) {
+    
+    char found_id[9];
+    extract_id_from_line(found_id, line);
+    
+    if (strncmp(found_id, id_string, 8) == 0) {
+      strncpy(filename, &(line[9]), MAX_FILENAME_LENGTH);
+      filename[strlen(filename)-1] = 0; // remove newline
+      Serial.print("#");
+      Serial.print(filename);
+      Serial.println("#");
+      return true;
+    }
+    
+    if (line[n - 1] != '\n') {
+      oled.fatalErrorMessage("Mapping error", "Long line/missing newline");
+    }
+  }
+
+  filename[0] = 0;
+  return false;
+}
+
+/**
+ * a new card was detected
+ */
 void newCard(byte *buffer, byte bufferSize) {
   cardPresent = true;
   if (bufferSize > sizeof(currentCard)) {
     bufferSize = sizeof(currentCard);
   }
   memcpy(currentCard, buffer, bufferSize);
-  Serial.print(F("New Card UID:"));
+  Serial.print(F("New Card with UID"));
   dump_byte_array(mfrc522.uid.uidByte, mfrc522.uid.size);
-  oled.cardId(mfrc522.uid.uidByte, mfrc522.uid.size);
-  Serial.println();  
+  oled.cardId(mfrc522.uid.uidByte, mfrc522.uid.size); 
+  Serial.println(" detected.");  
 }
 
 void loop() {
@@ -173,29 +238,32 @@ void loop() {
   }
 
   uint32_t maxfilechunk;
-
+  
+  
   switch (playerState) {
 
-    case PLAYREQ:
-
-      if (mfrc522.uid.uidByte[0] == 0xf0) {
-        dataFile.open("VBR-id3v1+id3v2+cover.mp3", FILE_READ);   
-        oled.trackName("VBR V1 V2 C");
-      }    
-
-      if (mfrc522.uid.uidByte[0] == 0xb0) {
-        dataFile.open("256kbps-id3v1-id3v2+cover.mp3", FILE_READ);   
-        oled.trackName("256 V1 V2 C");
-      }          
+    case PLAYREQ: {
+      char filename[MAX_FILENAME_LENGTH];
+      boolean found = resolveIdToFilename(mfrc522.uid.uidByte, filename);  
+      if (!found) {
+        Serial.println("Card not found in mapping");
+        oled.trackName("Unknown card");
+        playerState = STOPREQ;       
+        break;
+      }
+      
+      dataFile.open(filename, FILE_READ);   
+      oled.trackName(filename);
      
       if (!dataFile) {
-        Serial.println("open failed");
-        playerState = STOPREQ;
+        Serial.println("File mapped to card not found");
+        oled.fatalErrorMessage("Mapping error", "Mapped file not found");
       } else {
         playerState = PLAYING;
         vs1053player.setVolume(80);
       }      
       break;
+    }
 
     case PLAYING:      
       // fill ring buffer with MP3 data
@@ -244,16 +312,9 @@ void printDirectory() {
     Serial.println("open root failed");
     return;
   }
-
-  const uint16_t nMax = 10;
-  uint16_t n = 0;
-  uint16_t dirIndex[nMax];
   
-  while (n < nMax && file.openNext(&dirFile, O_READ)) {
+  while (file.openNext(&dirFile, O_READ)) {
     if (!file.isSubDir() && !file.isHidden()) {
-      dirIndex[n] = file.dirIndex();
-      Serial.print(n++);
-      Serial.write(' ');
       file.printName(&Serial);
       Serial.println();
     }
@@ -262,4 +323,6 @@ void printDirectory() {
 
   dirFile.close();
 }
+
+
 
