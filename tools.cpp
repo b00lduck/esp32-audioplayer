@@ -45,7 +45,3 @@ void dump_byte_array(byte *buffer, byte bufferSize) {
   }
 }
 
-// dump id to char array
-void uid_to_string(byte *uid, char output[9]) {
-  sprintf(output, "%02x%02x%02x%02x", uid[0], uid[1], uid[2], uid[3]);
-}

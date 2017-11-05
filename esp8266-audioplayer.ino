@@ -29,6 +29,7 @@
 #include "VS1053.h"
 #include "oled.h"
 #include "ringbuffer.h"
+#include "mapper.h"
 
 extern "C" {
   #include "user_interface.h"
@@ -47,10 +48,6 @@ extern "C" {
 #define MFRC522_CS_ADDRESS     3
 #define MFRC522_RST_ADDRESS    4
 
-#define MAPPING_FILE "mapping.txt"
-#define MAX_FILENAME_LENGTH 50
-#define MAX_MAPPING_LINE_LENGTH (MAX_FILENAME_LENGTH + 10)
-
 SdFat sd;
 
 void printDirectory();
@@ -64,6 +61,14 @@ RingBuffer      ringBuffer(20000);
 VS1053          vs1053player(&csMux, VS1053_XCS_ADDRESS, VS1053_XDCS_ADDRESS, VS1053_DREQ, VS1053_XRESET_ADDRESS);
 MFRC522         mfrc522(NULL, NULL);
 Oled            oled(0x3c);
+Mapper          mapper;
+
+void fatal(char* title, char* message) {
+  Serial.println("FATAL ERROR OCCURED");
+  Serial.println(title);
+  Serial.println(message);
+  oled.fatalErrorMessage(title, message);
+}
 
 void setup() {
 
@@ -91,8 +96,7 @@ void setup() {
      Serial.println("SD Card initialized.");
      printDirectory();
   } else {
-     Serial.println("SD Card initialization failed.");   
-     oled.fatalErrorMessage("SD card error", "init failed");
+     fatal("SD card error", "init failed");
   }    
   oled.loadingBar(50);
   
@@ -112,6 +116,8 @@ void setup() {
           }
         });
   oled.loadingBar(75);        
+
+  mapper.init();
 
   vs1053player.begin();  
   vs1053player.printDetails();  
@@ -136,64 +142,6 @@ bool cardChanged(byte *buffer, byte bufferSize) {
   return false;
 }
 
-void extract_id_from_line(char found_id[9], char line[MAX_MAPPING_LINE_LENGTH]) {
-  for(uint8_t i=0; i<8; i++) {
-    // to lowercase
-    if (line[i] >= 65 && line[i] <= 70) {
-      line[i] +=32;
-    }      
-    if ((line[i] < 97 || line[i] > 102) && (line[i] < 48 && line[i] > 57)) {
-      sprintf(found_id,"00000000"); 
-      return;
-    }
-    found_id[i] = line[i];
-  }
-  found_id[8] = 0;
-}
-
-
-/**
- * try to read mapping file line by line and try to match the first 8 characters,
- * which are interpreted as uppercase hex.
- */
-boolean resolveIdToFilename(byte id[4], char filename[MAX_FILENAME_LENGTH]) {
-
-  SdFile mappingFile;
-  if (!mappingFile.open(MAPPING_FILE, O_READ)) {
-    oled.fatalErrorMessage("SD card error", "mapping.txt not found");    
-  }
-
-  // convert id to string
-  char id_string[9];
-  uid_to_string(id, id_string);
-
-  Serial.print("ID string: ");
-  Serial.println(id_string);
-
-  char line[MAX_MAPPING_LINE_LENGTH];
-  size_t n;
-  while ((n = mappingFile.fgets(line, sizeof(line))) > 0) {
-    
-    char found_id[9];
-    extract_id_from_line(found_id, line);
-    
-    if (strncmp(found_id, id_string, 8) == 0) {
-      strncpy(filename, &(line[9]), MAX_FILENAME_LENGTH);
-      filename[strlen(filename)-1] = 0; // remove newline
-      Serial.print("#");
-      Serial.print(filename);
-      Serial.println("#");
-      return true;
-    }
-    
-    if (line[n - 1] != '\n') {
-      oled.fatalErrorMessage("Mapping error", "Long line/missing newline");
-    }
-  }
-
-  filename[0] = 0;
-  return false;
-}
 
 /**
  * a new card was detected
@@ -208,6 +156,44 @@ void newCard(byte *buffer, byte bufferSize) {
   dump_byte_array(mfrc522.uid.uidByte, mfrc522.uid.size);
   oled.cardId(mfrc522.uid.uidByte, mfrc522.uid.size); 
   Serial.println(" detected.");  
+}
+
+void playRequest() {
+  char filename[MAX_FILENAME_STRING_LENGTH];
+  Mapper::ResolveError err = mapper.resolveIdToFilename(mfrc522.uid.uidByte, filename);    
+  switch(err) {
+    case Mapper::ResolveError::ID_NOT_FOUND:
+      Serial.println("Card not found in mapping");
+      oled.trackName("Unknown card");
+      playerState = STOPREQ;         
+      return;
+    case Mapper::ResolveError::LINE_TOO_LONG:
+      fatal("Mapping error", "Long line/missing newline");         
+      break;
+    case Mapper::ResolveError::MAPPING_FILE_NOT_FOUND:
+      fatal("Mapping error", "Mapping file not found");         
+      break;
+    case Mapper::ResolveError::REFERENCED_FILE_NOT_FOUND:
+      fatal("Mapping error", "Data file not found"); 
+      break;    
+  } 
+  
+  dataFile.open(filename, FILE_READ);   
+  if (!dataFile) {
+    fatal("Error", "Unknown IO problem");
+  }
+  oled.trackName(filename);
+  playerState = PLAYING;
+  vs1053player.setVolume(80);                 
+}
+
+void stopRequest() {
+  dataFile.close();
+  vs1053player.processByte(0, true);
+  vs1053player.setVolume(0);                  
+  vs1053player.stopSong();                       
+  ringBuffer.empty();                            
+  playerState = STOPPED; 
 }
 
 void loop() {
@@ -238,32 +224,12 @@ void loop() {
   }
 
   uint32_t maxfilechunk;
-  
-  
+    
   switch (playerState) {
 
-    case PLAYREQ: {
-      char filename[MAX_FILENAME_LENGTH];
-      boolean found = resolveIdToFilename(mfrc522.uid.uidByte, filename);  
-      if (!found) {
-        Serial.println("Card not found in mapping");
-        oled.trackName("Unknown card");
-        playerState = STOPREQ;       
-        break;
-      }
-      
-      dataFile.open(filename, FILE_READ);   
-      oled.trackName(filename);
-     
-      if (!dataFile) {
-        Serial.println("File mapped to card not found");
-        oled.fatalErrorMessage("Mapping error", "Mapped file not found");
-      } else {
-        playerState = PLAYING;
-        vs1053player.setVolume(80);
-      }      
+    case PLAYREQ:
+      playRequest();
       break;
-    }
 
     case PLAYING:      
       // fill ring buffer with MP3 data
@@ -287,12 +253,7 @@ void loop() {
       break;
 
     case STOPREQ:
-      dataFile.close();
-      vs1053player.processByte(0, true);
-      vs1053player.setVolume(0);                  
-      vs1053player.stopSong();                       
-      ringBuffer.empty();                            
-      playerState = STOPPED; 
+      stopRequest();
       break;
 
     case STOPPED:

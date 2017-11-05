@@ -31,7 +31,8 @@ void CSMultiplexer::init() {
   Wire.write(0x00); // IODIRA 
   Wire.write(0x00); // PORTA output
   Wire.endTransmission();
-  
+
+  // PORTB unused for now
   //Wire.beginTransmission(0x20);
   //Wire.write(0x01); // IODIRB
   //Wire.write(0x00); // PORTB output
@@ -42,6 +43,7 @@ void CSMultiplexer::init() {
   Wire.write(0xff); // value
   Wire.endTransmission();    
   
+  // PORTB unused for now
   //Wire.beginTransmission(0x20);
   //Wire.write(0x13); // PORTB
   //Wire.write(0b11000000); // value
