@@ -29,7 +29,8 @@
 
 class Mapper {
   public:  
-    enum ResolveError {
+ 
+    enum MapperError {
 
       /**
        * all went OK
@@ -54,15 +55,32 @@ class Mapper {
       /**
        * A line of the mapping file is too long or the last line is missing a newline
        */
-      LINE_TOO_LONG
+      LINE_TOO_LONG,
+
+      /**
+       * A line of the mapping file is too short
+       */
+      LINE_TOO_SHORT,
+
+      /**
+       * Bad characters in card ID
+       */
+      MALFORMED_CARD_ID,
+
+      /**
+       * Space missing or at the wrong place
+       */
+      MALFORMED_LINE_SYNTAX
     };
         
-    void init();   
-    ResolveError resolveIdToFilename(byte id[ID_BYTE_ARRAY_LENGTH], char filename[MAX_FILENAME_STRING_LENGTH]); 
+    MapperError init();   
+    MapperError resolveIdToFilename(byte id[ID_BYTE_ARRAY_LENGTH], char filename[MAX_FILENAME_STRING_LENGTH]); 
     
   private:
     void uid_to_string(byte *uid, char output[9]);
-    void extract_id_from_line(char found_id[ID_STRING_LENGTH], char line[MAX_MAPPING_LINE_STRING_LENGTH]);
+    MapperError extract_id_from_line(char found_id[ID_STRING_LENGTH], char line[MAX_MAPPING_LINE_STRING_LENGTH]);
+    MapperError checkMappingFile();
+    MapperError checkMappingLine(char* line);
 };
 
 

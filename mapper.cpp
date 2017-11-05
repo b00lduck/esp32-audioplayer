@@ -21,19 +21,19 @@
 #include "mapper.h"
 #include <SdFat.h>
 
-void Mapper::init() {
- 
+Mapper::MapperError Mapper::init() {
+    return checkMappingFile();
 }
 
 /**
  * try to read mapping file line by line and try to match the first 8 characters,
  * which are interpreted as uppercase hex.
  */
-Mapper::ResolveError Mapper::resolveIdToFilename(byte id[4], char filename[MAX_FILENAME_STRING_LENGTH]) {
+Mapper::MapperError Mapper::resolveIdToFilename(byte id[4], char filename[MAX_FILENAME_STRING_LENGTH]) {
 
   SdFile mappingFile;
   if (!mappingFile.open(MAPPING_FILE, O_READ)) {
-    return ResolveError::MAPPING_FILE_NOT_FOUND;    
+    return MapperError::MAPPING_FILE_NOT_FOUND;    
   }
 
   // convert id to string
@@ -48,7 +48,10 @@ Mapper::ResolveError Mapper::resolveIdToFilename(byte id[4], char filename[MAX_F
   while ((n = mappingFile.fgets(line, sizeof(line))) > 0) {
     
     char found_id[ID_STRING_LENGTH];
-    extract_id_from_line(found_id, line);
+    MapperError err = extract_id_from_line(found_id, line);
+    if (err != MapperError::OK) {
+      return err;
+    }
     
     if (strncmp(found_id, id_string, 8) == 0) {
       strncpy(filename, &(line[ID_STRING_LENGTH]), MAX_FILENAME_STRING_LENGTH);
@@ -67,17 +70,16 @@ Mapper::ResolveError Mapper::resolveIdToFilename(byte id[4], char filename[MAX_F
 
 /**
  * Parse one line of the mapping file and convert the HEX, which is stored in the first 8 chars, to lowercase.
- * If any invalid chars are found (valid chars are [a-zA-Z0-9]) the id "00000000" is returned.
+ * If any invalid chars are found (valid chars are [a-fA-F0-9]) the id "00000000" is returned.
  */
-void Mapper::extract_id_from_line(char found_id[ID_STRING_LENGTH], char line[MAX_MAPPING_LINE_STRING_LENGTH]) {
+Mapper::MapperError Mapper::extract_id_from_line(char found_id[ID_STRING_LENGTH], char line[MAX_MAPPING_LINE_STRING_LENGTH]) {
   for(uint8_t i=0; i<8; i++) {
     // to lowercase
     if (line[i] >= 65 && line[i] <= 70) {
       line[i] +=32;
     }      
-    if ((line[i] < 97 || line[i] > 102) && (line[i] < 48 && line[i] > 57)) {
-      sprintf(found_id,"00000000"); 
-      return;
+    if ((line[i] < 97 || line[i] > 102) && (line[i] < 48 && line[i] > 57)) {      
+      return MapperError::MALFORMED_CARD_ID;
     }
     found_id[i] = line[i];
   }
@@ -86,10 +88,72 @@ void Mapper::extract_id_from_line(char found_id[ID_STRING_LENGTH], char line[MAX
 
 // copy id to char array
 void Mapper::uid_to_string(byte *uid, char output[ID_STRING_LENGTH]) {
-
   #if ID_BYTE_ARRAY_LENGTH == 4  
     sprintf(output, "%02x%02x%02x%02x", uid[0], uid[1], uid[2], uid[3]);
   #else
     #error Only 4 byte IDs supported
   #endif
+}
+
+/**
+ * Check syntax of mapping file and existence of linked files
+ */
+Mapper::MapperError Mapper::checkMappingFile() {
+  SdFile mappingFile;
+  if (!mappingFile.open(MAPPING_FILE, O_READ)) {
+    return MapperError::MAPPING_FILE_NOT_FOUND;    
+  }
+
+  char line[MAX_MAPPING_LINE_STRING_LENGTH];
+  size_t n;
+  while ((n = mappingFile.fgets(line, sizeof(line))) > 0) {    
+    MapperError err = checkMappingLine(line);
+    if (err != MapperError::OK) {
+      return err;  
+    }    
+  }
+
+  return MapperError::OK;
+}
+
+
+/**
+ * Check syntax of mapping line and existence of linked file
+ */
+Mapper::MapperError Mapper::checkMappingLine(char* line) {
+
+  // check minimum line length given an one charachter long filename
+  if (strlen(line) < (ID_STRING_LENGTH + 1) ) {
+    return MapperError::LINE_TOO_SHORT;
+  }
+
+  // check maximum line length by validating that last char is a newline
+  if (line[strlen(line) - 1] != '\n') {
+    return MapperError::LINE_TOO_LONG;
+  }  
+
+  // check format of hex id. [a-fA-F0-9]
+  for(uint8_t i = 0; i<(ID_BYTE_ARRAY_LENGTH*2); i++) {
+    char x = line[i];
+    if (!((x >= 65 && x <= 70) || (x >= 97 && x <= 102) || (x >= 48 && x <= 57))) {
+      return MapperError::MALFORMED_CARD_ID;
+    }   
+  }
+
+  // check space
+  if (line[ID_STRING_LENGTH-1] != 32) {
+    return MapperError::MALFORMED_LINE_SYNTAX;
+  }
+
+  // check if file exists
+  char* filename = line + ID_STRING_LENGTH;
+  filename[strlen(filename)-1] = 0; // remove newline
+
+  File dataFile;
+  dataFile.open(filename, FILE_READ);   
+  if (!dataFile) {
+    return MapperError::REFERENCED_FILE_NOT_FOUND;
+  }
+  dataFile.close();  
+  return MapperError::OK;
 }

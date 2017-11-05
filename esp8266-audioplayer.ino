@@ -117,8 +117,24 @@ void setup() {
         });
   oled.loadingBar(75);        
 
-  mapper.init();
-
+  Mapper::MapperError err = mapper.init(); 
+  switch(err) {
+    case Mapper::MapperError::MALFORMED_LINE_SYNTAX:
+      fatal("Mapping error", "Syntax error");
+      break;
+    case Mapper::MapperError::MALFORMED_CARD_ID:
+      fatal("Mapping error", "Illegal char in ID");
+      break;
+    case Mapper::MapperError::LINE_TOO_SHORT:
+      fatal("Mapping error", "Line too short");    
+      break;
+    case Mapper::MapperError::LINE_TOO_LONG:
+      fatal("Mapping error", "Line too long");
+      break;
+    case Mapper::MapperError::MAPPING_FILE_NOT_FOUND:
+      fatal("Mapping error", "Mapping file not found");      
+  }
+  
   vs1053player.begin();  
   vs1053player.printDetails();  
 
@@ -160,20 +176,20 @@ void newCard(byte *buffer, byte bufferSize) {
 
 void playRequest() {
   char filename[MAX_FILENAME_STRING_LENGTH];
-  Mapper::ResolveError err = mapper.resolveIdToFilename(mfrc522.uid.uidByte, filename);    
+  Mapper::MapperError err = mapper.resolveIdToFilename(mfrc522.uid.uidByte, filename);    
   switch(err) {
-    case Mapper::ResolveError::ID_NOT_FOUND:
+    case Mapper::MapperError::ID_NOT_FOUND:
       Serial.println("Card not found in mapping");
       oled.trackName("Unknown card");
       playerState = STOPREQ;         
       return;
-    case Mapper::ResolveError::LINE_TOO_LONG:
+    case Mapper::MapperError::LINE_TOO_LONG:
       fatal("Mapping error", "Long line/missing newline");         
       break;
-    case Mapper::ResolveError::MAPPING_FILE_NOT_FOUND:
+    case Mapper::MapperError::MAPPING_FILE_NOT_FOUND:
       fatal("Mapping error", "Mapping file not found");         
       break;
-    case Mapper::ResolveError::REFERENCED_FILE_NOT_FOUND:
+    case Mapper::MapperError::REFERENCED_FILE_NOT_FOUND:
       fatal("Mapping error", "Data file not found"); 
       break;    
   } 
