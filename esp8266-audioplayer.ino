@@ -64,7 +64,7 @@ Oled            oled(0x3c);
 Mapper          mapper;
 
 void fatal(char* title, char* message) {
-  Serial.println("FATAL ERROR OCCURED");
+  Serial.println(F("FATAL ERROR OCCURED"));
   Serial.println(title);
   Serial.println(message);
   oled.fatalErrorMessage(title, message);
@@ -93,7 +93,7 @@ void setup() {
           csMux.chipDeselect();
         }, 
         SD_SCK_MHZ(50))){
-     Serial.println("SD Card initialized.");
+     Serial.println(F("SD Card initialized."));
      printDirectory();
   } else {
      fatal("SD card error", "init failed");
@@ -171,7 +171,7 @@ void newCard(byte *buffer, byte bufferSize) {
   Serial.print(F("New Card with UID"));
   dump_byte_array(mfrc522.uid.uidByte, mfrc522.uid.size);
   oled.cardId(mfrc522.uid.uidByte, mfrc522.uid.size); 
-  Serial.println(" detected.");  
+  Serial.println(F(" detected."));  
 }
 
 void playRequest() {
@@ -179,7 +179,7 @@ void playRequest() {
   Mapper::MapperError err = mapper.resolveIdToFilename(mfrc522.uid.uidByte, filename);    
   switch(err) {
     case Mapper::MapperError::ID_NOT_FOUND:
-      Serial.println("Card not found in mapping");
+      Serial.println(F("Card not found in mapping"));
       oled.trackName("Unknown card");
       playerState = STOPREQ;         
       return;
@@ -205,7 +205,7 @@ void playRequest() {
   uint16_t n = dataFile.read(header, 10);
   if ((header[0] == 'I') && (header[1] == 'D') && (header[2] == '3')) {    
     uint32_t header_size = header[9] + ((uint16_t)header[8] << 7) + ((uint32_t)header[7] << 14) + ((uint32_t)header[6] << 21);
-    Serial.printf("Found ID3v2 tag at beginning, skipping %d bytes\n", header_size);
+    Serial.printf(F("Found ID3v2 tag at beginning, skipping %d bytes\n"), header_size);
     dataFile.seekSet(header_size);    
   } else {
     dataFile.seekSet(0);
@@ -234,7 +234,7 @@ void loop() {
         playerState = PLAYREQ;      
       }      
     } else {
-        Serial.print(F("Error reading card"));
+        Serial.println(F("Error reading card"));
         cardPresent = false;   
         playerState = STOPREQ;                    
     }
@@ -298,7 +298,7 @@ void printDirectory() {
   SdFile dirFile;
 
   if (!dirFile.open("/", O_READ)) {
-    Serial.println("open root failed");
+    Serial.println(F("open root failed"));
     return;
   }
   
