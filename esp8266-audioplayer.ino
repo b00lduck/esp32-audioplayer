@@ -199,6 +199,18 @@ void playRequest() {
     fatal("Error", "Unknown IO problem");
   }
   oled.trackName(filename);
+
+  // skip ID3v2 tag if present
+  char header[10];
+  uint16_t n = dataFile.read(header, 10);
+  if ((header[0] == 'I') && (header[1] == 'D') && (header[2] == '3')) {    
+    uint32_t header_size = header[9] + ((uint16_t)header[8] << 7) + ((uint32_t)header[7] << 14) + ((uint32_t)header[6] << 21);
+    Serial.printf("Found ID3v2 tag at beginning, skipping %d bytes\n", header_size);
+    dataFile.seekSet(header_size);    
+  } else {
+    dataFile.seekSet(0);
+  }
+    
   playerState = PLAYING;
   vs1053player.setVolume(80);                 
 }
