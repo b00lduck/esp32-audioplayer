@@ -27,6 +27,9 @@ CSMultiplexer::CSMultiplexer(uint8_t _i2cAddress) :
 
 void CSMultiplexer::init() {
  
+  // Configure ports of the MCP32017 
+
+  // Set PORTA data direction register
   Wire.beginTransmission(i2cAddress);
   Wire.write(0x00); // IODIRA 
   Wire.write(0x00); // PORTA output
@@ -38,6 +41,7 @@ void CSMultiplexer::init() {
   //Wire.write(0x00); // PORTB output
   //Wire.endTransmission();  
 
+  // Set PORTA to 0xff (all chips deselected)
   Wire.beginTransmission(i2cAddress);
   Wire.write(0x12); // PORTA
   Wire.write(0xff); // value
@@ -50,6 +54,9 @@ void CSMultiplexer::init() {
   //Wire.endTransmission();    
 }
 
+/**
+ * Select external SPI chip by pulling one of the outputs of PORTA to logic LOW
+ */
 void CSMultiplexer::chipSelect(uint8_t spiAddress) {    
   if (selectedSpiAddress != spiAddress) {
     uint8_t value = 0xff - (1 << spiAddress);    
@@ -61,6 +68,9 @@ void CSMultiplexer::chipSelect(uint8_t spiAddress) {
   }
 }
 
+/**
+ * Deselect all external SPI chips by setting all CS lines to logic HIGH
+ */
 void CSMultiplexer::chipDeselect() {
     Wire.beginTransmission(i2cAddress);
     Wire.write(0x12);
@@ -68,5 +78,4 @@ void CSMultiplexer::chipDeselect() {
     Wire.endTransmission();
     selectedSpiAddress = 255;
 }
-    
 

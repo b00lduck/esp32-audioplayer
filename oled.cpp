@@ -27,65 +27,64 @@ Oled::Oled(uint8_t _i2cAddress) :
   {}
 
 void Oled::init() {
- ssd1306.begin(SSD1306_SWITCHCAPVCC, i2cAddress, false);  
- ssd1306.clearDisplay();
- ssd1306.display();
+  ssd1306.begin(SSD1306_SWITCHCAPVCC, i2cAddress, false);  
+  ssd1306.clearDisplay();
+  ssd1306.display();
 }
 
 void Oled::clear() {
- ssd1306.clearDisplay();
- ssd1306.display();
+  ssd1306.clearDisplay();
+  ssd1306.display();
 }
 
 void Oled::trackName(char* trackName) {
- ssd1306.fillRect(0,0,127,10,BLACK); 
- ssd1306.setTextColor(1);
- ssd1306.setTextSize(1);
- ssd1306.setCursor(0,0);
- ssd1306.printf("%s", trackName);
- ssd1306.display();
+  ssd1306.fillRect(0,0,127,10,BLACK); 
+  ssd1306.setTextColor(1);
+  ssd1306.setTextSize(1);
+  ssd1306.setCursor(0,0);
+  ssd1306.printf("%s", trackName);
+  ssd1306.display();
 }
 
 void Oled::cardId(byte *card, uint8_t len) {
-
- ssd1306.fillRect(0,21,127,40,BLACK); 
- ssd1306.setTextColor(1);
- ssd1306.setTextSize(1);
- ssd1306.setCursor(0,21);
- for (byte i = 0; i < len; i++) {
-   ssd1306.print(card[i] < 0x10 ? " 0" : " ");
-   ssd1306.print(card[i], HEX);
- }
- ssd1306.display();
+  ssd1306.fillRect(0,21,127,40,BLACK); 
+  ssd1306.setTextColor(1);
+  ssd1306.setTextSize(1);
+  ssd1306.setCursor(0,21);
+  for (byte i = 0; i < len; i++) {
+    ssd1306.print(card[i] < 0x10 ? " 0" : " ");
+    ssd1306.print(card[i], HEX);
+  }
+  ssd1306.display();
 }
 
 /**
  * Display an error message and loop forever
  */
 void Oled::fatalErrorMessage(char* error, char* info) {
- ssd1306.setTextColor(1);
- ssd1306.setTextSize(1);
- boolean showBox = true;
- while (1) {
-   ssd1306.clearDisplay();
-   if (showBox) {
-     ssd1306.fillRect(0,0,127,13,1);
-     ssd1306.fillRect(3,2,121,9,0);
-   }
-   ssd1306.setCursor(19,3);
-   ssd1306.printf("GURU MEDITATION");
-   ssd1306.setCursor(0,15);
-   ssd1306.printf("%s", error);
-   ssd1306.setCursor(0,25);
-   ssd1306.printf("%s", info);   
-   ssd1306.display();  
-   delay(500);
-   showBox ^= 1;
- }
+  ssd1306.setTextColor(1);
+  ssd1306.setTextSize(1);
+  boolean showBox = true;
+  while (1) {
+    ssd1306.clearDisplay();
+    if (showBox) {
+      ssd1306.fillRect(0,0,127,13,1);
+      ssd1306.fillRect(3,2,121,9,0);
+    }
+    ssd1306.setCursor(19,3);
+    ssd1306.printf("GURU MEDITATION");
+    ssd1306.setCursor(0,15);
+    ssd1306.printf("%s", error);
+    ssd1306.setCursor(0,25);
+    ssd1306.printf("%s", info);   
+    ssd1306.display();  
+    delay(500);
+    showBox ^= 1;
+  }
 }
 
 /**
- * Display an error message and loop forever
+ * Display a loading bar
  */
 void Oled::loadingBar(uint8_t percent) {
    ssd1306.clearDisplay();
