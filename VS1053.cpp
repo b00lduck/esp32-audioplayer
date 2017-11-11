@@ -24,64 +24,64 @@
 #include "VS1053.h"
 #include "tools.h"
 
-VS1053::VS1053 (CSMultiplexer *_csMux, uint8_t _xcs_address, uint8_t _xdcs_address, uint8_t _dreq_pin, uint8_t _xreset_address) : 
+VS1053::VS1053 (CSMultiplexer *_csMux, uint8_t _xcsAddress, uint8_t _xdcsAddress, uint8_t _dreqPin, uint8_t _xresetAddress) : 
   csMux(_csMux),
-  xcs_address(_xcs_address), 
-  xdcs_address(_xdcs_address), 
-  dreq_pin(_dreq_pin), 
-  xreset_address(_xreset_address) {}
+  xcsAddress(_xcsAddress), 
+  xdcsAddress(_xdcsAddress), 
+  dreqPin(_dreqPin), 
+  xresetAddress(_xresetAddress) {}
 
 uint16_t VS1053::read_register (uint8_t _reg) const {
   uint16_t result;
-  control_mode_on();
+  controlModeOn();
   SPI.write (3);                                // Read operation
   SPI.write (_reg);                             // Register to write (0..0xF)
   // Note: transfer16 does not seem to work
   result = (SPI.transfer (0xFF) << 8) |         // Read 16 bits data
            (SPI.transfer (0xFF));
   await_data_request();                         // Wait for DREQ to be HIGH again
-  control_mode_off();
+  controlModeOff();
   return result;
 }
 
 void VS1053::write_register (uint8_t _reg, uint16_t _value) const {
-  control_mode_on();
+  controlModeOn();
   SPI.write(2);                                // Write operation
   SPI.write(_reg);                             // Register to write (0..0xF)
   SPI.write16(_value);                         // Send 16 bits data
   await_data_request();
-  control_mode_off();
+  controlModeOff();
 }
 
 void VS1053::sdi_send_buffer (uint8_t* data, size_t len) {
-  data_mode_on();
+  dataModeOn();
   while (len) {                                  // More to do?
     await_data_request();                         // Wait for space available
     size_t chunk_length = len;
-    if (len > vs1053_chunk_size) {
-      size_t chunk_length = vs1053_chunk_size;
+    if (len > vs1053ChunkSize) {
+      size_t chunk_length = vs1053ChunkSize;
     }
     len -= chunk_length;
     SPI.writeBytes (data, chunk_length);
     data += chunk_length;
   }
-  data_mode_off();
+  dataModeOff();
 }
 
 void VS1053::sdi_send_fillers (size_t len) {
-  data_mode_on();
+  dataModeOn();
   while (len) {                                  // More to do?
     await_data_request();                         // Wait for space available
     size_t chunk_length = len;
-    if (len > vs1053_chunk_size) {
-      chunk_length = vs1053_chunk_size;
+    if (len > vs1053ChunkSize) {
+      chunk_length = vs1053ChunkSize;
     }
     len -= chunk_length;
     while (chunk_length--) {
       SPI.write (endFillByte);
     }
   }
-  data_mode_off();
+  dataModeOff();
 }
 
 void VS1053::wram_write (uint16_t address, uint16_t data) {
@@ -103,10 +103,10 @@ bool VS1053::testComm (const char *header) {
   uint16_t  r1, r2, cnt = 0;
   uint16_t  delta = 300;                               // 3 for fast SPI
 
-  if (!digitalRead (dreq_pin)) {
+  if (!digitalRead (dreqPin)) {
     dbgprint ("VS1053 not properly installed!");
     // Allow testing without the VS1053 module
-    pinMode (dreq_pin,  INPUT_PULLUP);               // DREQ is now input with pull-up
+    pinMode (dreqPin,  INPUT_PULLUP);               // DREQ is now input with pull-up
     return false;                                      // Return bad result
   }
   // Further TESTING.  Check if SCI bus can write and read without errors.
@@ -133,12 +133,12 @@ bool VS1053::testComm (const char *header) {
 }
 
 void VS1053::begin() {
-  pinMode      (dreq_pin,  INPUT);                   // DREQ is an input
+  pinMode      (dreqPin,  INPUT);                   // DREQ is an input
   
   delay (100);
   
   dbgprint ("Reset VS1053...");
-  csMux->chipSelect(xreset_address);
+  csMux->chipSelect(xresetAddress);
   delay (100); 
   dbgprint ("End reset VS1053...");
   csMux->chipDeselect();

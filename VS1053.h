@@ -27,13 +27,13 @@
 class VS1053 {
   private:
     CSMultiplexer *csMux;
-    uint8_t       xcs_address;
-    uint8_t       xdcs_address;
-    uint8_t       xreset_address;
-    uint8_t       dreq_pin;    
+    uint8_t       xcsAddress;
+    uint8_t       xdcsAddress;
+    uint8_t       xresetAddress;
+    uint8_t       dreqPin;    
     
     uint8_t       curvol;
-    const uint8_t vs1053_chunk_size = 32 ;
+    const uint8_t vs1053ChunkSize = 32 ;
     
     // SCI Register
     const uint8_t SCI_MODE          = 0x0 ;
@@ -63,27 +63,27 @@ class VS1053 {
     
   protected:
     inline void await_data_request() const {
-      while (!digitalRead(dreq_pin)) {
+      while (!digitalRead(dreqPin)) {
         yield() ;                                 // Very short delay
       }
     }
 
-    inline void control_mode_on() const {
+    inline void controlModeOn() const {
       SPI.beginTransaction ( VS1053_SPI ) ;       // Prevent other SPI users
-      csMux->chipSelect(xcs_address);
+      csMux->chipSelect(xcsAddress);
     }
 
-    inline void control_mode_off() const {
+    inline void controlModeOff() const {
       csMux->chipDeselect();
       SPI.endTransaction() ;                      // Allow other SPI users
     }
 
-    inline void data_mode_on() const {
+    inline void dataModeOn() const {
       SPI.beginTransaction ( VS1053_SPI ) ;       // Prevent other SPI users
-      csMux->chipSelect(xdcs_address);
+      csMux->chipSelect(xdcsAddress);
     }
 
-    inline void data_mode_off() const {
+    inline void dataModeOff() const {
       csMux->chipDeselect();
       SPI.endTransaction() ;                      // Allow other SPI users
     }
@@ -97,7 +97,7 @@ class VS1053 {
 
   public:
   
-    VS1053(CSMultiplexer *csMux, uint8_t _xcs_address, uint8_t _xdcs_address, uint8_t _dreq_pin, uint8_t _xreset_address);
+    VS1053(CSMultiplexer *csMux, uint8_t _xcsAddress, uint8_t _xdcsAddress, uint8_t _dreqPin, uint8_t _xresetAddress);
     
     void     begin();                                     // Sets pins correctly and prepares SPI bus.
     void     startSong() ;                               // Prepare to start playing. Call this each time a new song starts.
@@ -115,7 +115,7 @@ class VS1053 {
     void     softReset() ;                               // Do a soft reset
     bool     testComm ( const char *header ) ;           // Test communication with module
     inline bool data_request() const {
-      return ( digitalRead ( dreq_pin ) == HIGH ) ;
+      return ( digitalRead ( dreqPin ) == HIGH ) ;
     }
 
     void     processByte (uint8_t b, bool force);
