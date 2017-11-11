@@ -21,7 +21,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <SdFat.h>
 #include <Wire.h>
 
 #include "config.h"
@@ -29,6 +28,7 @@
 #include "VS1053.h"
 #include "oled.h"
 #include "rfid.h"
+#include "sd.h"
 #include "ringbuffer.h"
 #include "mapper.h"
 
@@ -46,10 +46,9 @@ CSMultiplexer   csMux(0x20);
 RingBuffer      ringBuffer(20000);
 VS1053          vs1053player(&csMux, VS1053_XCS_ADDRESS, VS1053_XDCS_ADDRESS, VS1053_DREQ, VS1053_XRESET_ADDRESS);
 RFID            rfid(&csMux, MFRC522_CS_ADDRESS, MFRC522_RST_ADDRESS);
+SDCard          sd(&csMux, SD_CS_ADDRESS);
 Oled            oled(0x3c);
 Mapper          mapper;
-SdFat           sd;
-
 
 void fatal(char* title, char* message) {
   Serial.println(F("FATAL ERROR OCCURED"));
@@ -76,19 +75,10 @@ void setup() {
   oled.loadingBar(25);
 
   // Initialize SD card reader
-  if (sd.begin(
-        [](){
-          csMux.chipSelect(SD_CS_ADDRESS);
-        },
-        [](){
-          csMux.chipDeselect();
-        }, 
-        SD_SCK_MHZ(50))){
-     Serial.println(F("SD Card initialized."));
-     printDirectory();
-  } else {
-     fatal("SD card error", "init failed");
-  }    
+  if (!sd.init()) {
+      fatal("SD card error", "init failed");
+  }
+
   oled.loadingBar(50);
 
   // Initialize RFID reader
@@ -223,26 +213,7 @@ void loop() {
 
 }
 
-void printDirectory() {
 
-  SdFile file;
-  SdFile dirFile;
-
-  if (!dirFile.open("/", O_READ)) {
-    Serial.println(F("open root failed"));
-    return;
-  }
-  
-  while (file.openNext(&dirFile, O_READ)) {
-    if (!file.isSubDir() && !file.isHidden()) {
-      file.printName(&Serial);
-      Serial.println();
-    }
-    file.close();
-  }
-
-  dirFile.close();
-}
 
 
 
