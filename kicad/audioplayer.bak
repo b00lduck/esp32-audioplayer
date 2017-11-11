@@ -1,5 +1,4 @@
 EESchema Schematic File Version 2
-LIBS:audioplayer-rescue
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -30,7 +29,6 @@ LIBS:atmel
 LIBS:contrib
 LIBS:valves
 LIBS:audioplayer
-LIBS:audioplayer-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
@@ -46,7 +44,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L MCP23017-RESCUE-audioplayer U?
+L MCP23017 U?
 U 1 1 59B6E8A3
 P 4400 5800
 F 0 "U?" H 3850 6900 50  0000 C CNN

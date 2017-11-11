@@ -19,10 +19,10 @@
  *  
  */
 #include "Arduino.h"
+#include "config.h"
 #include <stdexcept>
 
 #define MAPPING_FILE                    "mapping.txt"
-#define ID_BYTE_ARRAY_LENGTH            4
 #define ID_STRING_LENGTH                (ID_BYTE_ARRAY_LENGTH * 2 + 1)    // with zero terminator
 #define MAX_FILENAME_STRING_LENGTH      (50 + 1)                          // with zero terminator
 #define MAX_MAPPING_LINE_STRING_LENGTH  (MAX_FILENAME_STRING_LENGTH + ID_STRING_LENGTH)    

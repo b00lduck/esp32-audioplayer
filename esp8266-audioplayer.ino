@@ -22,12 +22,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <SdFat.h>
-#include <MFRC522.h>
-#include <Wire.h>cd 
+#include <Wire.h>
 
+#include "config.h"
 #include "tools.h"
 #include "VS1053.h"
 #include "oled.h"
+#include "rfid.h"
 #include "ringbuffer.h"
 #include "mapper.h"
 
@@ -35,32 +36,20 @@ extern "C" {
   #include "user_interface.h"
 }
 
-// GPIO for VS1053 
-#define VS1053_XCS_ADDRESS     0
-#define VS1053_XDCS_ADDRESS    1
-#define VS1053_DREQ           16
-#define VS1053_XRESET_ADDRESS  5 
-
-// GPIO for SD card
-#define SD_CS_ADDRESS          2
-
-// GPIO for MFRC522
-#define MFRC522_CS_ADDRESS     3
-#define MFRC522_RST_ADDRESS    4
-
 void printDirectory();
 
-enum playerState_t {PLAY_REQUEST, PLAYING, STOP_REQUEST, STOPPED};
+enum playerState_t {PLAYING, STOPPED};
 
 playerState_t   playerState;
 File            dataFile;
 CSMultiplexer   csMux(0x20);
 RingBuffer      ringBuffer(20000);
 VS1053          vs1053player(&csMux, VS1053_XCS_ADDRESS, VS1053_XDCS_ADDRESS, VS1053_DREQ, VS1053_XRESET_ADDRESS);
-MFRC522         mfrc522(NULL, NULL);
+RFID            rfid(&csMux, MFRC522_CS_ADDRESS, MFRC522_RST_ADDRESS);
 Oled            oled(0x3c);
 Mapper          mapper;
 SdFat           sd;
+
 
 void fatal(char* title, char* message) {
   Serial.println(F("FATAL ERROR OCCURED"));
@@ -102,22 +91,9 @@ void setup() {
   }    
   oled.loadingBar(50);
 
-  // Initialize RFID card reader
-  mfrc522.PCD_Init(
-        [](bool state){
-          if (state) {
-            csMux.chipSelect(MFRC522_CS_ADDRESS);  
-          } else {
-            csMux.chipDeselect();  
-          }          
-        },
-        [](bool state){
-          if (state) {
-            csMux.chipSelect(MFRC522_RST_ADDRESS);  
-          } else {
-            csMux.chipDeselect();  
-          }
-        });
+  // Initialize RFID reader
+  rfid.init();
+  
   oled.loadingBar(75);        
 
   Mapper::MapperError err = mapper.init(); 
@@ -145,46 +121,15 @@ void setup() {
   oled.clear();
 }
 
-bool cardPresent = false;
-byte currentCard[32];
-uint8_t cardFailCount = 0;
-
-/** 
- * compares buffer with the currently active card  
- * return true if card ID has changed
- */
-bool cardChanged(byte *buffer, byte bufferSize) {
-  for (uint8_t i = 0; i < bufferSize; i++) {
-    if (buffer[i] != currentCard[i]) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * call when a new card is detected
- */
-void newCard(byte *buffer, byte bufferSize) {
-  cardPresent = true;
-  if (bufferSize > sizeof(currentCard)) {
-    bufferSize = sizeof(currentCard);
-  }
-  memcpy(currentCard, buffer, bufferSize);
-  Serial.print(F("New Card with UID"));
-  dump_byte_array(mfrc522.uid.uidByte, mfrc522.uid.size);
-  oled.cardId(mfrc522.uid.uidByte, mfrc522.uid.size); 
-  Serial.println(F(" detected."));  
-}
-
-void play_request() {
+void play_request(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
+  
   char filename[MAX_FILENAME_STRING_LENGTH];
-  Mapper::MapperError err = mapper.resolveIdToFilename(mfrc522.uid.uidByte, filename);    
+  Mapper::MapperError err = mapper.resolveIdToFilename(cardId, filename);    
   switch(err) {
     case Mapper::MapperError::ID_NOT_FOUND:
       Serial.println(F("Card not found in mapping"));
       oled.trackName("Unknown card");
-      playerState = STOP_REQUEST;         
+      stop_request();        
       return;
     case Mapper::MapperError::LINE_TOO_LONG:
       fatal("Mapping error", "Long line/missing newline");         
@@ -227,44 +172,27 @@ void stop_request() {
   playerState = STOPPED; 
 }
 
-void check_card_state() {
-  if (mfrc522.PICC_IsNewCardPresent()) {
-    if (mfrc522.PICC_ReadCardSerial()) {
-      cardFailCount = 0;    
-      if (cardChanged(mfrc522.uid.uidByte, mfrc522.uid.size)) {
-        newCard(mfrc522.uid.uidByte, mfrc522.uid.size);
-        playerState = PLAY_REQUEST;    
-      }      
-    } else {
-        Serial.println(F("Error reading card"));
-        cardPresent = false;   
-        playerState = STOP_REQUEST;                    
-    }
-  } else {
-    if (cardPresent) {
-      cardFailCount++;
-      if (cardFailCount > 1) {
-          Serial.println(F("Card removed"));
-          oled.cardId(NULL, 0);
-          cardPresent = false;   
-          memset(currentCard, 0, sizeof(currentCard));
-          playerState = STOP_REQUEST;                    
-      }     
-    }
-  }  
-}
-
 void loop() {
 
-  check_card_state();
+  RFID::CardState cardState = rfid.checkCardState();
+  
+  switch(cardState) {
+    case RFID::CardState::NEW_CARD:
+      play_request(rfid.currentCard);
+      break;
+    case RFID::CardState::REMOVED_CARD:
+      stop_request();
+      break;
+    case RFID::CardState::FAULTY_CARD:
+      stop_request();
+      break;
+    case RFID::CardState::NO_CHANGE:
+      break;
+  }
 
   uint32_t maxfilechunk;
     
   switch (playerState) {
-
-    case PLAY_REQUEST:
-      play_request();
-      break;
 
     case PLAYING:      
       // fill ring buffer with MP3 data
@@ -283,12 +211,8 @@ void loop() {
 
       // stop if data ends
       if ((dataFile.available() == 0) && (ringBuffer.avail() == 0)) {      
-        playerState = STOP_REQUEST;
+        stop_request();
       }
-      break;
-
-    case STOP_REQUEST:
-      stop_request();
       break;
 
     case STOPPED:

@@ -18,19 +18,39 @@
  * along with esp8266-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-#pragma once
 #include "Arduino.h"
+#include "config.h"
+#include "csmux.h"
+#include <MFRC522.h>
 
-class CSMultiplexer {
-
-  private:
-    uint8_t i2cAddress;
-    uint8_t selectedSpiAddress;
+class RFID {
 
   public:
-    CSMultiplexer(uint8_t _i2cAddress);
+    enum CardState {  
+       NO_CHANGE,
+       FAULTY_CARD,
+       NEW_CARD,
+       REMOVED_CARD
+    };
+  
+    RFID(CSMultiplexer *_csMux, uint8_t _csAddress, uint8_t _rstAddress);
     void init();
-    void chipSelect(uint8_t spiAddr);
-    void chipDeselect();
-    
+    CardState checkCardState();
+
+    byte currentCard[ID_BYTE_ARRAY_LENGTH];
+
+  private:
+    CSMultiplexer *csMux;
+    uint8_t csAddress;
+    uint8_t rstAddress;
+    MFRC522 mfrc522;
+
+    bool cardPresent = false;    
+    uint8_t cardFailCount = 0;    
+
+    bool cardChanged(byte *buffer, byte bufferSize);
+    void newCard(byte *buffer, byte bufferSize);   
+
 };
+
+

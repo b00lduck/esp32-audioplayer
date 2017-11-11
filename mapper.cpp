@@ -19,6 +19,7 @@
  *  
  */
 #include "mapper.h"
+#include "config.h"
 #include <SdFat.h>
 
 Mapper::MapperError Mapper::init() {
