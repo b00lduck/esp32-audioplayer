@@ -78,7 +78,7 @@ class Mapper {
     
   private:
     void uid_to_string(byte *uid, char output[9]);
-    MapperError extract_id_from_line(char found_id[ID_STRING_LENGTH], char line[MAX_MAPPING_LINE_STRING_LENGTH]);
+    MapperError extractIdFromLine(char found_id[ID_STRING_LENGTH], char line[MAX_MAPPING_LINE_STRING_LENGTH]);
     MapperError checkMappingFile();
     MapperError checkMappingLine(char* line);
 };

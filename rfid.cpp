@@ -99,6 +99,6 @@ void RFID::newCard(byte *buffer, byte bufferSize) {
   }
   memcpy(currentCard, buffer, bufferSize);
   Serial.print(F("New Card with UID"));
-  dump_byte_array(mfrc522.uid.uidByte, mfrc522.uid.size);  
+  dumpByteArray(mfrc522.uid.uidByte, mfrc522.uid.size);  
   Serial.println(F(" detected."));  
 }

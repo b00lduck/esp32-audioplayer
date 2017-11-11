@@ -18,11 +18,6 @@
  * along with esp8266-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-void dbgprint(const char* format, ...);
-void dump_byte_array(byte *buffer, byte bufferSize);
+ 
+void dumpByteArray(byte *buffer, byte bufferSize);
 
-#define DEBUG
-
-#ifdef DEBUG
-  #define DEBUG_BUFFER_SIZE 100
-#endif

@@ -49,7 +49,7 @@ Mapper::MapperError Mapper::resolveIdToFilename(byte id[4], char filename[MAX_FI
   while ((n = mappingFile.fgets(line, sizeof(line))) > 0) {
     
     char found_id[ID_STRING_LENGTH];
-    MapperError err = extract_id_from_line(found_id, line);
+    MapperError err = extractIdFromLine(found_id, line);
     if (err != MapperError::OK) {
       return err;
     }
@@ -73,7 +73,7 @@ Mapper::MapperError Mapper::resolveIdToFilename(byte id[4], char filename[MAX_FI
  * Parse one line of the mapping file and convert the HEX, which is stored in the first 8 chars, to lowercase.
  * If any invalid chars are found (valid chars are [a-fA-F0-9]) the id "00000000" is returned.
  */
-Mapper::MapperError Mapper::extract_id_from_line(char found_id[ID_STRING_LENGTH], char line[MAX_MAPPING_LINE_STRING_LENGTH]) {
+Mapper::MapperError Mapper::extractIdFromLine(char found_id[ID_STRING_LENGTH], char line[MAX_MAPPING_LINE_STRING_LENGTH]) {
   for(uint8_t i=0; i<8; i++) {
     // to lowercase
     if (line[i] >= 65 && line[i] <= 70) {
