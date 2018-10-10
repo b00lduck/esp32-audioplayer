@@ -1,25 +1,25 @@
-# esp8266-audioplayer
-Arduino IDE sketch for a ESP8266 based MP3 audio player with RFID control
+# esp32-audioplayer
+ESP32 based MP3 audio player with RFID control
 
 !!! WORK IN PROGRESS !!!
 !!! not functional yet !!!
 
-Used hardware components:
-* ESP-12E module with breakout adapter (i.e. https://www.ebay.de/itm/132140286131 and https://www.ebay.de/itm/201448256690)
+## Used hardware components:
+* ESP32 module (i.e. nodeMCU32)
 * RFID-RC522 module (i.e. https://www.ebay.de/itm/172603664748)
-* 3.3V FTDI serial converter (i.e. https://www.ebay.de/itm/272300614420 or https://www.ebay.de/itm/281909029942)
-* 5V to 3.3V voltage regulator (i.e. https://www.ebay.de/itm/232329075820)
 * VS1053B module with SD-slot (i.e. http://www.ebay.de/itm/272761135002)
 * Mifare classic 13.56MHz RFID cards (clones will do the job too, i.e. http://www.ebay.de/itm/122525501095)
-* MCP23017 I2C GPIO expander for CS and RESET lines of SPI devices
 * 0.96 inch I2C OLED display
 * Breadboard
 * Breadboard wires
-* Reset and GPIO0 momentary switch for breadboard use (i.e. http://www.ebay.de/itm/382172938811)
 
-Used software:
-* Arduino IDE 1.8.3
-* ESP8266 board manager installed (Board manager URL: https://arduino.esp8266.com/stable/package_esp8266com_index.json)
-* 
-* Heavily stripped and modified SdFat library in arduino library folder (https://github.com/b00lduck/SdFat)
-* Heavily stripped and modified mrfc522 library in arduino library folder (https://github.com/b00lduck/rfid)
+## Used software:
+* VSCode with PlatformioIDE
+
+## Used Arduino Libraries:
+* SdFat 1.0.5
+* MFRC522 1.3.6
+
+## Port mapping
+see src/config.h
+

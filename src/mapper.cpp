@@ -1,26 +1,27 @@
 /**
  * 
- * Copyright 2017 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2018 D.Zerlett <daniel@zerlett.eu>
  * 
- * This file is part of esp8266-audioplayer.
+ * This file is part of esp32-audioplayer.
  * 
- * esp8266-audioplayer is free software: you can redistribute it and/or modify
+ * esp32-audioplayer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * esp8266-audioplayer is distributed in the hope that it will be useful,
+ * esp32-audioplayer is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with esp8266-audioplayer. If not, see <http://www.gnu.org/licenses/>.
+ * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
 #include "mapper.h"
 #include "config.h"
-#include <SdFat.h>
+#include "FS.h"
+#include "SD.h"
 
 Mapper::MapperError Mapper::init() {
     return checkMappingFile();
@@ -32,8 +33,8 @@ Mapper::MapperError Mapper::init() {
  */
 Mapper::MapperError Mapper::resolveIdToFilename(byte id[4], char filename[MAX_FILENAME_STRING_LENGTH]) {
 
-  SdFile mappingFile;
-  if (!mappingFile.open(MAPPING_FILE, O_READ)) {
+  File mappingFile = SD.open(MAPPING_FILE, FILE_READ);
+  if (!mappingFile) {
     return MapperError::MAPPING_FILE_NOT_FOUND;    
   }
 
@@ -46,7 +47,7 @@ Mapper::MapperError Mapper::resolveIdToFilename(byte id[4], char filename[MAX_FI
 
   char line[MAX_MAPPING_LINE_STRING_LENGTH];
   size_t n;
-  while ((n = mappingFile.fgets(line, sizeof(line))) > 0) {
+  while ((n = readLine(line, &mappingFile)) > 0) {
     
     char found_id[ID_STRING_LENGTH];
     MapperError err = extractIdFromLine(found_id, line);
@@ -56,13 +57,11 @@ Mapper::MapperError Mapper::resolveIdToFilename(byte id[4], char filename[MAX_FI
     
     if (strncmp(found_id, id_string, 8) == 0) {
       strncpy(filename, &(line[ID_STRING_LENGTH]), MAX_FILENAME_STRING_LENGTH);
-      filename[strlen(filename)-1] = 0; // remove newline
       return OK;
     }
     
-    if (line[n - 1] != '\n') {
-      return LINE_TOO_LONG;    
-    }
+    Serial.println(line);
+
   }
 
   filename[0] = 0;
@@ -96,18 +95,35 @@ void Mapper::uid_to_string(byte *uid, char output[ID_STRING_LENGTH]) {
   #endif
 }
 
+
+uint16_t Mapper::readLine (char str[MAX_MAPPING_LINE_STRING_LENGTH], File *stream) {  
+  uint16_t i = 0;  
+  memset(str, 0, MAX_MAPPING_LINE_STRING_LENGTH); 
+  while (i < (MAX_MAPPING_LINE_STRING_LENGTH - 1)) {   
+    int16_t ch = stream->read();
+    if ((ch < 0) || (ch == 10)) {
+      break;
+    }
+    str[i++] = ch;
+  }
+  return i; 
+}
+
 /**
  * Check syntax of mapping file and existence of linked files
  */
 Mapper::MapperError Mapper::checkMappingFile() {
-  SdFile mappingFile;
-  if (!mappingFile.open(MAPPING_FILE, O_READ)) {
+  Serial.println("Checking mapping file...");
+  File mappingFile = SD.open(MAPPING_FILE, FILE_READ);
+  if (!mappingFile) {
     return MapperError::MAPPING_FILE_NOT_FOUND;    
   }
+  Serial.println("Found mapping file...");
 
   char line[MAX_MAPPING_LINE_STRING_LENGTH];
-  size_t n;
-  while ((n = mappingFile.fgets(line, sizeof(line))) > 0) {    
+  
+  while ((readLine(line, &mappingFile)) > 0) {    
+    Serial.printf("Line contents: %s\n", line);
     MapperError err = checkMappingLine(line);
     if (err != MapperError::OK) {
       return err;  
@@ -129,7 +145,7 @@ Mapper::MapperError Mapper::checkMappingLine(char* line) {
   }
 
   // check maximum line length by validating that last char is a newline
-  if (line[strlen(line) - 1] != '\n') {
+  if (strlen(line) >= MAX_MAPPING_LINE_STRING_LENGTH - 1) {
     return MapperError::LINE_TOO_LONG;
   }  
 
@@ -146,15 +162,25 @@ Mapper::MapperError Mapper::checkMappingLine(char* line) {
     return MapperError::MALFORMED_LINE_SYNTAX;
   }
 
-  // check if file exists
+  // check file entry
   char* filename = line + ID_STRING_LENGTH;
-  filename[strlen(filename)-1] = 0; // remove newline
 
-  File dataFile;
-  dataFile.open(filename, FILE_READ);   
-  if (!dataFile) {
-    return MapperError::REFERENCED_FILE_NOT_FOUND;
+  // filename must start with a slash or a hash
+  if (filename[0] != '/' && filename[0] != '#') {
+    return MapperError::MALFORMED_FILE_NAME;
   }
-  dataFile.close();  
+
+  if (filename[0] == '#') {
+    // special card, everything ok
+  } else {
+    // sound file, check if file exists
+    Serial.println("try to open file");
+    File dataFile = SD.open(filename, FILE_READ);   
+    if (!dataFile) {
+      return MapperError::REFERENCED_FILE_NOT_FOUND;
+    }
+    dataFile.close();  
+  }  
+
   return MapperError::OK;
 }

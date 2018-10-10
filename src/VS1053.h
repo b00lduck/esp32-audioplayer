@@ -1,35 +1,33 @@
 /**
  * 
- * Copyright 2017 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2018 D.Zerlett <daniel@zerlett.eu>
  * 
  * This file is based on the VS1053 library by maniacbug alias J.Coliz (https://github.com/maniacbug/VS1053)
  * 
- * This file is part of esp8266-audioplayer.
+ * This file is part of esp32-audioplayer.
  * 
- * esp8266-audioplayer is free software: you can redistribute it and/or modify
+ * esp32-audioplayer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * esp8266-audioplayer is distributed in the hope that it will be useful,
+ * esp32-audioplayer is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with esp8266-audioplayer. If not, see <http://www.gnu.org/licenses/>.
+ * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
 #include <Arduino.h>
 #include <SPI.h>
-#include "csmux.h"
 
 class VS1053 {
   private:
-    CSMultiplexer *csMux;
-    uint8_t       xcsAddress;
-    uint8_t       xdcsAddress;
-    uint8_t       xresetAddress;
+    uint8_t       xcsPin;
+    uint8_t       xdcsPin;
+    uint8_t       xresetPin;
     uint8_t       dreqPin;    
     
     uint8_t       curvol;
@@ -70,21 +68,21 @@ class VS1053 {
 
     inline void controlModeOn() const {
       SPI.beginTransaction ( VS1053_SPI ) ;       // Prevent other SPI users
-      csMux->chipSelect(xcsAddress);
+      digitalWrite(xcsPin, LOW);
     }
 
     inline void controlModeOff() const {
-      csMux->chipDeselect();
+      digitalWrite(xcsPin, HIGH);
       SPI.endTransaction() ;                      // Allow other SPI users
     }
 
     inline void dataModeOn() const {
       SPI.beginTransaction ( VS1053_SPI ) ;       // Prevent other SPI users
-      csMux->chipSelect(xdcsAddress);
+      digitalWrite(xdcsPin, LOW);
     }
 
     inline void dataModeOff() const {
-      csMux->chipDeselect();
+      digitalWrite(xdcsPin, HIGH);
       SPI.endTransaction() ;                      // Allow other SPI users
     }
 
@@ -97,7 +95,7 @@ class VS1053 {
 
   public:
   
-    VS1053(CSMultiplexer *csMux, uint8_t _xcsAddress, uint8_t _xdcsAddress, uint8_t _dreqPin, uint8_t _xresetAddress);
+    VS1053(uint8_t _xcsPin, uint8_t _xdcsPin, uint8_t _dreqPin, uint8_t _xresetPin);
     
     void     begin();                                     // Sets pins correctly and prepares SPI bus.
     void     startSong() ;                               // Prepare to start playing. Call this each time a new song starts.

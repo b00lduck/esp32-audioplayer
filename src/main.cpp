@@ -1,21 +1,21 @@
 /**
  * 
- * Copyright 2017 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2018 D.Zerlett <daniel@zerlett.eu>
  * 
- * This file is part of esp8266-audioplayer.
+ * This file is part of esp32-audioplayer.
  * 
- * esp8266-audioplayer is free software: you can redistribute it and/or modify
+ * esp32-audioplayer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * esp8266-audioplayer is distributed in the hope that it will be useful,
+ * esp32-audioplayer is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with esp8266-audioplayer. If not, see <http://www.gnu.org/licenses/>.
+ * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
 
@@ -32,22 +32,19 @@
 #include "ringbuffer.h"
 #include "mapper.h"
 
-extern "C" {
-  #include "user_interface.h"
-}
-
 void printDirectory();
 
 enum playerState_t {PLAYING, STOPPED};
 
 playerState_t   playerState;
 File            dataFile;
-CSMultiplexer   csMux(0x20);
 RingBuffer      ringBuffer(20000);
-VS1053          vs1053player(&csMux, VS1053_XCS_ADDRESS, VS1053_XDCS_ADDRESS, VS1053_DREQ, VS1053_XRESET_ADDRESS);
-RFID            rfid(&csMux, MFRC522_CS_ADDRESS, MFRC522_RST_ADDRESS);
-SDCard          sd(&csMux, SD_CS_ADDRESS);
-Oled            oled(0x3c);
+
+VS1053          vs1053player(VS1053_XCS_PIN, VS1053_XDCS_PIN, VS1053_DREQ_PIN, VS1053_XRESET_PIN);
+RFID            rfid(MFRC522_CS_PIN, MFRC522_RST_PIN);
+SDCard          sd(SD_CS_PIN);
+
+Oled            oled(DISPLAY_ADDRESS);
 Mapper          mapper;
 
 void fatal(char* title, char* message) {
@@ -61,30 +58,29 @@ void setup() {
 
   Serial.begin(115200);                            
   Serial.println("\nStarting...");
-  system_update_cpu_freq(160);
 
   // Initialize I²C bus
-  Wire.begin(2, 4);
-  csMux.init();
+  Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
   oled.init();
   oled.loadingBar(0);  
   Wire.setClock(600000L);
 
   // Initialize SPI bus
-  SPI.begin();
+  SPI.begin(SPI_SCK_PIN,SPI_MISO_PIN,SPI_MOSI_PIN);
   oled.loadingBar(25);
 
+  // Initialize RFID reader
+  rfid.init();
+
+  oled.loadingBar(50);
+  
   // Initialize SD card reader
   if (!sd.init()) {
       fatal("SD card error", "init failed");
   }
 
-  oled.loadingBar(50);
-
-  // Initialize RFID reader
-  rfid.init();
-  
   oled.loadingBar(75);        
+
 
   Mapper::MapperError err = mapper.init(); 
   switch(err) {
@@ -98,12 +94,18 @@ void setup() {
       fatal("Mapping error", "Line too long");
     case Mapper::MapperError::MAPPING_FILE_NOT_FOUND:
       fatal("Mapping error", "Mapping file not found");      
+    case Mapper::MapperError::MALFORMED_FILE_NAME:
+      fatal("Mapping error", "Malformed file name");   
+    case Mapper::MapperError::REFERENCED_FILE_NOT_FOUND:
+      fatal("Mapping error", "Referenced file not found");   
   }
+  
 
   // Initialize audio decoder
   vs1053player.begin();
+
   vs1053player.printDetails();
-  
+ 
   playerState = STOPPED;
 
   oled.loadingBar(100);
@@ -111,7 +113,7 @@ void setup() {
   oled.clear();
 }
 
-void play_request(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
+void play(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
   
   char filename[MAX_FILENAME_STRING_LENGTH];
   Mapper::MapperError err = mapper.resolveIdToFilename(cardId, filename);    
@@ -119,7 +121,7 @@ void play_request(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
     case Mapper::MapperError::ID_NOT_FOUND:
       Serial.println(F("Card not found in mapping"));
       oled.trackName("Unknown card");
-      stop_request();        
+      stop();        
       return;
     case Mapper::MapperError::LINE_TOO_LONG:
       fatal("Mapping error", "Long line/missing newline");         
@@ -132,28 +134,28 @@ void play_request(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
       break;    
   } 
   
-  dataFile.open(filename, FILE_READ);   
+  dataFile = SD.open(filename, FILE_READ);   
   if (!dataFile) {
     fatal("Error", "Unknown IO problem");
   }
   oled.trackName(filename);
 
   // skip ID3v2 tag if present
-  char header[10];
+  uint8_t header[10];
   uint16_t n = dataFile.read(header, 10);
   if ((header[0] == 'I') && (header[1] == 'D') && (header[2] == '3')) {    
     uint32_t header_size = header[9] + ((uint16_t)header[8] << 7) + ((uint32_t)header[7] << 14) + ((uint32_t)header[6] << 21);
-    Serial.printf(F("Found ID3v2 tag at beginning, skipping %d bytes\n"), header_size);
-    dataFile.seekSet(header_size);    
+    Serial.printf("Found ID3v2 tag at beginning, skipping %d bytes\n", header_size);
+    dataFile.seek(header_size);    
   } else {
-    dataFile.seekSet(0);
+    dataFile.seek(0);
   }
     
   playerState = PLAYING;
   vs1053player.setVolume(80);                 
 }
 
-void stop_request() {
+void stop() {
   dataFile.close();
   vs1053player.processByte(0, true);
   vs1053player.setVolume(0);                  
@@ -168,13 +170,15 @@ void loop() {
   
   switch(cardState) {
     case RFID::CardState::NEW_CARD:
-      play_request(rfid.currentCard);
+      play(rfid.currentCard);
       break;
     case RFID::CardState::REMOVED_CARD:
-      stop_request();
+      Serial.println("removed card");
+      stop();
       break;
     case RFID::CardState::FAULTY_CARD:
-      stop_request();
+      Serial.println("faulty card");
+      stop();
       break;
     case RFID::CardState::NO_CHANGE:
       break;
@@ -201,7 +205,7 @@ void loop() {
 
       // stop if data ends
       if ((dataFile.available() == 0) && (ringBuffer.avail() == 0)) {      
-        stop_request();
+        stop();
       }
       break;
 
@@ -212,8 +216,3 @@ void loop() {
   }
 
 }
-
-
-
-
-

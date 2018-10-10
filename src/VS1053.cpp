@@ -1,42 +1,40 @@
 /**
  * 
- * Copyright 2017 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2018 D.Zerlett <daniel@zerlett.eu>
  * 
  * This file is based on the VS1053 library by maniacbug alias J.Coliz (https://github.com/maniacbug/VS1053)
  * 
- * This file is part of esp8266-audioplayer.
+ * This file is part of esp32-audioplayer.
  * 
- * esp8266-audioplayer is free software: you can redistribute it and/or modify
+ * esp32-audioplayer is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * esp8266-audioplayer is distributed in the hope that it will be useful,
+ * esp32-audioplayer is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with esp8266-audioplayer. If not, see <http://www.gnu.org/licenses/>.
+ * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
 #include <SPI.h>
 #include "VS1053.h"
 #include "tools.h"
 
-
-VS1053::VS1053 (CSMultiplexer *_csMux, uint8_t _xcsAddress, uint8_t _xdcsAddress, uint8_t _dreqPin, uint8_t _xresetAddress) : 
-  csMux(_csMux),
-  xcsAddress(_xcsAddress), 
-  xdcsAddress(_xdcsAddress), 
+VS1053::VS1053 (uint8_t _xcsPin, uint8_t _xdcsPin, uint8_t _dreqPin, uint8_t _xresetPin) : 
+  xcsPin(_xcsPin), 
+  xdcsPin(_xdcsPin), 
   dreqPin(_dreqPin), 
-  xresetAddress(_xresetAddress) {}
+  xresetPin(_xresetPin) {}
 
 uint16_t VS1053::read_register (uint8_t _reg) const {
   uint16_t result;
   controlModeOn();
-  SPI.write (3);                                // Read operation
-  SPI.write (_reg);                             // Register to write (0..0xF)
+  SPI.write(3);                                // Read operation
+  SPI.write(_reg);                             // Register to write (0..0xF)
   // Note: transfer16 does not seem to work
   result = (SPI.transfer (0xFF) << 8) |         // Read 16 bits data
            (SPI.transfer (0xFF));
@@ -133,17 +131,27 @@ bool VS1053::testComm (const char *header) {
   return (cnt == 0);                                 // Return the result
 }
 
-void VS1053::begin() {
-  pinMode      (dreqPin,  INPUT);                   // DREQ is an input
+void VS1053::begin() {  
+
+  pinMode(dreqPin, INPUT);
+
+  pinMode(xcsPin, OUTPUT);
+  digitalWrite(xcsPin, HIGH);
   
+  pinMode(xdcsPin, OUTPUT);
+  digitalWrite(xdcsPin, HIGH);
+  
+  pinMode(xresetPin, OUTPUT);
+  digitalWrite(xresetPin, HIGH);
+    
   delay (100);
   
   Serial.println ("Reset VS1053...");
-  csMux->chipSelect(xresetAddress);
-  delay (100); 
+  digitalWrite(xresetPin, LOW);
+  delay(100); 
   Serial.println ("End reset VS1053...");
-  csMux->chipDeselect();
-  delay (100);
+  digitalWrite(xresetPin, HIGH);
+  delay(100);
   
   // Init SPI in slow mode (0.2 MHz)
   VS1053_SPI = SPISettings (200000, MSBFIRST, SPI_MODE0);
@@ -172,7 +180,7 @@ void VS1053::begin() {
   delay (10);
   await_data_request();
   endFillByte = wram_read (0x1E06) & 0xFF;
-  Serial.printf ("endFillByte is %X", endFillByte);
+  Serial.printf ("endFillByte is %X\n", endFillByte);
   delay (100);
 }
 
