@@ -17,7 +17,7 @@ ESP32 based MP3 audio player with RFID control
 * VSCode with PlatformioIDE
 
 ## Used Arduino Libraries:
-* SdFat 1.0.5
+* SdFat 1.0.7
 * MFRC522 1.3.6
 
 ## Port mapping
