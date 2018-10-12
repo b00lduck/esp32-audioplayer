@@ -18,23 +18,35 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-#include "Arduino.h"
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include "config.h"
+#include "buttons.h"
 
-class Oled {
+Buttons::Buttons() : state(0), oldState(0) {}
 
-  private:
-    uint8_t i2cAddress;
-    Adafruit_SSD1306 ssd1306;
+void Buttons::init() {
+  pinMode(BUTTON1, INPUT);
+  pinMode(BUTTON2, INPUT);
+  pinMode(BUTTON3, INPUT);
+  pinMode(BUTTON4, INPUT);
+  pinMode(BUTTON5, INPUT);
+  pinMode(BUTTON6, INPUT);
+  pinMode(BUTTON7, INPUT);
+}
 
-  public:
-    Oled(uint8_t i2cAddress);
-    void init();
-    void clear();
-    void trackName(char* trackName);
-    void buttons(char buttons);
-    void cardId(byte *card, uint8_t len);
-    void fatalErrorMessage(char* error, char* info);
-    void loadingBar(uint8_t percent);
-};
+bool Buttons::read() {
+
+    state = digitalRead(BUTTON1) |  
+            digitalRead(BUTTON2) << 1 | 
+            digitalRead(BUTTON3) << 2 | 
+            digitalRead(BUTTON4) << 3 | 
+            digitalRead(BUTTON5) << 4 | 
+            digitalRead(BUTTON6) << 5 | 
+            digitalRead(BUTTON7) << 6;
+
+    if (oldState != state) {
+        oldState  = state;
+        return true;
+    }
+    return false;
+}
+

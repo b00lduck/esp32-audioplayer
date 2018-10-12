@@ -19,22 +19,17 @@
  *  
  */
 #include "Arduino.h"
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
 
-class Oled {
+class Buttons {
 
   private:
-    uint8_t i2cAddress;
-    Adafruit_SSD1306 ssd1306;
+    uint8_t oldState;
 
   public:
-    Oled(uint8_t i2cAddress);
+    Buttons();
     void init();
-    void clear();
-    void trackName(char* trackName);
-    void buttons(char buttons);
-    void cardId(byte *card, uint8_t len);
-    void fatalErrorMessage(char* error, char* info);
-    void loadingBar(uint8_t percent);
+    bool read();
+
+    uint8_t state;
+
 };

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "tools.h"
+#include "buttons.h"
 #include "VS1053.h"
 #include "oled.h"
 #include "rfid.h"
@@ -47,6 +48,8 @@ SDCard          sd(SD_CS_PIN);
 Oled            oled(DISPLAY_ADDRESS);
 Mapper          mapper;
 
+Buttons         buttons;
+
 void fatal(char* title, char* message) {
   Serial.println(F("FATAL ERROR OCCURED"));
   Serial.println(title);
@@ -59,6 +62,17 @@ void setup() {
   Serial.begin(115200);                            
   Serial.println("\nStarting...");
 
+  // Initialize LEDs
+  pinMode(LED1, OUTPUT);
+  pinMode(LED2, OUTPUT);
+  pinMode(LED3, OUTPUT);
+  digitalWrite(LED1, HIGH);  
+  digitalWrite(LED2, HIGH);  
+  digitalWrite(LED3, HIGH);  
+
+  // Initialize buttons
+  buttons.init();
+ 
   // Initialize I²C bus
   Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
   oled.init();
@@ -165,6 +179,12 @@ void stop() {
 }
 
 void loop() {
+
+  bool changed = buttons.read();
+
+  if (changed) {
+    oled.buttons(buttons.state);
+  }  
 
   RFID::CardState cardState = rfid.checkCardState();
   
