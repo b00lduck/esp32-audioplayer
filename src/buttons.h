@@ -30,6 +30,8 @@ class Buttons {
     void init();
     bool read();
 
+    bool buttonDown(uint8_t id);
+
     uint8_t state;
 
 };

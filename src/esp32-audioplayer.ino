@@ -50,6 +50,8 @@ Mapper          mapper;
 
 Buttons         buttons;
 
+uint8_t currentVolume = 85;
+
 void fatal(char* title, char* message) {
   Serial.println(F("FATAL ERROR OCCURED"));
   Serial.println(title);
@@ -66,7 +68,7 @@ void setup() {
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
   pinMode(LED3, OUTPUT);
-  digitalWrite(LED1, HIGH);  
+  digitalWrite(LED1, LOW);  // disable amplifier
   digitalWrite(LED2, HIGH);  
   digitalWrite(LED3, HIGH);  
 
@@ -128,7 +130,7 @@ void setup() {
 }
 
 void play(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
-  
+   
   char filename[MAX_FILENAME_STRING_LENGTH];
   Mapper::MapperError err = mapper.resolveIdToFilename(cardId, filename);    
   switch(err) {
@@ -165,11 +167,17 @@ void play(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
     dataFile.seek(0);
   }
     
+  digitalWrite(LED1, HIGH);  // enable amplifier
+
   playerState = PLAYING;
-  vs1053player.setVolume(80);                 
+  vs1053player.setVolume(currentVolume);                 
+
+  uint8_t tone[4] = {0,0,15,15};
+  vs1053player.setTone(tone);
 }
 
 void stop() {
+  digitalWrite(LED1, LOW);  // disable amplifier
   dataFile.close();
   vs1053player.processByte(0, true);
   vs1053player.setVolume(0);                  
@@ -185,6 +193,18 @@ void loop() {
   if (changed) {
     oled.buttons(buttons.state);
   }  
+
+  // Volume Control
+  if (buttons.buttonDown(0)) {
+    currentVolume++;
+    if (currentVolume > 100) currentVolume = 100;
+    vs1053player.setVolume(currentVolume);
+  }
+  if (buttons.buttonDown(1)) {
+    currentVolume--;
+    if (currentVolume < 1) currentVolume = 1;
+    vs1053player.setVolume(currentVolume);
+  }
 
   RFID::CardState cardState = rfid.checkCardState();
   

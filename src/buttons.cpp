@@ -50,3 +50,7 @@ bool Buttons::read() {
     return false;
 }
 
+bool Buttons::buttonDown(uint8_t id) {
+    return (state & (1 << id)) == 0;
+}
+

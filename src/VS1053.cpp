@@ -192,10 +192,13 @@ void VS1053::setVolume (uint8_t vol) {
 
   if (vol != curvol) {
     curvol = vol;                                      // Save for later use
-    value = map (vol, 0, 100, 0xF8, 0x00);           // 0..100% to one channel
+    //value = map (vol, 0, 100, 0xF8, 0x00);           // 0..100% to one channel
+    value = map (vol, 0, 100, 0x8f, 0x10);           // 0..100% to one channel
     value = (value << 8) | value;
     write_register (SCI_VOL, value);                 // Volume left and right
   }
+
+  Serial.printf ("Volume %d\n", vol);
 }
 
 void VS1053::setTone (uint8_t *rtone) {               // Set bass/treble (4 nibbles)
@@ -205,10 +208,10 @@ void VS1053::setTone (uint8_t *rtone) {               // Set bass/treble (4 nibb
   for (i = 0; i < 4; i++) {
     value = (value << 4) | rtone[i];                 // Shift next nibble in
   }
-  write_register (SCI_BASS, value);                  // Volume left and right
+  write_register (SCI_BASS, value);
 }
 
-uint8_t VS1053::getVolume() {                           // Get the currenet volume setting.
+uint8_t VS1053::getVolume() {
   return curvol;
 }
 
