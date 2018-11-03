@@ -1,3 +1,13 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP GY-521
+D GY-512 breakout board with MPU-6050
+K MPU-6050 GY-512 gyroscope
+$ENDCMP
+#
+$CMP HW-323
+D HW-323 breakout board for PAM8403
+K PAM8403 HW-323 CLASS-D AMPLIFIER AUDIO
+$ENDCMP
+#
 #End Doc Library
