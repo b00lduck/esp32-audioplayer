@@ -27,3 +27,11 @@ module speakerRow(width, cutWidth) {
     square([width,cutWidth],true);          
   }
 }
+
+module speakerRing(holeDist, holeDiameter) {
+    difference() {
+        circle(97/2);
+        circle(75/2);
+        speakerHoles(holeDist, holeDiameter);
+    }
+}

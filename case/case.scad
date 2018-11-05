@@ -28,9 +28,10 @@ color([1,0,0]) {
 //    sheet3();
     //translate([0,-120]) 
     //sheet3();
-    kerftest();
-    
+    //kerftest();
+    speakerRing(speakerHoleDistance, 4);
 }
+
 
 module kerftest() {
     reducedSquare(40, 40);
