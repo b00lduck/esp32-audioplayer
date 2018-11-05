@@ -1,10 +1,12 @@
 include <speakers.scad>;
 
+$fn = 50;
+
 width = 185;
 depth = 110;
 height = 110;
 material = 4;
-kerf = 0.15;
+kerf = 0.6;
 buttonDiameter = 24;
 //buttonDiameter = 34;
 buttonSpread = 36;
@@ -20,12 +22,26 @@ fingersB = 4;
 
 //dimensions();
 
-color([255,0,0,]) {
+color([1,0,0]) {
     //translate([0,200]) 
     //sheet1();
-    sheet2();
+//    sheet3();
     //translate([0,-120]) 
     //sheet3();
+    kerftest();
+    
+}
+
+module kerftest() {
+    reducedSquare(40, 40);
+    fingersA(40, 40, 3, 0.5);
+    fingersB(40, 40, 3, 0, true);
+
+    translate([0,43,0]) {
+        reducedSquare(40, 40);
+        fingersA(40, 40, 3, 0);
+        fingersB(40, 40, 3, 0);
+    }
 }
 
 module dimensions() {
@@ -44,7 +60,7 @@ module sheet2() {
     translate([-90,0,0]) rotate([0,0,90]) difference() {
         faceA(width, depth);
         translate([20,30]) sdCut();
-        translate([-35,30]) usbCut();
+        translate([-35,32]) usbCut();
         translate([-65,30]) powerCut();
     }
 
@@ -57,14 +73,12 @@ module sheet2() {
 }
 
 module sdCut() {
-    translate([-17,0]) circle(1.6);
-    translate([17,0]) circle(1.6);
     square([25,3], true);
 }
 
 module usbCut() {
-    translate([-12,0]) circle(1.6);
-    translate([12,0]) circle(1.6);
+    //translate([-12,0]) circle(1.6);
+    //translate([12,0]) circle(1.6);
     square([12,7], true);
 }
 
@@ -75,11 +89,11 @@ module powerCut() {
 module sheet3() {
     translate([-90,-40,0]) difference() {
         faceC(height, depth);
-        rotate([0,0,90]) speakerCuts(speakerHoleDistance, 4.2, speakerDiameter, speakerSluts);
+        rotate([0,0,90]) speakerCuts(speakerHoleDistance, 4, speakerDiameter, speakerSluts - kerf/2);
     }
     translate([25,-40,0]) difference() {
         faceC(height, depth);
-        rotate([0,0,90]) speakerCuts(speakerHoleDistance, 4.2, speakerDiameter, speakerSluts);
+        rotate([0,0,90]) speakerCuts(speakerHoleDistance, 4, speakerDiameter, speakerSluts - kerf/2);
     }
 }
 
