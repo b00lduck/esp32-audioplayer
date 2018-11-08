@@ -64,23 +64,23 @@ module sheet2() {
         translate([55,25]) usbCut();
         translate([-65,30]) powerCut();
     }
-
+/*
     translate([25,0,0]) rotate([0,0,90]) difference() {
         faceB(width, depth);
         translate([-buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
         translate([0,-buttonSpacing]) circle(buttonDiameter/2);
         translate([buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
-    }
+    }*/
 }
 
 module sdCut() {
-    square([42.4 - kerf * 2 , 17.5 - kerf * 2]);
+    square([42.6 - kerf, 17.7 - kerf]);
 }
 
 module usbCut() {
     //translate([-12,0]) circle(1.6);
     //translate([12,0]) circle(1.6);
-    square([20.4 - kerf * 2 , 9.5 - kerf * 2]);
+    square([20.6 - kerf, 9.8 - kerf]);
 }
 
 module powerCut() {
