@@ -8,10 +8,11 @@
 #define BUTTON1                 36
 #define BUTTON2                 39
 #define BUTTON3                 34
-#define BUTTON4                 35
-#define BUTTON5                 32
-#define BUTTON6                 33
-#define BUTTON7                 25
+
+#define AMP_ENABLE              4
+//#define BUTTON5                 32
+//#define BUTTON6                 33
+//#define BUTTON7                 25
 
 // Digital pins for VS1053 
 #define VS1053_XCS_PIN          2

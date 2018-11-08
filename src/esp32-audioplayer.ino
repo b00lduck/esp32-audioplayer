@@ -64,13 +64,18 @@ void setup() {
   Serial.begin(115200);                            
   Serial.println("\nStarting...");
 
-  // Initialize LEDs
+  // Initialize GPIOs
   pinMode(LED1, OUTPUT);
+  digitalWrite(LED1, LOW);
+  
   pinMode(LED2, OUTPUT);
+  digitalWrite(LED2, LOW);
+  
   pinMode(LED3, OUTPUT);
-  digitalWrite(LED1, LOW);  // disable amplifier
-  digitalWrite(LED2, HIGH);  
-  digitalWrite(LED3, HIGH);  
+  digitalWrite(LED3, LOW);
+
+  pinMode(AMP_ENABLE, OUTPUT);
+  digitalWrite(AMP_ENABLE, LOW); // disable amplifier     
 
   // Initialize buttons
   buttons.init();
@@ -130,6 +135,8 @@ void setup() {
 }
 
 void play(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
+
+  digitalWrite(AMP_ENABLE, HIGH);  // enable amplifier
    
   char filename[MAX_FILENAME_STRING_LENGTH];
   Mapper::MapperError err = mapper.resolveIdToFilename(cardId, filename);    
@@ -165,9 +172,9 @@ void play(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
     dataFile.seek(header_size);    
   } else {
     dataFile.seek(0);
-  }
-    
-  digitalWrite(LED1, HIGH);  // enable amplifier
+  }  
+
+  delay(300);
 
   playerState = PLAYING;
   vs1053player.setVolume(currentVolume);                 
@@ -177,7 +184,7 @@ void play(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
 }
 
 void stop() {
-  digitalWrite(LED1, LOW);  // disable amplifier
+  digitalWrite(AMP_ENABLE, LOW);  // disable amplifier
   dataFile.close();
   vs1053player.processByte(0, true);
   vs1053player.setVolume(0);                  

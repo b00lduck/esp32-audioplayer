@@ -95,7 +95,7 @@ void Oled::loadingBar(uint8_t percent) {
 }
 
 void Oled::buttons(char buttons) {
-  for(int i=0; i<7; i++) {    
+  for(int i=0; i<3; i++) {    
     ssd1306.fillRect(i * 5, 25, 4, 4, 1);
     if (buttons & 1 << i) {
       ssd1306.fillRect(i * 5 + 1, 26, 2, 2, 0);
