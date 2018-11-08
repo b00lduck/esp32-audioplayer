@@ -4,11 +4,11 @@ width = 40;
 height = 15;
 
 // lid
-lidThickness = 3;
+lidThickness = 2.8;
 pinLength = 2.4;
 pinWidth = 5;
 pinThickness = lidThickness / 2;
-boxToLidSpacing = 0.;
+boxToLidSpacing = 0.5;
 lidReinforcementDepth = 2;
 
 screwHoleHeadDiameter = 6;
@@ -26,7 +26,6 @@ screwPoleDiameter = 6;
 
 woodWidth = 4;
 
-
 clipThickness = 0.6;
 clipWidth = 4;
 clipHeight = 5;
@@ -35,8 +34,6 @@ clipNoseThickness = 1;
 clipRadius = 1;
 
 clipToWoodThruSpacing = 0.25;
-
-
 
 lid();
 //box();
@@ -51,7 +48,7 @@ module solidBox() {
  
     // rest
     translate([0, 0, (boxDepth-woodWidth-clipToWoodThruSpacing)/2 + woodWidth]) cube([width + (boxThickness - boxKragen) * 2, height + (boxThickness - boxKragen) * 2, boxDepth - woodWidth + clipToWoodThruSpacing], true);
-    snapClips();
+    //snapClips();
 }
 
 module snapClips() {
@@ -172,7 +169,7 @@ module lid() {
  
 module pins(spacing = 0) {
     for(i = [-1,1]) 
-        translate([(-pinLength-width)/2 , - pinWidth/2 + i*height/4, lidThickness/2 - boxThickness]) {
+        translate([(-pinLength-width)/2 , - pinWidth/2 + i*height/4, lidThickness/2 - boxThickness + spacing]) {
             cube([pinLength, pinWidth - spacing, pinThickness - spacing]);
         }
 }
