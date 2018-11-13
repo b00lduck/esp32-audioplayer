@@ -59,6 +59,9 @@ void fatal(char* title, char* message) {
   oled.fatalErrorMessage(title, message);
 }
 
+
+
+
 void setup() {
 
   Serial.begin(115200);                            
@@ -79,7 +82,9 @@ void setup() {
 
   // Initialize buttons
   buttons.init();
- 
+
+  pinMode(ADC_BATT, ANALOG);
+
   // Initialize I²C bus
   Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
   oled.init();
@@ -193,6 +198,9 @@ void stop() {
   playerState = STOPPED; 
 }
 
+uint16_t lpf = 0;
+
+
 void loop() {
 
   bool changed = buttons.read();
@@ -200,6 +208,18 @@ void loop() {
   if (changed) {
     oled.buttons(buttons.state);
   }  
+
+  // Cheapo one pole IIR low pass filter with unknown cutoff frequency (because sample rate is unknown).
+  // This is good enough for battery monitoring though.
+  //
+  // lpf:
+  // 0 is 0V battery voltage  
+  // 1000 is approx. 4.12V battery voltage
+  // in between linear (voltage divider)
+  uint16_t batt = analogRead(ADC_BATT);
+  uint16_t newLpf = (float)lpf * 0.95 + (float)batt * 0.05;
+  lpf = newLpf;
+
 
   // Volume Control
   if (buttons.buttonDown(0)) {

@@ -9,16 +9,18 @@
 #define BUTTON2                 39
 #define BUTTON3                 34
 
-#define AMP_ENABLE              4
-//#define BUTTON5                 32
-//#define BUTTON6                 33
-//#define BUTTON7                 25
+// Amplifier enable/disable (power saving)
+#define AMP_ENABLE              25
+
+// Battery monitoring
+#define ADC_BATT                 32
+#define LOW_BATT                 33
 
 // Digital pins for VS1053 
-#define VS1053_XCS_PIN          2
+#define VS1053_XCS_PIN          15
 #define VS1053_XDCS_PIN         16
 #define VS1053_DREQ_PIN         17
-#define VS1053_XRESET_PIN       15 
+#define VS1053_XRESET_PIN       2 
 
 // Digital pins for SD card
 #define SD_CS_PIN               5
