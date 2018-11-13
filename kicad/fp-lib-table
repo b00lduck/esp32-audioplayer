@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name audioplayer)(type KiCad)(uri ${KIPRJMOD}/audioplayer.pretty)(options "")(descr ""))
+)
