@@ -69,13 +69,13 @@ void setup() {
 
   // Initialize GPIOs
   pinMode(LED1, OUTPUT);
-  digitalWrite(LED1, LOW);
+  digitalWrite(LED1, HIGH);
   
   pinMode(LED2, OUTPUT);
-  digitalWrite(LED2, LOW);
+  digitalWrite(LED2, HIGH);
   
   pinMode(LED3, OUTPUT);
-  digitalWrite(LED3, LOW);
+  digitalWrite(LED3, HIGH);
 
   pinMode(AMP_ENABLE, OUTPUT);
   digitalWrite(AMP_ENABLE, LOW); // disable amplifier     
