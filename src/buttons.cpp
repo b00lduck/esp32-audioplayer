@@ -27,14 +27,18 @@ void Buttons::init() {
   pinMode(BUTTON1, INPUT);
   pinMode(BUTTON2, INPUT);
   pinMode(BUTTON3, INPUT);
+  pinMode(BUTTON4, INPUT);
 }
 
 bool Buttons::read() {
 
-    state = digitalRead(BUTTON1) |  
-            digitalRead(BUTTON2) << 1 | 
-            digitalRead(BUTTON3) << 2;
+    state = (digitalRead(BUTTON1)) |  
+            (digitalRead(BUTTON2)) << 1 | 
+            (digitalRead(BUTTON3)) << 2 |
+            (digitalRead(BUTTON4)) << 3;
             
+    state ^= 255;
+
     if (oldState != state) {
         oldState  = state;
         return true;
@@ -43,6 +47,6 @@ bool Buttons::read() {
 }
 
 bool Buttons::buttonDown(uint8_t id) {
-    return (state & (1 << id)) == 0;
+    return (state & (1 << id)) != 0;
 }
 

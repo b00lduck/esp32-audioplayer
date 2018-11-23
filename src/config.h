@@ -3,11 +3,15 @@
 #define LED1                    26
 #define LED2                    27
 #define LED3                    14
+#define LED4                    16
+#define LED5                    17
+#define LED6                    18
 
 // Digital pins for buttons
 #define BUTTON1                 36
 #define BUTTON2                 39
 #define BUTTON3                 34
+#define BUTTON4                 35
 
 // Amplifier enable/disable (power saving)
 #define AMP_ENABLE              25

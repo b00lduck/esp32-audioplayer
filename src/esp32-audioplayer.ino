@@ -69,13 +69,23 @@ void setup() {
 
   // Initialize GPIOs
   pinMode(LED1, OUTPUT);
-  digitalWrite(LED1, HIGH);
+  digitalWrite(LED1, LOW);
   
   pinMode(LED2, OUTPUT);
-  digitalWrite(LED2, HIGH);
+  digitalWrite(LED2, LOW);
   
   pinMode(LED3, OUTPUT);
-  digitalWrite(LED3, HIGH);
+  digitalWrite(LED3, LOW);
+
+  pinMode(LED4, OUTPUT);
+  digitalWrite(LED4, LOW);
+
+  pinMode(LED5, OUTPUT);
+  digitalWrite(LED5, LOW);
+
+  pinMode(LED6, OUTPUT);
+  digitalWrite(LED6, LOW);
+
 
   pinMode(AMP_ENABLE, OUTPUT);
   digitalWrite(AMP_ENABLE, LOW); // disable amplifier     
@@ -142,6 +152,7 @@ void setup() {
 void play(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
 
   digitalWrite(AMP_ENABLE, HIGH);  // enable amplifier
+  digitalWrite(LED1, HIGH);
    
   char filename[MAX_FILENAME_STRING_LENGTH];
   Mapper::MapperError err = mapper.resolveIdToFilename(cardId, filename);    
@@ -190,6 +201,7 @@ void play(byte cardId[ID_BYTE_ARRAY_LENGTH]) {
 
 void stop() {
   digitalWrite(AMP_ENABLE, LOW);  // disable amplifier
+  digitalWrite(LED1, LOW);
   dataFile.close();
   vs1053player.processByte(0, true);
   vs1053player.setVolume(0);                  
@@ -222,15 +234,22 @@ void loop() {
 
 
   // Volume Control
-  if (buttons.buttonDown(0)) {
-    currentVolume++;
-    if (currentVolume > 100) currentVolume = 100;
-    vs1053player.setVolume(currentVolume);
-  }
   if (buttons.buttonDown(1)) {
+    currentVolume++;
+    if (currentVolume > 100) {
+      currentVolume = 100;
+    } else {
+      vs1053player.setVolume(currentVolume);
+    }
+  }
+
+  if (buttons.buttonDown(2)) {
     currentVolume--;
-    if (currentVolume < 1) currentVolume = 1;
-    vs1053player.setVolume(currentVolume);
+    if (currentVolume < 1) {
+      currentVolume = 1;
+    } else {
+      vs1053player.setVolume(currentVolume);
+    }    
   }
 
   RFID::CardState cardState = rfid.checkCardState();
