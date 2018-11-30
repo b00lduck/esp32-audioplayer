@@ -72,20 +72,13 @@ void setup() {
   digitalWrite(LED1, LOW);
   
   pinMode(LED2, OUTPUT);
-  digitalWrite(LED2, LOW);
+  digitalWrite(LED2, HIGH);
   
   pinMode(LED3, OUTPUT);
-  digitalWrite(LED3, LOW);
+  digitalWrite(LED3, HIGH);
 
   pinMode(LED4, OUTPUT);
-  digitalWrite(LED4, LOW);
-
-  pinMode(LED5, OUTPUT);
-  digitalWrite(LED5, LOW);
-
-  pinMode(LED6, OUTPUT);
-  digitalWrite(LED6, LOW);
-
+  digitalWrite(LED4, HIGH);
 
   pinMode(AMP_ENABLE, OUTPUT);
   digitalWrite(AMP_ENABLE, LOW); // disable amplifier     

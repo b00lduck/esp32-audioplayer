@@ -3,9 +3,9 @@
 #define LED1                    26
 #define LED2                    27
 #define LED3                    14
-#define LED4                    16
-#define LED5                    17
-#define LED6                    18
+#define LED4                    12
+//#define LED5                    17
+//#define LED6                    18
 
 // Digital pins for buttons
 #define BUTTON1                 36
@@ -30,7 +30,7 @@
 #define SD_CS_PIN               5
 
 // Digital pins for MFRC522
-#define MFRC522_CS_PIN          12
+#define MFRC522_CS_PIN          4
 #define MFRC522_RST_PIN         13
 
 #define SPI_SCK_PIN             18
