@@ -47,20 +47,25 @@ fingersB = 4;
 */
 
 color([1,0,0]) {
-    sheet1(); // front/bottom
+    //sheet1(); // front/bottom
     //sheet2(); // top/back
     //sheet3(); // left/right
     //sheet4(); // speaker ring
-    //kerftest();
+    kerftest();
 }
 
 module kerftest() {
-    reducedSquare(40, 40);
-    fingersA(40, 40, 3, 0.5);
-    fingersB(40, 40, 3, 0, true);
+    
+    sq = 40;
+    
+    translate([0,-21,0]) {
+        reducedSquare(sq, sq);
+        fingersA(40, 40, 3, 0.5);
+        fingersB(40, 40, 3, 0, true);
+    }
 
-    translate([0,43,0]) {
-        reducedSquare(40, 40);
+    translate([0,21,0]) {
+        reducedSquare(sq, sq);
         fingersA(40, 40, 3, 0);
         fingersB(40, 40, 3, 0);
     }
@@ -162,7 +167,7 @@ module faceC(a,b) {
 
 // inner square of face without finger joints
 module reducedSquare(a, b) {   
-    reduction = (material- kerf) * 2;
+    reduction = (material - kerf) * 2;
     translate([-(a-reduction)/2, -(b-reduction)/2]) 
       square([a - reduction, b - reduction]);
 }
@@ -170,27 +175,25 @@ module reducedSquare(a, b) {
 // fingers on edge A of reduced square
 module fingersA (a, b, num, offset) {    
     stride = a / (num + .5);
-    fingerDepth = material - kerf; 
     for(x = [-1,1])
         for(i = [0+offset:num-offset]) {
-            translate([stride/4 - a/2 + i * stride, x * (b/2 - fingerDepth/2)]) 
-                square([stride/2, fingerDepth], true);
+            translate([stride/4 - a/2 + i * stride, x * (b/2 - material/2 + kerf)]) 
+                square([stride/2 + kerf * 2, material], true);
     }
 }
 
 // fingers on edge B of reduced square
 module fingersB (a, b, num, offset, cut = false) {   
     stride = b / (num + .5);
-    fingerDepth = material - kerf;     
     for(x = [-1,1]) {
         difference() {
             for(i = [0+offset:num-offset]) {
-                translate([x * (a/2 - fingerDepth/2), stride/4 - b/2 + i * stride]) 
-                    square([fingerDepth, stride/2], true);
+                translate([x * (a/2 - material/2 + kerf), stride/4 - b/2 + i * stride]) 
+                    square([material, stride/2 + kerf * 2], true);
             }
             if (cut) {
-                translate([x*a/2,-b/2]) square([fingerDepth*2,fingerDepth*2],true);    
-                translate([x*a/2,b/2]) square([fingerDepth*2,fingerDepth*2],true);    
+                translate([x * a/2, -(b/2 + kerf)]) square([material*2,material*2],true);    
+                translate([x * a/2, (b/2 + kerf)]) square([material*2,material*2],true);    
             }
         }
     }
