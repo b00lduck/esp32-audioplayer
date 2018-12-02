@@ -1,12 +1,12 @@
 include <speakers.scad>;
 
-$fn = 50;
+$fn = 150;
 
 width = 185;
 depth = 110;
 height = 110;
-material = 4;
-kerf = 0.6;
+material = 3;
+kerf = 0.2;
 buttonDiameter = 24;
 //buttonDiameter = 34;
 buttonSpread = 36;
@@ -22,16 +22,37 @@ fingersB = 4;
 
 //dimensions();
 
-color([1,0,0]) {
-    //translate([0,200]) 
-    //sheet1();
-    sheet2();
-    //translate([0,-120]) 
-    //sheet3();
-    //kerftest();
-    //speakerRing(speakerHoleDistance, 4);
-}
+/*
+    Material dimensions needed:
+                                       
+    1   top/bottom      240mm x 200mm   
+    2   front/back      240mm x 200mm
+    3   left/right      240mm x 120mm
+    4   speaker ring    210mm x 110mm
 
+
+    Cost for two cases without room for error:
+
+    Rauchglas braun getoent     5mm     30€ (without rings)
+    Rauchglas braun getoent     3mm     27€
+    hellblau 5C18               3mm     30€
+    Transparent                 5mm     21€ (without rings)
+    Transparent                 3mm     21€
+    Transparent kratzfest       3mm     29€
+    grau 7C83                   3mm     31€ 
+       
+    https://www.plattenzuschnitt24.de/Acrylglas-Zuschnitt/Acrylglas-getoent/
+    https://acrylglasplattenshop.de/acrylglas-getoent/       
+    https://expresszuschnitt.de/3mm-PLEXIGLAS-hellgrau-GS-nach-Mass 
+*/
+
+color([1,0,0]) {
+    sheet1(); // front/bottom
+    //sheet2(); // top/back
+    //sheet3(); // left/right
+    //sheet4(); // speaker ring
+    //kerftest();
+}
 
 module kerftest() {
     reducedSquare(40, 40);
@@ -47,30 +68,44 @@ module kerftest() {
 
 module dimensions() {
     difference() {
-        square([301,201],true);
-        square([300,200],true);
+        square([211,111],true);
+        square([210,110],true);
     }
 }
 
 module sheet1() {
-    translate([-90,0,0]) rotate([0,0,90]) faceA(width, depth);
-    translate([25,0]) rotate([0,0,90]) faceB(width, depth);
+    // front
+    translate([60,0]) rotate([0,0,90]) faceA(width, depth);
+
+    // bottom
+    translate([-60,0,0]) rotate([0,0,90]) difference() {
+        faceB(width, depth);
+        translate([width/2 - 45.8,height/2 - 32,0]) circle(3.2 / 2);
+        translate([-width/2 + 45.8,height/2 - 32,0]) circle(3.2 / 2);
+        translate([width/2 - 45.8,height/2 - 98.8,0]) circle(3.2 / 2);
+        translate([-width/2 + 45.8,height/2 - 98.8,0]) circle(3.2 / 2);
+    }
 }
 
 module sheet2() {
-    translate([-90,0,0]) rotate([0,0,90]) difference() {
+    translate([-60,0,0]) rotate([0,0,90]) difference() {
         faceA(width, depth);
         translate([-9, 6]) sdCut();
         translate([55,25]) usbCut();
         translate([-65,30]) powerCut();
+        translate([width/2 - 25.5,-height/2 + 27]) phoneCut();
     }
-/*
-    translate([25,0,0]) rotate([0,0,90]) difference() {
+
+    translate([60,0,0]) rotate([0,0,90]) difference() {
         faceB(width, depth);
         translate([-buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
         translate([0,-buttonSpacing]) circle(buttonDiameter/2);
         translate([buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
-    }*/
+    }
+}
+
+module phoneCut() {
+    circle(10.5/2);
 }
 
 module sdCut() {
@@ -88,13 +123,22 @@ module powerCut() {
 }
 
 module sheet3() {
-    translate([-90,-40,0]) difference() {
+    translate([-60,0,0]) difference() {
         faceC(height, depth);
         rotate([0,0,90]) speakerCuts(speakerHoleDistance, 4, speakerDiameter, speakerSluts - kerf/2);
     }
-    translate([25,-40,0]) difference() {
+    translate([60,0,0]) difference() {
         faceC(height, depth);
         rotate([0,0,90]) speakerCuts(speakerHoleDistance, 4, speakerDiameter, speakerSluts - kerf/2);
+    }
+}
+
+module sheet4() {
+    translate([-50,0,0]) {
+        speakerRing(speakerHoleDistance, 4);
+    }
+    translate([50,0,0]) {
+        speakerRing(speakerHoleDistance, 4);
     }
 }
 
@@ -131,7 +175,6 @@ module fingersA (a, b, num, offset) {
         for(i = [0+offset:num-offset]) {
             translate([stride/4 - a/2 + i * stride, x * (b/2 - fingerDepth/2)]) 
                 square([stride/2, fingerDepth], true);
-    
     }
 }
 
