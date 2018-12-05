@@ -5,7 +5,7 @@ $fn = 150;
 width = 185;
 depth = 110;
 height = 110;
-material = 3;
+material = 4;
 kerf = 0.2;
 buttonDiameter = 24;
 //buttonDiameter = 34;
@@ -19,6 +19,8 @@ speakerSluts = 2.5;
 
 fingersA = 9;
 fingersB = 4;
+
+edgeHoleDistance = 11;
 
 //dimensions();
 
@@ -50,14 +52,12 @@ color([1,0,0]) {
     //sheet1(); // front/bottom
     //sheet2(); // top/back
     //sheet3(); // left/right
-    //sheet4(); // speaker ring
-    kerftest();
+    sheet4(); // speaker ring
+    //kerftest();
 }
 
-module kerftest() {
-    
-    sq = 40;
-    
+module kerftest() {   
+    sq = 40;    
     translate([0,-21,0]) {
         reducedSquare(sq, sq);
         fingersA(40, 40, 3, 0.5);
@@ -85,10 +85,10 @@ module sheet1() {
     // bottom
     translate([-60,0,0]) rotate([0,0,90]) difference() {
         faceB(width, depth);
-        translate([width/2 - 45.8,height/2 - 32,0]) circle(3.2 / 2);
-        translate([-width/2 + 45.8,height/2 - 32,0]) circle(3.2 / 2);
-        translate([width/2 - 45.8,height/2 - 98.8,0]) circle(3.2 / 2);
-        translate([-width/2 + 45.8,height/2 - 98.8,0]) circle(3.2 / 2);
+        translate([width/2 - 45.8,height/2 - 32,0]) circle(1.8);
+        translate([-width/2 + 45.8,height/2 - 32,0]) circle(1.8);
+        translate([width/2 - 45.8,height/2 - 98.8,0]) circle(1.8);
+        translate([-width/2 + 45.8,height/2 - 98.8,0]) circle(1.8);
     }
 }
 
@@ -96,8 +96,8 @@ module sheet2() {
     translate([-60,0,0]) rotate([0,0,90]) difference() {
         faceA(width, depth);
         translate([-9, 6]) sdCut();
-        translate([55,25]) usbCut();
-        translate([-65,30]) powerCut();
+        translate([55,14]) usbCut();
+        translate([-65,17]) powerCut();
         translate([width/2 - 25.5,-height/2 + 27]) phoneCut();
     }
 
@@ -106,6 +106,19 @@ module sheet2() {
         translate([-buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
         translate([0,-buttonSpacing]) circle(buttonDiameter/2);
         translate([buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
+        rfid();
+    }
+}
+
+module rfid() {    
+    distA = 34 / 2;
+    distB = 25 / 2;   
+    distC = 37 / 2;    
+    translate([0,20,0]) {
+        translate([distC,distA,0]) circle(1.6);
+        translate([-distC,distB,0]) circle(1.6);
+        translate([distC, -distA,0]) circle(1.6);
+        translate([-distC,-distB,0]) circle(1.6);
     }
 }
 
@@ -127,7 +140,7 @@ module powerCut() {
     square([13,19], true);
 }
 
-module sheet3() {
+module sheet3() {    
     translate([-60,0,0]) difference() {
         faceC(height, depth);
         rotate([0,0,90]) speakerCuts(speakerHoleDistance, 4, speakerDiameter, speakerSluts - kerf/2);
@@ -168,8 +181,19 @@ module faceC(a,b) {
 // inner square of face without finger joints
 module reducedSquare(a, b) {   
     reduction = (material - kerf) * 2;
-    translate([-(a-reduction)/2, -(b-reduction)/2]) 
-      square([a - reduction, b - reduction]);
+    
+    as = -(a-reduction)/2;
+    bs = -(b-reduction)/2;
+    
+    at = -(a/2-material);
+    bt = -(b/2-material);
+    
+    difference() {
+        translate([as, bs]) square([a - reduction, b - reduction]);
+        for(x = [-1,1]) for(y = [-1,1]) {
+            translate([x * (at + edgeHoleDistance),y * (bt + edgeHoleDistance)]) circle(2);
+        }
+    }
 }
 
 // fingers on edge A of reduced square
