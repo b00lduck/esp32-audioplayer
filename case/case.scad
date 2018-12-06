@@ -5,8 +5,13 @@ $fn = 150;
 width = 185;
 depth = 110;
 height = 110;
-material = 4;
-kerf = 0.2;
+
+// 3.6 mm Pappel
+material = 3.6;
+kerf = 0.07;
+kerfExtraToothLen = 0.2;
+
+
 buttonDiameter = 24;
 //buttonDiameter = 34;
 buttonSpread = 36;
@@ -20,7 +25,7 @@ speakerSluts = 2.5;
 fingersA = 9;
 fingersB = 4;
 
-edgeHoleDistance = 11;
+    edgeHoleDistance = 11;
 
 //dimensions();
 
@@ -49,10 +54,10 @@ edgeHoleDistance = 11;
 */
 
 color([1,0,0]) {
-    //sheet1(); // front/bottom
+    sheet1(); // front/bottom
     //sheet2(); // top/back
     //sheet3(); // left/right
-    sheet4(); // speaker ring
+    //sheet4(); // speaker ring
     //kerftest();
 }
 
@@ -202,7 +207,7 @@ module fingersA (a, b, num, offset) {
     for(x = [-1,1])
         for(i = [0+offset:num-offset]) {
             translate([stride/4 - a/2 + i * stride, x * (b/2 - material/2 + kerf)]) 
-                square([stride/2 + kerf * 2, material], true);
+                square([stride/2 + kerf * 2, material + kerfExtraToothLen], true);
     }
 }
 
@@ -213,7 +218,7 @@ module fingersB (a, b, num, offset, cut = false) {
         difference() {
             for(i = [0+offset:num-offset]) {
                 translate([x * (a/2 - material/2 + kerf), stride/4 - b/2 + i * stride]) 
-                    square([material, stride/2 + kerf * 2], true);
+                    square([material + kerfExtraToothLen, stride/2 + kerf * 2], true);
             }
             if (cut) {
                 translate([x * a/2, -(b/2 + kerf)]) square([material*2,material*2],true);    
