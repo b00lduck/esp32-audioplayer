@@ -20,6 +20,7 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
+#pragma once
 #include <Arduino.h>
 #include <SPI.h>
 

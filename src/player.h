@@ -19,23 +19,36 @@
  *  
  */
 #pragma once
+#include <FS.h>
 #include "Arduino.h"
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include "fatal.h"
+#include "oled.h"
+#include "VS1053.h"
+#include "ringbuffer.h"
 
-class Oled {
+
+enum playerState_t {PLAYING, STOPPED};
+
+class Player {
 
   private:
-    uint8_t i2cAddress;
-    Adafruit_SSD1306 ssd1306;
+    playerState_t state;
+    Fatal fatal;
+    Oled oled;
+    VS1053 vs1053;
+    RingBuffer ringBuffer;
+
+    File dataFile;
+
+    uint8_t currentVolume;
 
   public:
-    Oled(uint8_t i2cAddress);
+    Player(Fatal fatal, Oled oled, VS1053 vs1053);
     void init();
-    void clear();
-    void trackName(char* trackName);
-    void buttons(char buttons);
-    void cardId(byte *card, uint8_t len);
-    void fatalErrorMessage(char* error, char* info);
-    void loadingBar(uint8_t percent);
+    void play(char* filename);
+    void stop();
+    void process();
+
+    void increaseVolume();
+    void decreaseVolume();
 };

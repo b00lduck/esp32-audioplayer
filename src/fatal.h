@@ -20,22 +20,15 @@
  */
 #pragma once
 #include "Arduino.h"
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include "oled.h"
 
-class Oled {
+class Fatal {
 
   private:
-    uint8_t i2cAddress;
-    Adafruit_SSD1306 ssd1306;
+    Oled oled;
 
   public:
-    Oled(uint8_t i2cAddress);
-    void init();
-    void clear();
-    void trackName(char* trackName);
-    void buttons(char buttons);
-    void cardId(byte *card, uint8_t len);
-    void fatalErrorMessage(char* error, char* info);
-    void loadingBar(uint8_t percent);
+    Fatal(Oled oled);
+    void fatal(char* title, char* message);
+
 };

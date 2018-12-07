@@ -18,24 +18,15 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-#pragma once
-#include "Arduino.h"
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include "config.h"
+#include "fatal.h"
 
-class Oled {
+Fatal::Fatal(Oled oled) : oled(oled) {}
 
-  private:
-    uint8_t i2cAddress;
-    Adafruit_SSD1306 ssd1306;
+void Fatal::fatal(char* title, char* message) {
+  Serial.println(F("FATAL ERROR OCCURED"));
+  Serial.println(title);
+  Serial.println(message);
+  oled.fatalErrorMessage(title, message);
+}
 
-  public:
-    Oled(uint8_t i2cAddress);
-    void init();
-    void clear();
-    void trackName(char* trackName);
-    void buttons(char buttons);
-    void cardId(byte *card, uint8_t len);
-    void fatalErrorMessage(char* error, char* info);
-    void loadingBar(uint8_t percent);
-};

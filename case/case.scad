@@ -6,14 +6,14 @@ width = 185;
 depth = 110;
 height = 110;
 
-// 3.6 mm Pappel
+// 3.6 mm Pappel settings
 material = 3.6;
 kerf = 0.07;
 kerfExtraToothLen = 0.2;
 
 
-buttonDiameter = 24;
-//buttonDiameter = 34;
+buttonDiameter = 24; 
+//outerButtonDiameter = 34;
 buttonSpread = 36;
 buttonSpacing = 25;
 buttonFoo = 0;
@@ -25,7 +25,7 @@ speakerSluts = 2.5;
 fingersA = 9;
 fingersB = 4;
 
-    edgeHoleDistance = 11;
+edgeHoleDistance = 11.6; // 11mm + ?
 
 //dimensions();
 
@@ -120,15 +120,16 @@ module rfid() {
     distB = 25 / 2;   
     distC = 37 / 2;    
     translate([0,20,0]) {
-        translate([distC,distA,0]) circle(1.6);
+        // two holes are enough and so the asymmetry of the board will be hidden
+        //translate([distC,distA,0]) circle(1.6);
         translate([-distC,distB,0]) circle(1.6);
         translate([distC, -distA,0]) circle(1.6);
-        translate([-distC,-distB,0]) circle(1.6);
+        //translate([-distC,-distB,0]) circle(1.6);
     }
 }
 
 module phoneCut() {
-    circle(10.5/2);
+    circle(5.5);
 }
 
 module sdCut() {
@@ -136,8 +137,6 @@ module sdCut() {
 }
 
 module usbCut() {
-    //translate([-12,0]) circle(1.6);
-    //translate([12,0]) circle(1.6);
     square([20.6 - kerf, 9.8 - kerf]);
 }
 
