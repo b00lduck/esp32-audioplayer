@@ -98,14 +98,14 @@ module sheet1() {
 }
 
 module sheet2() {
-    translate([-60,0,0]) rotate([0,0,90]) difference() {
+    translate([-60,0,0]) rotate([0,0,0]) difference() {
         faceA(width, depth);
         translate([-10, 6]) sdCut();
         translate([55,14]) usbCut();
         translate([-65,17]) powerCut();
         translate([width/2 - 25.5,-height/2 + 27]) phoneCut();
     }
-
+/*
     translate([60,0,0]) rotate([0,0,90]) difference() {
         faceB(width, depth);
         translate([-buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
@@ -113,6 +113,7 @@ module sheet2() {
         translate([buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
         rfid();
     }
+    */
 }
 
 module rfid() {    
@@ -133,7 +134,7 @@ module phoneCut() {
 }
 
 module sdCut() {
-    square([44 - kerf * 2, 19 - kerf * 2]);
+    square([43.7 - kerf * 2, 18.7 - kerf * 2]);
 }
 
 module usbCut() {
