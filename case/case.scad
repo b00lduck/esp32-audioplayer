@@ -54,8 +54,8 @@ edgeHoleDistance = 11.6; // 11mm + ?
 */
 
 color([1,0,0]) {
-    sheet1(); // front/bottom
-    //sheet2(); // top/back
+    //sheet1(); // front/bottom
+    sheet2(); // top/back
     //sheet3(); // left/right
     //sheet4(); // speaker ring
     //kerftest();
@@ -100,7 +100,7 @@ module sheet1() {
 module sheet2() {
     translate([-60,0,0]) rotate([0,0,90]) difference() {
         faceA(width, depth);
-        translate([-9, 6]) sdCut();
+        translate([-10, 6]) sdCut();
         translate([55,14]) usbCut();
         translate([-65,17]) powerCut();
         translate([width/2 - 25.5,-height/2 + 27]) phoneCut();
@@ -133,11 +133,11 @@ module phoneCut() {
 }
 
 module sdCut() {
-    square([42.6 - kerf, 17.7 - kerf]);
+    square([44 - kerf * 2, 19 - kerf * 2]);
 }
 
 module usbCut() {
-    square([20.6 - kerf, 9.8 - kerf]);
+    square([22 - kerf * 2, 11 - kerf * 2]);
 }
 
 module powerCut() {

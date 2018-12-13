@@ -5,10 +5,11 @@ height = 15;
 
 // lid
 lidThickness = 2.8;
-pinLength = 2.4;
+pinLength = 4;
 pinWidth = 5;
 pinThickness = lidThickness / 2;
-boxToLidSpacing = 0.5;
+boxToLidSpacing = 1;
+pinSpacing = 0.5;
 lidReinforcementDepth = 2;
 
 screwHoleHeadDiameter = 6;
@@ -17,12 +18,12 @@ screwHoleDiameter = 3.2;
 screwHoleDistance = 6;
 
 boxOverlap = 10;
-boxThickness = 1.2;
+boxThickness = 2;
 boxDepth = 10;
 boxKragen = 1.6;
 boxFloorThickness = 3;
 
-screwPoleDiameter = 6;
+screwPoleDiameter = 8;
 
 woodWidth = 4;
 
@@ -116,7 +117,7 @@ module box() {
         ]);
         
         // notch for opening lid
-        translate([width/2 - 0.5,-5,-2.2]) rotate([60,0,90]) cube([10,3.4,2]);      
+        translate([width/2,-5,-3.4]) rotate([60,0,90]) cube([10,3.6,2]);      
     }    
 }
 
@@ -164,7 +165,7 @@ module lid() {
             translate([screwHoleDistance, height/2, 0]) cylinder(screwHoleHeadDepth, screwHoleHeadDiameter/2, screwHoleHeadDiameter/2);
        }
     }
-    translate([0,0,0]) pins(boxToLidSpacing);
+    translate([0,0,0]) pins(pinSpacing);
  }
  
 module pins(spacing = 0) {

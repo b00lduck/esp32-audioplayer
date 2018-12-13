@@ -4,15 +4,15 @@ width = 18;
 height = 7;
 
 boxOverlap = 10;
-boxThickness = 1.2;
+boxThickness = 2;
 boxDepth = 3;
 boxKragen = 1.6;
 boxFloorThickness = 3;
 
-woodWidth = 4;
+woodWidth = 3.6;
 
 clipWidth = 4;
-clipNoseThickness = 1.5;
+clipNoseThickness = 1.3;
 clipLength = 3;
 
 box();
