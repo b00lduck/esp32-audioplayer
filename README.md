@@ -47,6 +47,8 @@ ESP32 based MP3 audio player with RFID control and case made from laser cutted p
 * 4x M3x3 standoff
 * 8x M3*8 standoff (for main board)
 * 4x M3x11 standoff (for MP3 board)
+* 2x M3x6 standoff (for panel board)
+* 2x M3x4 standoff (for panel board)
 * 1x USB receptacle holder
 * 1x SD-Card slot box
 * 1x SD-Card slot cover
