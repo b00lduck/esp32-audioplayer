@@ -98,14 +98,14 @@ module sheet1() {
 }
 
 module sheet2() {
-    translate([-60,0,0]) rotate([0,0,0]) difference() {
+    translate([-60,0,0]) rotate([0,0,90]) difference() {
         faceA(width, depth);
         translate([-10, 6]) sdCut();
         translate([55,14]) usbCut();
         translate([-65,17]) powerCut();
         translate([width/2 - 25.5,-height/2 + 27]) phoneCut();
     }
-/*
+
     translate([60,0,0]) rotate([0,0,90]) difference() {
         faceB(width, depth);
         translate([-buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
@@ -113,7 +113,7 @@ module sheet2() {
         translate([buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
         rfid();
     }
-    */
+    
 }
 
 module rfid() {    
@@ -122,10 +122,10 @@ module rfid() {
     distC = 37 / 2;    
     translate([0,20,0]) {
         // two holes are enough and so the asymmetry of the board will be hidden
-        //translate([distC,distA,0]) circle(1.6);
-        translate([-distC,distB,0]) circle(1.6);
-        translate([distC, -distA,0]) circle(1.6);
-        //translate([-distC,-distB,0]) circle(1.6);
+        translate([distC,distA,0]) circle(1.6);
+        //translate([-distC,distB,0]) circle(1.6);
+        //translate([distC, -distA,0]) circle(1.6);
+        translate([-distC,-distB,0]) circle(1.6);
     }
 }
 
