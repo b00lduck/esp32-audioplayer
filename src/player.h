@@ -22,19 +22,24 @@
 #include <FS.h>
 #include "Arduino.h"
 #include "fatal.h"
-#include "oled.h"
+#ifdef OLED
+  #include "oled.h"
+#endif
 #include "VS1053.h"
 #include "ringbuffer.h"
 
 
-enum playerState_t {PLAYING, STOPPED};
+enum playerState_t {INITIALIZING, PLAYING, STOPPED};
 
 class Player {
 
   private:
     playerState_t state;
+    playerState_t oldState;
     Fatal fatal;
-    Oled oled;
+    #ifdef OLED
+      Oled oled;
+    #endif
     VS1053 vs1053;
     RingBuffer ringBuffer;
 
@@ -43,7 +48,11 @@ class Player {
     uint8_t currentVolume;
 
   public:
-    Player(Fatal fatal, Oled oled, VS1053 vs1053);
+    #ifdef OLED
+      Player(Fatal fatal, Oled oled, VS1053 vs1053);
+    #else
+      Player(Fatal fatal, VS1053 vs1053);
+    #endif
     void init();
     void play(char* filename);
     void stop();

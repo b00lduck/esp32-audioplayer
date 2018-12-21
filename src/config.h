@@ -4,8 +4,6 @@
 #define LED2                    27
 #define LED3                    14
 #define LED4                    12
-//#define LED5                    17
-//#define LED6                    18
 
 // Digital pins for buttons
 #define BUTTON1                 36
@@ -46,3 +44,6 @@
 
 // Number of bytes for the card ID
 #define ID_BYTE_ARRAY_LENGTH    4
+
+#define OLED
+#define TWI_CLOCK 600000UL

@@ -18,17 +18,20 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
- 
+#include "config.h"
+
+#ifdef OLED
 #include "oled.h"
 
 Oled::Oled(uint8_t _i2cAddress) : 
   i2cAddress(_i2cAddress),
-  ssd1306(4)
+  ssd1306(-1)
   {}
 
 void Oled::init() {
   ssd1306.begin(SSD1306_SWITCHCAPVCC, i2cAddress, false);  
   ssd1306.clearDisplay();
+  ssd1306.fillRect(0,0,127,40,WHITE);
   ssd1306.display();
 }
 
@@ -43,10 +46,10 @@ void Oled::trackName(char* trackName) {
   ssd1306.setTextSize(1);
   ssd1306.setCursor(0,0);
   ssd1306.printf("%s", trackName);
-  ssd1306.display();
+  ssd1306.display();  
 }
 
-void Oled::cardId(byte *card, uint8_t len) {
+void Oled::cardId(byte *card, uint8_t len) {  
   ssd1306.fillRect(0,21,127,40,BLACK); 
   ssd1306.setTextColor(1);
   ssd1306.setTextSize(1);
@@ -62,6 +65,7 @@ void Oled::cardId(byte *card, uint8_t len) {
  * Display an error message and loop forever
  */
 void Oled::fatalErrorMessage(char* error, char* info) {
+  Serial.printf("Fatal: %s - %s\n", error, info);  
   ssd1306.setTextColor(1);
   ssd1306.setTextSize(1);
   boolean showBox = true;
@@ -94,6 +98,13 @@ void Oled::loadingBar(uint8_t percent) {
    ssd1306.display();  
 }
 
+/**
+ * Display a volume bar
+ */
+void Oled::volumeBar(uint8_t percent) {
+  loadingBar(percent);
+}
+
 void Oled::buttons(char buttons) {
   for(int i=0; i<4; i++) {    
     ssd1306.fillRect(i * 5, 25, 4, 4, 1);
@@ -103,3 +114,4 @@ void Oled::buttons(char buttons) {
   }
   ssd1306.display();
 }
+#endif

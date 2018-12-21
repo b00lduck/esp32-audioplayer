@@ -23,14 +23,25 @@
 #include "VS1053.h"
 #include <SD.h>
 
-Player::Player(Fatal fatal, Oled oled, VS1053 vs1053) : 
-    state(STOPPED), 
-    fatal(fatal), 
-    oled(oled),
-    vs1053(vs1053),
-    ringBuffer(20000),
-    dataFile(),
-    currentVolume(85) {}
+#ifdef OLED
+  Player::Player(Fatal fatal, Oled oled, VS1053 vs1053) : 
+      state(STOPPED), 
+      oldState(INITIALIZING),
+      fatal(fatal),     
+      oled(oled),
+      vs1053(vs1053),
+      ringBuffer(20000),
+      dataFile(),
+      currentVolume(85) {}
+#else 
+  Player::Player(Fatal fatal, VS1053 vs1053) : 
+      state(STOPPED), 
+      fatal(fatal),     
+      vs1053(vs1053),
+      ringBuffer(20000),
+      dataFile(),
+      currentVolume(85) {}
+#endif
 
 void Player::init() {
   // Initialize audio decoder
@@ -41,13 +52,15 @@ void Player::init() {
 void Player::play(char* filename) {
 
   digitalWrite(AMP_ENABLE, HIGH);  // enable amplifier
-  digitalWrite(LED1, HIGH);
+  digitalWrite(LED2, HIGH);
     
   dataFile = SD.open(filename, FILE_READ);   
   if (!dataFile) {
     fatal.fatal("Error", "Unknown IO problem");
   }
-  oled.trackName(filename);
+  #ifdef OLED
+    oled.trackName(filename);
+  #endif
 
   // skip ID3v2 tag if present
   uint8_t header[10];
@@ -71,7 +84,7 @@ void Player::play(char* filename) {
 
 void Player::stop() {
   digitalWrite(AMP_ENABLE, LOW);  // disable amplifier
-  digitalWrite(LED1, LOW);
+  digitalWrite(LED2, LOW);
   dataFile.close();
   vs1053.processByte(0, true);
   vs1053.setVolume(0);                  
@@ -83,6 +96,12 @@ void Player::stop() {
 void Player::process() {
 
   uint32_t maxfilechunk;
+
+  if (oldState != state) {
+    Serial.printf("Player state is now %d, was %d.\n", state, oldState);
+    oldState = state;
+  }
+  
        
   switch (state) {
 
@@ -108,7 +127,9 @@ void Player::process() {
       break;
 
     case STOPPED:
-      oled.trackName("");
+      #ifdef OLED
+        oled.trackName("");
+      #endif
       break;    
     
   }
@@ -119,6 +140,7 @@ void Player::increaseVolume() {
     if (currentVolume > 100) {
       currentVolume = 100;
     } else {
+      oled.volumeBar(currentVolume);
       vs1053.setVolume(currentVolume);
     }    
 }
@@ -128,6 +150,7 @@ void Player::decreaseVolume() {
     if (currentVolume < 1) {
       currentVolume = 1;
     } else {
+      oled.volumeBar(currentVolume);
       vs1053.setVolume(currentVolume);
     }    
 }

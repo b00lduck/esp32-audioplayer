@@ -20,15 +20,23 @@
  */
 #pragma once
 #include "Arduino.h"
-#include "oled.h"
+#ifdef OLED
+  #include "oled.h"
+#endif
 
 class Fatal {
 
   private:
-    Oled oled;
+    #ifdef OLED
+      Oled oled;
+    #endif
 
   public:
-    Fatal(Oled oled);
+    #ifdef OLED
+      Fatal(Oled oled);
+    #else
+      Fatal();
+    #endif
     void fatal(char* title, char* message);
 
 };

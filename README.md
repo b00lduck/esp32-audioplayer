@@ -74,3 +74,6 @@ ESP32 based MP3 audio player with RFID control and case made from laser cutted p
 ## Port mapping
 see src/config.h
 
+## 3D printing
+I used black 1.75 PETG filament for all parts.
+Layer height was 0.15mm at a printign speed of 30mm/s.
