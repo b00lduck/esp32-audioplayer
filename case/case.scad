@@ -98,6 +98,7 @@ module sheet1() {
 }
 
 module sheet2() {
+    /*
     translate([-60,0,0]) rotate([0,0,90]) difference() {
         faceA(width, depth);
         translate([-10, 6]) sdCut();
@@ -105,6 +106,7 @@ module sheet2() {
         translate([-65,17]) powerCut();
         translate([width/2 - 25.5,-height/2 + 27]) phoneCut();
     }
+    */
 
     translate([60,0,0]) rotate([0,0,90]) difference() {
         faceB(width, depth);
