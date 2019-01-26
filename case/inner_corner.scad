@@ -39,7 +39,7 @@ module boreReinforce() {
 module bore() {
     cylinder(thickness, hole, hole);
     translate([0, 0, -nutThickness-0.3])
-    linear_extrude(height = nutThickness + 0.3) scale([1.05,1.05,1.05]) polygon([
+    linear_extrude(height = nutThickness + 0.3) scale([1.01,1.01,1.01]) polygon([
         [3.17543,0],
         [1.58771,-2.75],
         [-1.58771,-2.75],

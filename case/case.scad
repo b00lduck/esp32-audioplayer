@@ -12,6 +12,12 @@ kerf = 0.07;
 kerfExtraToothLen = 0.2;
 
 
+// 4 mm Birke settings
+//material = 4;
+//kerf = 0.07;
+//kerfExtraToothLen = 0.2;
+
+
 buttonDiameter = 24; 
 //outerButtonDiameter = 34;
 buttonSpread = 36;
