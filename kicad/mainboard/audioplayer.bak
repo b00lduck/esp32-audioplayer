@@ -369,7 +369,7 @@ ADC_BATT
 Text Label 2300 3300 1    50   ~ 0
 LOW_BATT
 Text Notes 3800 4750 0    50   ~ 0
-1: USB+\n2: USB- (GND)\n3: PWR SW\n4: PWR SW (GND)\n5: Full LED (+)\n6: Full LED (-)\n7: Charge LED (+)\n8: Charge LED (-)
+1: USB+\n2: USB- (GND)\n3: PWR SW\n4: PWR SW (VBAT)\n5: Full LED (+)\n6: Full LED (-)\n7: Charge LED (+)\n8: Charge LED (-)
 $Comp
 L Connector:Conn_01x04_Male J3
 U 1 1 5BE4DA0C
@@ -415,7 +415,7 @@ Wire Wire Line
 Wire Wire Line
 	1300 2950 1300 2850
 Wire Wire Line
-	1300 3250 1300 4400
+	1300 3250 1300 3700
 Text Notes 950  2850 0    50   ~ 0
 4.3V battery -> 1.0V ADC
 Wire Wire Line
@@ -1333,18 +1333,18 @@ $EndComp
 $Comp
 L Device:R R5
 U 1 1 5C6B7954
-P 2600 5300
-F 0 "R5" H 2700 5350 50  0000 C CNN
-F 1 "?" H 2750 5250 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 2530 5300 50  0001 C CNN
-F 3 "~" H 2600 5300 50  0001 C CNN
-	1    2600 5300
+P 2600 5350
+F 0 "R5" H 2700 5400 50  0000 C CNN
+F 1 "?" H 2750 5300 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 2530 5350 50  0001 C CNN
+F 3 "~" H 2600 5350 50  0001 C CNN
+	1    2600 5350
 	0    1    1    0   
 $EndComp
 Wire Wire Line
 	2450 5550 2250 5550
 Wire Wire Line
-	2250 5300 2450 5300
+	2250 5350 2450 5350
 $Comp
 L Connector_Generic:Conn_02x04_Odd_Even J2
 U 1 1 5C6E7F83
@@ -1367,23 +1367,14 @@ Wire Wire Line
 Wire Wire Line
 	2900 5200 3250 5200
 Wire Wire Line
-	2200 4750 2900 4750
-Wire Wire Line
-	3750 5200 3850 5200
-Wire Wire Line
-	3850 5200 3850 5100
+	2200 4750 2450 4750
 Connection ~ 3850 5100
 Wire Wire Line
 	3850 5100 3950 5100
 Wire Wire Line
-	2250 5300 2250 5450
-Wire Wire Line
-	2750 5300 3250 5300
+	2250 5350 2250 5450
 Wire Wire Line
 	3750 5300 3850 5300
-Wire Wire Line
-	3850 5300 3850 5200
-Connection ~ 3850 5200
 Wire Wire Line
 	3850 5550 3850 5400
 Wire Wire Line
@@ -1410,6 +1401,56 @@ Wire Wire Line
 	3250 5400 3200 5400
 Wire Wire Line
 	3200 5400 3200 5100
+Connection ~ 3200 5100
+Wire Wire Line
+	3200 5100 3000 5100
+Text Label 2700 4500 0    50   ~ 0
+USB+
+$Comp
+L Device:R R?
+U 1 1 5C8AB77F
+P 2450 4950
+F 0 "R?" H 2550 5000 50  0000 C CNN
+F 1 "47k" H 2600 4900 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 2380 4950 50  0001 C CNN
+F 3 "~" H 2450 4950 50  0001 C CNN
+	1    2450 4950
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	2450 4800 2450 4750
+Connection ~ 2450 4750
+Wire Wire Line
+	2450 4750 2900 4750
+$Comp
+L power:GND #PWR?
+U 1 1 5C8B9589
+P 2450 5100
+F 0 "#PWR?" H 2450 4850 50  0001 C CNN
+F 1 "GND" H 2450 4950 50  0000 C CNN
+F 2 "" H 2450 5100 50  0000 C CNN
+F 3 "" H 2450 5100 50  0000 C CNN
+	1    2450 5100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3250 5300 3150 5300
+Wire Wire Line
+	3150 5300 3150 5350
+Wire Wire Line
+	3150 5350 2750 5350
+Wire Wire Line
+	3850 5100 3850 5300
+Wire Wire Line
+	3750 5200 3800 5200
+Wire Wire Line
+	3800 5200 3800 4750
+Wire Wire Line
+	3800 4750 3100 4750
+Wire Wire Line
+	3100 4750 3100 3700
+Wire Wire Line
+	3100 3700 1300 3700
 Wire Bus Line
 	7050 2900 7050 4500
 Wire Bus Line
@@ -1418,7 +1459,7 @@ Wire Bus Line
 	5850 4500 5850 5150
 Wire Bus Line
 	6400 1750 6400 3550
-Connection ~ 3200 5100
+Connection ~ 1300 3700
 Wire Wire Line
-	3200 5100 3000 5100
+	1300 3700 1300 4400
 $EndSCHEMATC
