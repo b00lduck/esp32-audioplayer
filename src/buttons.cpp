@@ -27,7 +27,7 @@ void Buttons::init() {
   pinMode(BUTTON1, INPUT);
   pinMode(BUTTON2, INPUT);
   pinMode(BUTTON3, INPUT);
-  pinMode(BUTTON4, INPUT);
+  pinMode(HEADPHONE_SWITCH, INPUT);
 }
 
 bool Buttons::read() {
@@ -35,7 +35,7 @@ bool Buttons::read() {
     state = (digitalRead(BUTTON1)) |  
             (digitalRead(BUTTON2)) << 1 | 
             (digitalRead(BUTTON3)) << 2 |
-            (digitalRead(BUTTON4)) << 3;
+            (digitalRead(HEADPHONE_SWITCH)) << 3;
             
     state ^= 255;
 

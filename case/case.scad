@@ -104,16 +104,17 @@ module sheet1() {
 }
 
 module sheet2() {
-    /*
+    
     translate([-60,0,0]) rotate([0,0,90]) difference() {
         faceA(width, depth);
         translate([-10, 6]) sdCut();
         translate([55,14]) usbCut();
         translate([-65,17]) powerCut();
-        translate([width/2 - 25.5,-height/2 + 27]) phoneCut();
+        translate([width/2 - 25.5, -height/2 + 27]) phoneCut();
+        translate([width/2 - 26.5, -height/2 + 55]) ledsCut();
     }
-    */
-
+    
+    /*
     translate([60,0,0]) rotate([0,0,90]) difference() {
         faceB(width, depth);
         translate([-buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
@@ -121,6 +122,7 @@ module sheet2() {
         translate([buttonSpread,-buttonSpacing+buttonFoo]) circle(buttonDiameter/2);
         rfid();
     }
+    */
     
 }
 
@@ -139,6 +141,11 @@ module rfid() {
 
 module phoneCut() {
     circle(5.5);
+}
+
+module ledsCut() {
+    translate([-5,0]) circle(2.1);
+    translate([5,0]) circle(2.1);
 }
 
 module sdCut() {
