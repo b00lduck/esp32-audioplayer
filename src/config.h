@@ -2,14 +2,14 @@
 // Digital pins for LEDs
 #define LED1                    26
 #define LED2                    27
-#define LED3                    14
-#define LED4                    12
+//#define LED3                    14
+//#define LED4                    12
 
 // Digital pins for buttons
 #define BUTTON1                 36
 #define BUTTON2                 39
 #define BUTTON3                 34
-#define BUTTON4                 35
+#define HEADPHONE_SWITCH        35
 
 // Amplifier enable/disable (power saving)
 #define AMP_ENABLE              25

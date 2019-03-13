@@ -59,20 +59,20 @@ void setup() {
 
   // Initialize GPIOs for LEDs
   // led1 green
-  pinMode(LED1, OUTPUT);
-  digitalWrite(LED1, LOW);
+//  pinMode(LED1, OUTPUT);
+//  digitalWrite(LED1, LOW);
   
   // led2 white (player state)
   pinMode(LED2, OUTPUT);
   digitalWrite(LED2, LOW);
   
   // led3 red
-  pinMode(LED3, OUTPUT);
-  digitalWrite(LED3, LOW);
+//  pinMode(LED3, OUTPUT);
+//  digitalWrite(LED3, LOW);
 
   // led4 not used
-  pinMode(LED4, OUTPUT);
-  digitalWrite(LED4, LOW);  
+//  pinMode(LED4, OUTPUT);
+//  digitalWrite(LED4, LOW);  
 
   // Initialize GPIOs for "amplifier enable"
   pinMode(AMP_ENABLE, OUTPUT);

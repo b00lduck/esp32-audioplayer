@@ -311,45 +311,17 @@ Wire Wire Line
 	1400 1000 1400 900 
 Text Label 6700 800  2    50   ~ 0
 AMP_ENABLE
-$Comp
-L Switch:SW_SPST SW1
-U 1 1 5BEEA3BD
-P 2450 4750
-F 0 "SW1" H 2450 4650 50  0000 C CNN
-F 1 "POWER" H 2450 4550 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 2450 4750 50  0001 C CNN
-F 3 "" H 2450 4750 50  0001 C CNN
-	1    2450 4750
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	2200 4750 2250 4750
-Wire Wire Line
-	2650 4750 2800 4750
-Wire Wire Line
-	2800 4750 2800 4850
-$Comp
-L power:GND #PWR06
-U 1 1 5BEF6B43
-P 2800 4850
-F 0 "#PWR06" H 2800 4600 50  0001 C CNN
-F 1 "GND" H 2800 4700 50  0000 C CNN
-F 2 "" H 2800 4850 50  0000 C CNN
-F 3 "" H 2800 4850 50  0000 C CNN
-	1    2800 4850
-	1    0    0    -1  
-$EndComp
 Text GLabel 5700 3250 2    50   Input ~ 0
 LED1
 Text GLabel 5700 3350 2    50   Input ~ 0
 LED2
 Text GLabel 4000 2600 0    50   Input ~ 0
 LED3
-Text GLabel 3300 3250 0    50   Input ~ 0
+Text GLabel 3450 3250 0    50   Input ~ 0
 SW1
-Text GLabel 3000 3350 0    50   Input ~ 0
+Text GLabel 3450 3350 0    50   Input ~ 0
 SW2
-Text GLabel 3300 3050 0    50   Input ~ 0
+Text GLabel 3450 3050 0    50   Input ~ 0
 SW3
 Wire Wire Line
 	2200 4650 2300 4650
@@ -396,19 +368,8 @@ Text Label 3350 2850 0    50   ~ 0
 ADC_BATT
 Text Label 2300 3300 1    50   ~ 0
 LOW_BATT
-$Comp
-L Connector_Generic:Conn_01x02 J2
-U 1 1 5BE39FB9
-P 3900 4500
-F 0 "J2" H 3979 4492 50  0000 L CNN
-F 1 "Charge_USB" H 3979 4401 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3900 4500 50  0001 C CNN
-F 3 "~" H 3900 4500 50  0001 C CNN
-	1    3900 4500
-	1    0    0    -1  
-$EndComp
-Text Notes 3600 4850 0    50   ~ 0
-Power supply\nfrom USB jack
+Text Notes 3800 4750 0    50   ~ 0
+1: USB+\n2: USB- (GND)\n3: PWR SW\n4: PWR SW (VBAT)\n5: Full LED (+)\n6: Full LED (-)\n7: Charge LED (+)\n8: Charge LED (-)
 $Comp
 L Connector:Conn_01x04_Male J3
 U 1 1 5BE4DA0C
@@ -454,7 +415,7 @@ Wire Wire Line
 Wire Wire Line
 	1300 2950 1300 2850
 Wire Wire Line
-	1300 3250 1300 4400
+	1300 3250 1300 3700
 Text Notes 950  2850 0    50   ~ 0
 4.3V battery -> 1.0V ADC
 Wire Wire Line
@@ -803,14 +764,14 @@ Wire Wire Line
 	5450 3350 5700 3350
 Wire Wire Line
 	5450 3250 5700 3250
-Text Label 3500 6350 0    50   ~ 0
+Text Label 3500 6650 0    50   ~ 0
 LED1_OD
-Text Label 3500 6450 0    50   ~ 0
-LED2_OD
 Text Label 3500 6550 0    50   ~ 0
+LED2_OD
+Text Label 3500 6450 0    50   ~ 0
 LED3_OD
 Wire Wire Line
-	3450 6550 3900 6550
+	3450 6550 4100 6550
 Wire Wire Line
 	3450 6350 4200 6350
 $Comp
@@ -849,13 +810,9 @@ Text GLabel 4000 2400 0    50   Input ~ 0
 LED4
 Text GLabel 2600 6350 0    50   Input ~ 0
 LED4
-Text GLabel 3000 3150 0    50   Input ~ 0
-SW4
 Wire Wire Line
 	1950 2850 4350 2850
-Text GLabel 4900 6850 2    50   Input ~ 0
-SW4
-Text Label 3500 6650 0    50   ~ 0
+Text Label 3500 6350 0    50   ~ 0
 LED4_OD
 Wire Wire Line
 	4000 2600 4350 2600
@@ -1072,15 +1029,15 @@ Wire Wire Line
 Wire Wire Line
 	3450 6450 4150 6450
 Wire Wire Line
-	3900 6550 3900 6750
+	4100 6550 4100 6750
 Wire Wire Line
-	3900 6750 4350 6750
+	4100 6750 4350 6750
 Wire Wire Line
-	3450 6650 3850 6650
+	3450 6650 4050 6650
 Wire Wire Line
-	3850 6650 3850 6850
+	4050 6650 4050 6850
 Wire Wire Line
-	3850 6850 4350 6850
+	4050 6850 4350 6850
 Wire Wire Line
 	2600 6950 2600 6850
 Connection ~ 2600 6950
@@ -1102,21 +1059,8 @@ Wire Wire Line
 	3450 6150 3550 6150
 Wire Wire Line
 	3550 6150 3550 6100
-$Comp
-L Diode:1N4007 D1
-U 1 1 5C1A04B7
-P 3200 4500
-F 0 "D1" H 3200 4716 50  0000 C CNN
-F 1 "1N4007" H 3200 4625 50  0000 C CNN
-F 2 "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal" H 3200 4325 50  0001 C CNN
-F 3 "http://www.vishay.com/docs/88503/1n4001.pdf" H 3200 4500 50  0001 C CNN
-	1    3200 4500
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
-	2200 4500 3050 4500
-Wire Wire Line
-	3350 4500 3700 4500
+	2200 4500 3000 4500
 $Comp
 L Device:R R6
 U 1 1 5C1EAAFE
@@ -1207,13 +1151,11 @@ F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 3600 3700 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	3000 3150 3500 3150
+	3450 3050 3600 3050
 Wire Wire Line
-	3300 3050 3600 3050
+	3450 3350 3700 3350
 Wire Wire Line
-	3000 3350 3700 3350
-Wire Wire Line
-	3300 3250 3800 3250
+	3450 3250 3800 3250
 Wire Wire Line
 	3800 3500 3800 3250
 Connection ~ 3800 3250
@@ -1231,7 +1173,6 @@ Wire Wire Line
 	3600 3050 4350 3050
 Wire Wire Line
 	3500 3500 3500 3150
-Connection ~ 3500 3150
 Wire Wire Line
 	3500 3150 4350 3150
 Wire Wire Line
@@ -1249,26 +1190,20 @@ Wire Wire Line
 Wire Wire Line
 	4200 6950 4350 6950
 Wire Wire Line
-	4850 6850 4900 6850
-Wire Wire Line
 	4900 7000 4900 6950
 Wire Wire Line
 	4900 6950 4850 6950
 $Comp
 L power:GND #PWR0121
 U 1 1 5C1A1D3C
-P 3450 4700
-F 0 "#PWR0121" H 3450 4450 50  0001 C CNN
-F 1 "GND" H 3450 4550 50  0000 C CNN
-F 2 "" H 3450 4700 50  0000 C CNN
-F 3 "" H 3450 4700 50  0000 C CNN
-	1    3450 4700
-	1    0    0    -1  
+P 3950 5100
+F 0 "#PWR0121" H 3950 4850 50  0001 C CNN
+F 1 "GND" H 3950 4950 50  0000 C CNN
+F 2 "" H 3950 5100 50  0000 C CNN
+F 3 "" H 3950 5100 50  0000 C CNN
+	1    3950 5100
+	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	3450 4700 3450 4600
-Wire Wire Line
-	3450 4600 3700 4600
 Wire Wire Line
 	1700 5150 1700 5200
 Wire Wire Line
@@ -1316,10 +1251,10 @@ Wire Wire Line
 Wire Wire Line
 	4000 2400 4350 2400
 $Comp
-L Diode:1N4007 D?
+L Diode:1N4007 D2
 U 1 1 5C2DA7D7
 P 2800 2700
-F 0 "D?" H 2800 2916 50  0000 C CNN
+F 0 "D2" H 2800 2916 50  0000 C CNN
 F 1 "1N4007" H 2800 2825 50  0000 C CNN
 F 2 "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal" H 2800 2525 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/88503/1n4001.pdf" H 2800 2700 50  0001 C CNN
@@ -1327,10 +1262,10 @@ F 3 "http://www.vishay.com/docs/88503/1n4001.pdf" H 2800 2700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R?
+L Device:R R3
 U 1 1 5C2DA9AD
 P 3050 2450
-F 0 "R?" H 3150 2500 50  0000 C CNN
+F 0 "R3" H 3150 2500 50  0000 C CNN
 F 1 "10k" H 3200 2400 50  0000 C CNN
 F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 2980 2450 50  0001 C CNN
 F 3 "~" H 3050 2450 50  0001 C CNN
@@ -1349,10 +1284,10 @@ Wire Wire Line
 Wire Wire Line
 	3050 2300 3050 2200
 $Comp
-L power:+5V #PWR?
+L power:+5V #PWR0122
 U 1 1 5C347A2C
 P 3050 2200
-F 0 "#PWR?" H 3050 2050 50  0001 C CNN
+F 0 "#PWR0122" H 3050 2050 50  0001 C CNN
 F 1 "+5V" H 3050 2340 50  0000 C CNN
 F 2 "" H 3050 2200 50  0000 C CNN
 F 3 "" H 3050 2200 50  0000 C CNN
@@ -1361,6 +1296,161 @@ F 3 "" H 3050 2200 50  0000 C CNN
 $EndComp
 Wire Wire Line
 	2300 2700 2650 2700
+Wire Wire Line
+	4850 6850 4900 6850
+Wire Wire Line
+	4900 6850 4900 6950
+Connection ~ 4900 6950
+Wire Wire Line
+	3500 3150 2550 3150
+Wire Wire Line
+	2550 3150 2550 3300
+Connection ~ 3500 3150
+$Comp
+L power:GNDA #PWR0123
+U 1 1 5C51AD39
+P 2550 3300
+F 0 "#PWR0123" H 2550 3050 50  0001 C CNN
+F 1 "GNDA" H 2555 3127 50  0000 C CNN
+F 2 "" H 2550 3300 50  0001 C CNN
+F 3 "" H 2550 3300 50  0001 C CNN
+	1    2550 3300
+	1    0    0    -1  
+$EndComp
+Text Notes 2550 3150 0    50   ~ 0
+headphone switch
+$Comp
+L Device:R R4
+U 1 1 5C6A100C
+P 2600 5550
+F 0 "R4" H 2700 5600 50  0000 C CNN
+F 1 "?" H 2750 5500 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 2530 5550 50  0001 C CNN
+F 3 "~" H 2600 5550 50  0001 C CNN
+	1    2600 5550
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R5
+U 1 1 5C6B7954
+P 2600 5350
+F 0 "R5" H 2700 5400 50  0000 C CNN
+F 1 "?" H 2750 5300 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 2530 5350 50  0001 C CNN
+F 3 "~" H 2600 5350 50  0001 C CNN
+	1    2600 5350
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2450 5550 2250 5550
+Wire Wire Line
+	2250 5350 2450 5350
+$Comp
+L Connector_Generic:Conn_02x04_Odd_Even J2
+U 1 1 5C6E7F83
+P 3450 5200
+F 0 "J2" H 3500 5517 50  0000 C CNN
+F 1 "Conn_02x04_Odd_Even" H 3500 5426 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical" H 3450 5200 50  0001 C CNN
+F 3 "~" H 3450 5200 50  0001 C CNN
+	1    3450 5200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3750 5100 3850 5100
+Wire Wire Line
+	3250 5100 3200 5100
+Wire Wire Line
+	3000 5100 3000 4500
+Wire Wire Line
+	2900 4750 2900 5200
+Wire Wire Line
+	2900 5200 3250 5200
+Wire Wire Line
+	2200 4750 2450 4750
+Connection ~ 3850 5100
+Wire Wire Line
+	3850 5100 3950 5100
+Wire Wire Line
+	2250 5350 2250 5450
+Wire Wire Line
+	3750 5300 3850 5300
+Wire Wire Line
+	3850 5550 3850 5400
+Wire Wire Line
+	3850 5400 3750 5400
+Wire Wire Line
+	2750 5550 3850 5550
+$Comp
+L Connector:TestPoint TP4
+U 1 1 5C88FD5A
+P 2200 5450
+F 0 "TP4" V 2395 5524 50  0000 C CNN
+F 1 "R" V 2304 5524 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 2400 5450 50  0001 C CNN
+F 3 "~" H 2400 5450 50  0001 C CNN
+	1    2200 5450
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2200 5450 2250 5450
+Connection ~ 2250 5450
+Wire Wire Line
+	2250 5450 2250 5550
+Wire Wire Line
+	3250 5400 3200 5400
+Wire Wire Line
+	3200 5400 3200 5100
+Connection ~ 3200 5100
+Wire Wire Line
+	3200 5100 3000 5100
+Text Label 2700 4500 0    50   ~ 0
+USB+
+$Comp
+L Device:R R7
+U 1 1 5C8AB77F
+P 2450 4950
+F 0 "R7" H 2550 5000 50  0000 C CNN
+F 1 "47k" H 2600 4900 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 2380 4950 50  0001 C CNN
+F 3 "~" H 2450 4950 50  0001 C CNN
+	1    2450 4950
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	2450 4800 2450 4750
+Connection ~ 2450 4750
+Wire Wire Line
+	2450 4750 2900 4750
+$Comp
+L power:GND #PWR0124
+U 1 1 5C8B9589
+P 2450 5100
+F 0 "#PWR0124" H 2450 4850 50  0001 C CNN
+F 1 "GND" H 2450 4950 50  0000 C CNN
+F 2 "" H 2450 5100 50  0000 C CNN
+F 3 "" H 2450 5100 50  0000 C CNN
+	1    2450 5100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3250 5300 3150 5300
+Wire Wire Line
+	3150 5300 3150 5350
+Wire Wire Line
+	3150 5350 2750 5350
+Wire Wire Line
+	3850 5100 3850 5300
+Wire Wire Line
+	3750 5200 3800 5200
+Wire Wire Line
+	3800 5200 3800 4750
+Wire Wire Line
+	3800 4750 3100 4750
+Wire Wire Line
+	3100 4750 3100 3700
+Wire Wire Line
+	3100 3700 1300 3700
 Wire Bus Line
 	7050 2900 7050 4500
 Wire Bus Line
@@ -1369,4 +1459,7 @@ Wire Bus Line
 	5850 4500 5850 5150
 Wire Bus Line
 	6400 1750 6400 3550
+Connection ~ 1300 3700
+Wire Wire Line
+	1300 3700 1300 4400
 $EndSCHEMATC
