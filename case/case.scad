@@ -7,15 +7,24 @@ depth = 110;
 height = 110;
 
 // 3.6 mm Pappel settings
-material = 3.6;
-kerf = 0.07;
-kerfExtraToothLen = 0.2;
+//material = 3.6;
+//kerf = 0.07;
+//kerfExtraToothLen = 0.2;
+//edgeHoleDistance = 11.6; // 11mm + ?
+//edgeHoleRadius = 2
 
+// 3 mm Plexi settings
+material = 3;
+kerf = 0.05;
+kerfExtraToothLen = 0.2;
+edgeHoleDistance = 11.8; // 11mm + ?
+edgeHoleRadius = 1.6;
 
 // 4 mm Birke settings
 //material = 4;
 //kerf = 0.07;
 //kerfExtraToothLen = 0.2;
+
 
 
 buttonDiameter = 24; 
@@ -31,7 +40,7 @@ speakerSluts = 2.5;
 fingersA = 9;
 fingersB = 4;
 
-edgeHoleDistance = 11.6; // 11mm + ?
+
 
 //dimensions();
 
@@ -104,7 +113,7 @@ module sheet1() {
 }
 
 module sheet2() {
-    /*
+    
     translate([-60,0,0]) rotate([0,0,90]) difference() {
         faceA(width, depth);
         translate([-10, 6]) sdCut();
@@ -112,7 +121,6 @@ module sheet2() {
         translate([-65,17]) powerCut();
         translate([width/2 - 25.5,-height/2 + 27]) phoneCut();
     }
-    */
 
     translate([60,0,0]) rotate([0,0,90]) difference() {
         faceB(width, depth);
@@ -130,10 +138,10 @@ module rfid() {
     distC = 37 / 2;    
     translate([0,20,0]) {
         // two holes are enough and so the asymmetry of the board will be hidden
-        translate([distC,distA,0]) circle(1.6);
-        //translate([-distC,distB,0]) circle(1.6);
-        //translate([distC, -distA,0]) circle(1.6);
-        translate([-distC,-distB,0]) circle(1.6);
+        translate([distC,distA,0]) circle(edgeHoleRadius);
+        //translate([-distC,distB,0]) circle(edgeHoleRadius);
+        //translate([distC, -distA,0]) circle(edgeHoleRadius);
+        translate([-distC,-distB,0]) circle(edgeHoleRadius);
     }
 }
 
@@ -168,9 +176,9 @@ module sheet4() {
     translate([-50,0,0]) {
         speakerRing(speakerHoleDistance, 4);
     }
-    translate([50,0,0]) {
-        speakerRing(speakerHoleDistance, 4);
-    }
+    //translate([50,0,0]) {
+    //    speakerRing(speakerHoleDistance, 4);
+    //}
 }
 
 module faceA(a,b) {
@@ -204,7 +212,7 @@ module reducedSquare(a, b) {
     difference() {
         translate([as, bs]) square([a - reduction, b - reduction]);
         for(x = [-1,1]) for(y = [-1,1]) {
-            translate([x * (at + edgeHoleDistance),y * (bt + edgeHoleDistance)]) circle(2);
+            translate([x * (at + edgeHoleDistance),y * (bt + edgeHoleDistance)]) circle(edgeHoleRadius);
         }
     }
 }
