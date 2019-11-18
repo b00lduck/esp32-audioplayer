@@ -59,8 +59,8 @@ void setup() {
 
   // Initialize GPIOs for LEDs
   // led1 green
-//  pinMode(LED1, OUTPUT);
-//  digitalWrite(LED1, LOW);
+  pinMode(LED1, OUTPUT);
+  digitalWrite(LED1, LOW);
   
   // led2 white (player state)
   pinMode(LED2, OUTPUT);
@@ -115,25 +115,32 @@ void setup() {
   }
 
   Mapper::MapperError err = mapper.init(); 
-  switch(err) {
-    case Mapper::MapperError::MALFORMED_LINE_SYNTAX:
-      fatal.fatal("Mapping error", "Syntax error");
-    case Mapper::MapperError::MALFORMED_CARD_ID:
-      fatal.fatal("Mapping error", "Illegal char in ID");
-    case Mapper::MapperError::LINE_TOO_SHORT:
-      fatal.fatal("Mapping error", "Line too short");    
-    case Mapper::MapperError::LINE_TOO_LONG:
-      fatal.fatal("Mapping error", "Line too long");
-    case Mapper::MapperError::MAPPING_FILE_NOT_FOUND:
-      fatal.fatal("Mapping error", "Mapping file not found");      
-    case Mapper::MapperError::MALFORMED_FILE_NAME:
-      fatal.fatal("Mapping error", "Malformed file name");   
-    case Mapper::MapperError::REFERENCED_FILE_NOT_FOUND:
-      fatal.fatal("Mapping error", "Referenced file not found");   
-  }    
+  if (err != Mapper::MapperError::OK) {
+    //player.play("/error.mp3");
+    switch(err) {
+      case Mapper::MapperError::MALFORMED_LINE_SYNTAX:
+        fatal.fatal("Mapping error", "Syntax error");
+      case Mapper::MapperError::MALFORMED_CARD_ID:
+        fatal.fatal("Mapping error", "Illegal char in ID");
+      case Mapper::MapperError::LINE_TOO_SHORT:
+        fatal.fatal("Mapping error", "Line too short");    
+      case Mapper::MapperError::LINE_TOO_LONG:
+        fatal.fatal("Mapping error", "Line too long");
+      case Mapper::MapperError::MAPPING_FILE_NOT_FOUND:
+        fatal.fatal("Mapping error", "Mapping file not found");      
+      case Mapper::MapperError::MALFORMED_FILE_NAME:
+        fatal.fatal("Mapping error", "Malformed file name");   
+      #ifdef FAIL_ON_FILE_NOT_FOUND      
+        case Mapper::MapperError::REFERENCED_FILE_NOT_FOUND:
+          fatal.fatal("Mapping error", "Referenced file not found");   
+      #endif      
+    }    
+  }
 
   // initialize player
   player.init();
+
+  player.play("/startup.mp3");
 
   oled.clear();
 }
@@ -189,8 +196,10 @@ void loop() {
             fatal.fatal("Mapping error", "Long line/missing newline");         
           case Mapper::MapperError::MAPPING_FILE_NOT_FOUND:
             fatal.fatal("Mapping error", "Mapping file not found");         
-          case Mapper::MapperError::REFERENCED_FILE_NOT_FOUND:
-            fatal.fatal("Mapping error", "Data file not found"); 
+          #ifdef FAIL_ON_FILE_NOT_FOUND  
+            case Mapper::MapperError::REFERENCED_FILE_NOT_FOUND:
+              fatal.fatal("Mapping error", "Data file not found"); 
+          #endif              
           case OK:
             player.play(filename);
         } 

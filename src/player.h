@@ -47,6 +47,13 @@ class Player {
 
     uint8_t currentVolume;
 
+    char *playlist[MAX_PLAYLIST_LENGTH];
+    uint8_t playlistLen;
+    uint8_t playlistIndex;
+    void playNextFile();
+    void clearPlaylist();
+    void addPlaylistEntry(char* filename);
+
   public:
     #ifdef OLED
       Player(Fatal fatal, Oled oled, VS1053 vs1053);
@@ -57,6 +64,7 @@ class Player {
     void play(char* filename);
     void stop();
     void process();
+    void next();
 
     void increaseVolume();
     void decreaseVolume();

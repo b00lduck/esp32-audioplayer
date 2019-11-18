@@ -21,6 +21,7 @@
 #include "sd.h"
 #include <FS.h>
 #include "tools.h"
+#include "config.h"
 
 SDCard::SDCard(uint8_t _csPin) : 
   csPin(_csPin) 
@@ -29,7 +30,9 @@ SDCard::SDCard(uint8_t _csPin) :
 bool SDCard::init() {
   if (SD.begin(csPin, SPI, 4000000)){
      Serial.println("SD Card initialized.");
-     printDirectory();
+     #ifdef DEBUG
+        printDirectory();
+    #endif
      return true;
   }  
   return false;      
