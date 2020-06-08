@@ -15,7 +15,7 @@ height = 110;
 
 // 3 mm Plexi settings
 material = 3;
-kerf = 0.05;
+kerf = 0.04;
 kerfExtraToothLen = 0.2;
 edgeHoleDistance = 11.8; // 11mm + ?
 edgeHoleRadius = 1.6;
