@@ -96,7 +96,7 @@ void Mapper::uid_to_string(byte *uid, char output[ID_STRING_LENGTH]) {
 }
 
 
-uint16_t Mapper::readLine (char str[MAX_MAPPING_LINE_STRING_LENGTH], File *stream) {  
+uint16_t Mapper::readLine(char str[MAX_MAPPING_LINE_STRING_LENGTH], File *stream) {  
   uint16_t i = 0;  
   memset(str, 0, MAX_MAPPING_LINE_STRING_LENGTH); 
   while (i < (MAX_MAPPING_LINE_STRING_LENGTH - 1)) {   
@@ -129,6 +129,8 @@ Mapper::MapperError Mapper::checkMappingFile() {
       return err;  
     }    
   }
+
+  Serial.println("Mapping file looks OK");
 
   return MapperError::OK;
 }
@@ -172,7 +174,10 @@ Mapper::MapperError Mapper::checkMappingLine(char* line) {
 
   if (filename[0] == '#') {
     // special card, everything ok
-  } else {
+    return MapperError::OK;
+  } 
+  
+  #ifdef FAIL_ON_FILE_NOT_FOUND
     // sound file, check if file exists
     Serial.println("try to open file");
     File dataFile = SD.open(filename, FILE_READ);   
@@ -180,7 +185,9 @@ Mapper::MapperError Mapper::checkMappingLine(char* line) {
       return MapperError::REFERENCED_FILE_NOT_FOUND;
     }
     dataFile.close();  
-  }  
 
-  return MapperError::OK;
+    return MapperError::OK;
+  #endif
+
+
 }

@@ -28,8 +28,8 @@ class VS1053 {
   private:
     uint8_t       xcsPin;
     uint8_t       xdcsPin;
-    uint8_t       xresetPin;
     uint8_t       dreqPin;    
+    uint8_t       xresetPin;    
     
     uint8_t       curvol;
     const uint8_t vs1053ChunkSize = 32 ;

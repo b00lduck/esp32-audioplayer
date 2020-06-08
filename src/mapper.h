@@ -50,10 +50,12 @@ class Mapper {
        */
       MAPPING_FILE_NOT_FOUND,
       
+#ifdef FAIL_ON_FILE_NOT_FOUND      
       /**
        * The file referenced in the mapping file was not found
        */
       REFERENCED_FILE_NOT_FOUND,
+#endif      
       
       /**
        * A line of the mapping file is too long or the last line is missing a newline

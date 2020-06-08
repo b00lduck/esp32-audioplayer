@@ -5,6 +5,11 @@ module speakerCuts(holeDist, holeDiameter, diameter, cutWidth) {
     speakerHoles(holeDist, holeDiameter);
 }
 
+module speakerCuts2(holeDist, holeDiameter, diameter, holeRadius) {
+    speakerPerforation(diameter, holeRadius, holeRadius * 2.8);
+    speakerHoles(holeDist, holeDiameter);
+}
+
 module speakerHoles(holeDist,holeDiameter) {     
   for(x=[-holeDist/2,holeDist/2])
       for(y=[-holeDist/2,holeDist/2])
@@ -19,6 +24,17 @@ module speakerGrid(diameter, cutWidth) {
      translate([0,i]) speakerRow(lenf, cutWidth);          
   }
 }
+
+module speakerPerforation(diameter, holeRadius, holeDiameter) {
+   a = 1.8;
+  for(x=[-diameter/2 + a:holeDiameter:diameter/2]) {         
+    for(y=[-diameter/2 + a:holeDiameter:diameter/2]) {
+        if (((x*x)+(y*y)) < (diameter/2)*(diameter/2)) {           
+            translate([x,y]) circle(holeRadius);          
+        }
+    }
+  }
+}    
 
 module speakerRow(width, cutWidth) {
   union() {      

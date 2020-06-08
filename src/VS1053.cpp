@@ -23,6 +23,7 @@
 #include <SPI.h>
 #include "VS1053.h"
 #include "tools.h"
+#include "config.h"
 
 VS1053::VS1053 (uint8_t _xcsPin, uint8_t _xdcsPin, uint8_t _dreqPin, uint8_t _xresetPin) : 
   xcsPin(_xcsPin), 
@@ -143,43 +144,43 @@ void VS1053::begin() {
   
   pinMode(xresetPin, OUTPUT);
   digitalWrite(xresetPin, HIGH);
-    
-  delay (100);
-  
+     
   Serial.println ("Reset VS1053...");
   digitalWrite(xresetPin, LOW);
-  delay(100); 
+  delay(5); 
   Serial.println ("End reset VS1053...");
   digitalWrite(xresetPin, HIGH);
-  delay(100);
   
   // Init SPI in slow mode (0.2 MHz)
   VS1053_SPI = SPISettings (200000, MSBFIRST, SPI_MODE0);
 
   delay (20);
   testComm ("Slow SPI,Testing VS1053 read/write registers...");  
-  
+
   // Most VS1053 modules will start up in midi mode.  The result is that there is no audio
   // when playing MP3.  You can modify the board, but there is a more elegant way:
   wram_write (0xC017, 3);                            // GPIO DDR = 3
   wram_write (0xC019, 0);                            // GPIO ODATA = 0
   delay (100);
+    
+   softReset();                                         
   
-  softReset();                                         // Do a soft reset
-  // Switch on the analog parts
-  write_register (SCI_AUDATA, 44100 + 1);            // 44.1kHz + stereo
+  // Power up analog circuits (44.1kHz stereo)
+  write_register (SCI_AUDATA, 44100 + 1);
   
-  // The next clocksetting allows SPI clocking at 5 MHz, 4 MHz is safe then.
-  write_register (SCI_CLOCKF, 6 << 12);              // Normal clock settings multiplyer 3.0 = 12.2 MHz
+  // The next clock setting allows SPI clocking at 5 MHz, 4 MHz is safe then.
+  write_register (SCI_CLOCKF, 6 << 12);  // Normal clock settings multiplier 3.0 = 12.2 MHz
   
-  //SPI Clock to 4 MHz. Now you can set high speed SPI clock.
+  //SPI Clock to 4 MHz
   VS1053_SPI = SPISettings (4000000, MSBFIRST, SPI_MODE0);
   write_register (SCI_MODE, _BV (SM_SDINEW) | _BV (SM_LINE1));
   
-  testComm ("Fast SPI, Testing VS1053 read/write registers again...");
-  delay (10);
+  testComm ("Fast SPI, Testing VS1053 read/write registers again...");    
+  delay(200);
+  
   await_data_request();
   endFillByte = wram_read (0x1E06) & 0xFF;
+
   Serial.printf ("endFillByte is %X\n", endFillByte);
   delay (100);
 }

@@ -47,3 +47,9 @@
 
 #define OLED
 #define TWI_CLOCK 600000UL
+
+
+//#define FAIL_ON_FILE_NOT_FOUND
+#define FAST_BOOT
+#define MAX_PLAYLIST_LENGTH 32
+#define MAX_FILENAME_LENGTH 64

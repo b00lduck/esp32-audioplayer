@@ -70,8 +70,8 @@ fingersB = 4;
 
 color([1,0,0]) {
     //sheet1(); // front/bottom
-    sheet2(); // top/back
-    //sheet3(); // left/right
+    //sheet2(); // top/back
+    sheet3(); // left/right
     //sheet4(); // speaker ring
     //kerftest();
 }
@@ -173,11 +173,11 @@ module powerCut() {
 module sheet3() {    
     translate([-60,0,0]) difference() {
         faceC(height, depth);
-        rotate([0,0,90]) speakerCuts(speakerHoleDistance, 4, speakerDiameter, speakerSluts - kerf/2);
+        rotate([0,0,90]) speakerCuts2(speakerHoleDistance, 4, speakerDiameter, 1.7);
     }
     translate([60,0,0]) difference() {
         faceC(height, depth);
-        rotate([0,0,90]) speakerCuts(speakerHoleDistance, 4, speakerDiameter, speakerSluts - kerf/2);
+        rotate([0,0,90]) speakerCuts2(speakerHoleDistance, 4, speakerDiameter, 1.7);
     }
 }
 

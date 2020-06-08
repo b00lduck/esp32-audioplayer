@@ -21,7 +21,7 @@
 #include "config.h"
 #include "buttons.h"
 
-Buttons::Buttons() : state(0), oldState(0) {}
+Buttons::Buttons() : oldState(0), state(0) {}
 
 void Buttons::init() {
   pinMode(BUTTON1, INPUT);
