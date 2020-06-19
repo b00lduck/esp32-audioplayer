@@ -33,7 +33,9 @@
       vs1053(vs1053),
       ringBuffer(20000),
       dataFile(),
-      currentVolume(85) {}
+      currentVolume(65),      
+      lastTime(0),
+      idleTime(0) {}
 
 void Player::init() {
   // Initialize audio decoder
@@ -166,8 +168,9 @@ void Player::process() {
     Serial.printf("Player state is now %d, was %d.\n", state, oldState);
     oldState = state;
   }
-  
-       
+         
+  uint32_t timeGone = millis() - lastTime;
+
   switch (state) {
 
     case PLAYING:      
@@ -189,34 +192,36 @@ void Player::process() {
       if ((dataFile.available() == 0) && (ringBuffer.avail() == 0)) {      
         next();
       }
+      idleTime = 0;
       break;
 
     case STOPPED:
       #ifdef OLED
         oled.trackName("");
       #endif
+      idleTime += timeGone;
       break;    
     
   }
 }
 
+void Player::setVolume(uint8_t volume) {
+  currentVolume = volume;
+  if (currentVolume > 100) {
+    currentVolume = 100;
+  }
+  if (currentVolume < 1) {
+    currentVolume = 1;
+  }
+  oled.volumeBar(currentVolume);
+  vs1053.setVolume(currentVolume);
+ }
+
 void Player::increaseVolume() {
-    currentVolume++;
-    if (currentVolume > 100) {
-      currentVolume = 100;
-    } else {
-      oled.volumeBar(currentVolume);
-      vs1053.setVolume(currentVolume);
-    }    
+    setVolume(currentVolume+1);
 }
 
 void Player::decreaseVolume() {
-    currentVolume--;
-    if (currentVolume < 1) {
-      currentVolume = 1;
-    } else {
-      oled.volumeBar(currentVolume);
-      vs1053.setVolume(currentVolume);
-    }    
+    setVolume(currentVolume-1);
 }
 

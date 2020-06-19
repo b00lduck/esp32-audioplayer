@@ -5,6 +5,9 @@
 //#define LED3                    14
 //#define LED4                    12
 
+// Digital pin for power down
+#define SHUTDOWN 12
+
 // Digital pins for buttons
 #define BUTTON1                 36
 #define BUTTON2                 39

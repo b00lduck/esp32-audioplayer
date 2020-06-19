@@ -28,7 +28,6 @@
 #include "VS1053.h"
 #include "ringbuffer.h"
 
-
 enum playerState_t {INITIALIZING, PLAYING, STOPPED};
 
 class Player {
@@ -53,6 +52,9 @@ class Player {
     void playNextFile();
     void clearPlaylist();
     void addPlaylistEntry(char* filename);
+    void setVolume(uint8_t volume);
+
+    uint32_t lastTime;
 
   public:
     #ifdef OLED
@@ -68,4 +70,6 @@ class Player {
 
     void increaseVolume();
     void decreaseVolume();
+
+    uint32_t idleTime;
 };

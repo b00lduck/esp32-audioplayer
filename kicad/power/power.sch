@@ -1,0 +1,396 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L power:VCC #PWR03
+U 1 1 5EDF9876
+P 3250 1775
+F 0 "#PWR03" H 3250 1625 50  0001 C CNN
+F 1 "VCC" H 3265 1948 50  0000 C CNN
+F 2 "" H 3250 1775 50  0001 C CNN
+F 3 "" H 3250 1775 50  0001 C CNN
+	1    3250 1775
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R1
+U 1 1 5EDFA382
+P 3250 1975
+F 0 "R1" H 3320 2021 50  0000 L CNN
+F 1 "10k" H 3320 1930 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 3180 1975 50  0001 C CNN
+F 3 "~" H 3250 1975 50  0001 C CNN
+	1    3250 1975
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3250 1775 3250 1825
+$Comp
+L Transistor_BJT:BC546 Q1
+U 1 1 5EE14051
+P 3350 2525
+F 0 "Q1" H 3541 2571 50  0000 L CNN
+F 1 "BC546" H 3541 2480 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_HandSolder" H 3550 2450 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/BC/BC547.pdf" H 3350 2525 50  0001 L CNN
+	1    3350 2525
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	3250 2325 3250 2200
+Wire Wire Line
+	3250 2725 3250 2975
+$Comp
+L power:GND #PWR0101
+U 1 1 5EE15190
+P 3250 2975
+F 0 "#PWR0101" H 3250 2725 50  0001 C CNN
+F 1 "GND" H 3255 2802 50  0000 C CNN
+F 2 "" H 3250 2975 50  0001 C CNN
+F 3 "" H 3250 2975 50  0001 C CNN
+	1    3250 2975
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R2
+U 1 1 5EE15626
+P 3600 2200
+F 0 "R2" H 3670 2246 50  0000 L CNN
+F 1 "100k" H 3670 2155 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 3530 2200 50  0001 C CNN
+F 3 "~" H 3600 2200 50  0001 C CNN
+	1    3600 2200
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3450 2200 3250 2200
+Connection ~ 3250 2200
+Wire Wire Line
+	3250 2200 3250 2125
+$Comp
+L power:VCC #PWR0102
+U 1 1 5EE1D8A9
+P 5325 1775
+F 0 "#PWR0102" H 5325 1625 50  0001 C CNN
+F 1 "VCC" H 5340 1948 50  0000 C CNN
+F 2 "" H 5325 1775 50  0001 C CNN
+F 3 "" H 5325 1775 50  0001 C CNN
+	1    5325 1775
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Device:R R6
+U 1 1 5EE1D8B3
+P 5325 1975
+F 0 "R6" H 5395 2021 50  0000 L CNN
+F 1 "10k" H 5395 1930 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 5255 1975 50  0001 C CNN
+F 3 "~" H 5325 1975 50  0001 C CNN
+	1    5325 1975
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	5325 1775 5325 1825
+$Comp
+L Transistor_BJT:BC546 Q3
+U 1 1 5EE1D8BE
+P 5225 2525
+F 0 "Q3" H 5416 2571 50  0000 L CNN
+F 1 "BC546" H 5416 2480 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_HandSolder" H 5425 2450 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/BC/BC547.pdf" H 5225 2525 50  0001 L CNN
+	1    5225 2525
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5325 2325 5325 2175
+Wire Wire Line
+	5325 2725 5325 2975
+$Comp
+L power:GND #PWR0103
+U 1 1 5EE1D8CA
+P 5325 2975
+F 0 "#PWR0103" H 5325 2725 50  0001 C CNN
+F 1 "GND" H 5330 2802 50  0000 C CNN
+F 2 "" H 5325 2975 50  0001 C CNN
+F 3 "" H 5325 2975 50  0001 C CNN
+	1    5325 2975
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Device:R R5
+U 1 1 5EE1D8D4
+P 4975 2175
+F 0 "R5" H 5045 2221 50  0000 L CNN
+F 1 "100k" H 5045 2130 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 4905 2175 50  0001 C CNN
+F 3 "~" H 4975 2175 50  0001 C CNN
+	1    4975 2175
+	0    -1   1    0   
+$EndComp
+Wire Wire Line
+	5125 2175 5325 2175
+Connection ~ 5325 2175
+Wire Wire Line
+	5325 2175 5325 2125
+Wire Wire Line
+	4825 2175 4500 2175
+Wire Wire Line
+	5025 2525 4775 2525
+Wire Wire Line
+	4050 2525 4500 2175
+Wire Wire Line
+	3550 2525 3625 2525
+Wire Wire Line
+	4050 2200 4500 2525
+Wire Wire Line
+	3750 2200 4050 2200
+$Comp
+L Device:C C1
+U 1 1 5EE22DF2
+P 3625 3075
+F 0 "C1" H 3740 3121 50  0000 L CNN
+F 1 "100n" H 3740 3030 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D3.8mm_W2.6mm_P2.50mm" H 3663 2925 50  0001 C CNN
+F 3 "~" H 3625 3075 50  0001 C CNN
+	1    3625 3075
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3625 2925 3625 2525
+Connection ~ 3625 2525
+Wire Wire Line
+	3625 2525 4050 2525
+$Comp
+L Device:C C2
+U 1 1 5EE239ED
+P 4775 3075
+F 0 "C2" H 4890 3121 50  0000 L CNN
+F 1 "100n" H 4890 3030 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D3.0mm_W2.0mm_P2.50mm" H 4813 2925 50  0001 C CNN
+F 3 "~" H 4775 3075 50  0001 C CNN
+	1    4775 3075
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4775 2925 4775 2525
+Connection ~ 4775 2525
+Wire Wire Line
+	4775 2525 4500 2525
+$Comp
+L power:VCC #PWR0105
+U 1 1 5EE291F5
+P 3975 4300
+F 0 "#PWR0105" H 3975 4150 50  0001 C CNN
+F 1 "VCC" H 3990 4473 50  0000 C CNN
+F 2 "" H 3975 4300 50  0001 C CNN
+F 3 "" H 3975 4300 50  0001 C CNN
+	1    3975 4300
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	5325 2175 6175 2175
+Text GLabel 6175 2175 2    50   Input ~ 0
+EN
+Text GLabel 4525 3675 3    50   Input ~ 0
+SHUTDN
+$Comp
+L Connector:Conn_01x04_Male J2
+U 1 1 5EE4C33A
+P 1650 1825
+F 0 "J2" H 1758 2106 50  0000 C CNN
+F 1 "Conn_01x04_Male" H 1758 2015 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 1650 1825 50  0001 C CNN
+F 3 "~" H 1650 1825 50  0001 C CNN
+	1    1650 1825
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Male J1
+U 1 1 5EE4D06E
+P 1600 3550
+F 0 "J1" H 1708 3731 50  0000 C CNN
+F 1 "Conn_01x02_Male" H 1708 3640 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 1600 3550 50  0001 C CNN
+F 3 "~" H 1600 3550 50  0001 C CNN
+	1    1600 3550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1850 1725 2325 1725
+$Comp
+L power:GND #PWR0107
+U 1 1 5EE503F9
+P 2050 1825
+F 0 "#PWR0107" H 2050 1575 50  0001 C CNN
+F 1 "GND" H 2055 1652 50  0000 C CNN
+F 2 "" H 2050 1825 50  0001 C CNN
+F 3 "" H 2050 1825 50  0001 C CNN
+	1    2050 1825
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	1850 2025 2325 2025
+Wire Wire Line
+	2325 1725 2325 1575
+$Comp
+L power:VCC #PWR0108
+U 1 1 5EE4FF72
+P 2325 1575
+F 0 "#PWR0108" H 2325 1425 50  0001 C CNN
+F 1 "VCC" H 2340 1748 50  0000 C CNN
+F 2 "" H 2325 1575 50  0001 C CNN
+F 3 "" H 2325 1575 50  0001 C CNN
+	1    2325 1575
+	1    0    0    -1  
+$EndComp
+Text GLabel 2325 2025 2    50   Input ~ 0
+SHUTDN
+Wire Wire Line
+	1850 1825 2050 1825
+Text GLabel 2325 1925 2    50   Input ~ 0
+EN
+Wire Wire Line
+	1850 1925 2325 1925
+$Comp
+L Transistor_BJT:BC546 Q4
+U 1 1 5EEC4ADE
+P 4150 2800
+F 0 "Q4" H 4341 2846 50  0000 L CNN
+F 1 "BC546" H 4341 2755 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_HandSolder" H 4350 2725 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/BC/BC547.pdf" H 4150 2800 50  0001 L CNN
+	1    4150 2800
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Device:R R7
+U 1 1 5EEC64F3
+P 4525 3350
+F 0 "R7" H 4595 3396 50  0000 L CNN
+F 1 "10k" H 4595 3305 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 4455 3350 50  0001 C CNN
+F 3 "~" H 4525 3350 50  0001 C CNN
+	1    4525 3350
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	4050 2600 4050 2525
+Connection ~ 4050 2525
+$Comp
+L power:GND #PWR0109
+U 1 1 5EEC76DE
+P 4050 3000
+F 0 "#PWR0109" H 4050 2750 50  0001 C CNN
+F 1 "GND" H 4025 2850 50  0000 C CNN
+F 2 "" H 4050 3000 50  0001 C CNN
+F 3 "" H 4050 3000 50  0001 C CNN
+	1    4050 3000
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	5225 4575 4775 4575
+Wire Wire Line
+	2075 3550 1800 3550
+Text GLabel 2075 3550 2    50   Input ~ 0
+SW
+Wire Wire Line
+	1925 3650 1925 3725
+Wire Wire Line
+	1800 3650 1925 3650
+$Comp
+L power:GND #PWR0106
+U 1 1 5EE4DD65
+P 1925 3725
+F 0 "#PWR0106" H 1925 3475 50  0001 C CNN
+F 1 "GND" H 1930 3552 50  0000 C CNN
+F 2 "" H 1925 3725 50  0001 C CNN
+F 3 "" H 1925 3725 50  0001 C CNN
+	1    1925 3725
+	-1   0    0    -1  
+$EndComp
+Connection ~ 4775 4575
+Text GLabel 5225 4575 2    50   Input ~ 0
+SW
+Wire Wire Line
+	4300 4575 4275 4575
+Wire Wire Line
+	3975 4850 3625 4850
+Wire Wire Line
+	4775 4575 4600 4575
+Wire Wire Line
+	4775 3225 4775 4575
+$Comp
+L Device:R R3
+U 1 1 5EE32235
+P 4450 4575
+F 0 "R3" H 4520 4621 50  0000 L CNN
+F 1 "10k" H 4520 4530 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 4380 4575 50  0001 C CNN
+F 3 "~" H 4450 4575 50  0001 C CNN
+	1    4450 4575
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	3975 4850 3975 4900
+Connection ~ 3975 4850
+Wire Wire Line
+	3975 4775 3975 4850
+Wire Wire Line
+	3625 3225 3625 4850
+Wire Wire Line
+	3975 5300 3975 5200
+$Comp
+L Transistor_BJT:BC327 Q2
+U 1 1 5EE2500F
+P 4075 4575
+F 0 "Q2" H 4266 4529 50  0000 L CNN
+F 1 "BC327" H 4266 4620 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_HandSolder" H 4275 4500 50  0001 L CIN
+F 3 "http://www.onsemi.com/pub_link/Collateral/BC327-D.PDF" H 4075 4575 50  0001 L CNN
+	1    4075 4575
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR0104
+U 1 1 5EE2476F
+P 3975 5300
+F 0 "#PWR0104" H 3975 5050 50  0001 C CNN
+F 1 "GND" H 3980 5127 50  0000 C CNN
+F 2 "" H 3975 5300 50  0001 C CNN
+F 3 "" H 3975 5300 50  0001 C CNN
+	1    3975 5300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R4
+U 1 1 5EE2415D
+P 3975 5050
+F 0 "R4" H 4045 5096 50  0000 L CNN
+F 1 "10k" H 4045 5005 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 3905 5050 50  0001 C CNN
+F 3 "~" H 3975 5050 50  0001 C CNN
+	1    3975 5050
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	3975 4375 3975 4300
+Wire Wire Line
+	4350 2800 4525 2800
+Wire Wire Line
+	4525 2800 4525 3200
+Wire Wire Line
+	4525 3500 4525 3675
+$EndSCHEMATC

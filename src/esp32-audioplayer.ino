@@ -70,10 +70,6 @@ void setup() {
 //  pinMode(LED3, OUTPUT);
 //  digitalWrite(LED3, LOW);
 
-  // led4 not used
-//  pinMode(LED4, OUTPUT);
-//  digitalWrite(LED4, LOW);  
-
   // Initialize GPIOs for "amplifier enable"
   pinMode(AMP_ENABLE, OUTPUT);
   digitalWrite(AMP_ENABLE, LOW); 
@@ -83,6 +79,9 @@ void setup() {
 
   // Initialize GPIO for battery voltage
   pinMode(ADC_BATT, ANALOG);
+  pinMode(LOW_BATT, INPUT);
+  pinMode(SHUTDOWN, OUTPUT);
+  digitalWrite(SHUTDOWN, LOW);
 
   Serial.println("GPIO init completed.");
 
@@ -142,7 +141,7 @@ void setup() {
 
   player.play("/startup.mp3");
 
-  oled.clear();
+  oled.clear();  
 }
 
 uint16_t lpf = 0;
@@ -156,7 +155,7 @@ void loop() {
   if (changed) {
     oled.buttons(buttons.state);
   }  
-  #endif
+  #endif  
 
   // Cheapo one pole IIR low pass filter with unknown cutoff frequency (because sample rate is unknown).
   // This is good enough for battery monitoring though.
@@ -169,6 +168,18 @@ void loop() {
   uint16_t newLpf = (float)lpf * 0.95 + (float)batt * 0.05;
   lpf = newLpf;
 
+
+  uint8_t lowBattFromPowerModule = digitalRead(LOW_BATT);
+  if (lowBattFromPowerModule == 0) {
+    pinMode(SHUTDOWN, OUTPUT);
+    digitalWrite(SHUTDOWN, 1);
+  }
+
+  if (player.idleTime > 700000000) { // approx 15 min shutdown timer
+    pinMode(SHUTDOWN, OUTPUT);
+    digitalWrite(SHUTDOWN, 1);
+  }
+  
   // Volume Control
   if (buttons.buttonDown(0)) {
     player.increaseVolume();
