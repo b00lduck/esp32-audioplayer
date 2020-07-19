@@ -48,7 +48,7 @@ module box() {
       //translate([-width/2,-height/2,-boxThickness]) cube([width, height, boxDepth]);    
             
       // usb slot
-      translate([0,0,boxDepth-boxFloorThickness/2]) cube([12,11,20], true); 
+      translate([0,0,boxDepth-boxFloorThickness/2]) cube([12.5,11.5,20], true); 
       //translate([0,1.7,boxDepth + 0.4]) cube([20,1.2,20], true); 
    }   
    
