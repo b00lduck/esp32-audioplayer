@@ -35,4 +35,11 @@ c026995e /bummel_rolltreppe.mp3
 e06c555e /wusel1.mp3
 f091565e /wusel2.mp3
 50b76c5d /wusel3
-
+70b9985e /piraten.mp3
+70e3e45d /albatraoz.mp3
+a739ed65 /robbi
+9748ae65 /stoopsale.mp3
+800f565d /unga-bunga.mp3
+007f8a7a /pumuckl-1
+e0aca67a /heat-of-night.mp3
+40febf5d /egal.mp3
