@@ -1,6 +1,4 @@
 (sym_lib_table
   (lib (name audioplayer-rescue)(type Legacy)(uri ${KIPRJMOD}/audioplayer-rescue.lib)(options "")(descr ""))
   (lib (name audioplayer)(type Legacy)(uri ${KIPRJMOD}/audioplayer.lib)(options "")(descr ""))
-  (lib (name RF_Module)(type Legacy)(uri ${KIPRJMOD}/RF_Module.lib)(options "")(descr ""))
-  (lib (name nodemcu-esp32)(type Legacy)(uri ${KIPRJMOD}/nodemcu-esp32.lib)(options "")(descr ""))
 )

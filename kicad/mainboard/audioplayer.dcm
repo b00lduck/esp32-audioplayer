@@ -1,5 +1,11 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP CP2102N-GQFN20
+D USB to UART master bridge, QFN-24
+K USB UART bridge
+F https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf
+$ENDCMP
+#
 $CMP GY-521
 D GY-512 breakout board with MPU-6050
 K MPU-6050 GY-512 gyroscope
