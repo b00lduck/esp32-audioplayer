@@ -3128,8 +3128,6 @@ F 3 "" H 8575 7275 50  0000 C CNN
 $EndComp
 Wire Wire Line
 	8800 6900 8575 6900
-Wire Bus Line
-	8475 1000 8475 4600
 Wire Wire Line
 	8575 7275 8575 7250
 Wire Wire Line
@@ -3145,4 +3143,27 @@ F 3 "~" H 8575 7100 50  0001 C CNN
 	1    8575 7100
 	1    0    0    -1  
 $EndComp
+$Comp
+L Device:C C?
+U 1 1 5F2FDB6F
+P 9300 10750
+F 0 "C?" H 9415 10796 50  0000 L CNN
+F 1 "100n" H 9415 10705 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 9338 10600 50  0001 C CNN
+F 3 "~" H 9300 10750 50  0001 C CNN
+	1    9300 10750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8875 10500 9300 10500
+Wire Wire Line
+	9300 10500 9300 10600
+Connection ~ 8875 10500
+Wire Wire Line
+	9300 10950 8875 10950
+Wire Wire Line
+	9300 10900 9300 10950
+Wire Bus Line
+	8475 1000 8475 4600
+Connection ~ 8875 10950
 $EndSCHEMATC
