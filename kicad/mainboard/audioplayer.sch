@@ -2386,23 +2386,23 @@ Wire Wire Line
 $Comp
 L Jumper:SolderJumper_3_Bridged123 JP2
 U 1 1 628BA939
-P 7425 3250
-F 0 "JP2" H 7375 3400 50  0000 L CNN
-F 1 "SolderJumper_3_Bridged123" H 7425 3454 50  0001 C CNN
-F 2 "Jumper:SolderJumper-3_P1.3mm_Open_RoundedPad1.0x1.5mm_NumberLabels" H 7425 3250 50  0001 C CNN
-F 3 "~" H 7425 3250 50  0001 C CNN
-F 4 "ok" H 7425 3250 50  0001 C CNN "Vorrätig"
-	1    7425 3250
+P 7575 3250
+F 0 "JP2" H 7525 3400 50  0000 L CNN
+F 1 "SolderJumper_3_Bridged123" H 7575 3454 50  0001 C CNN
+F 2 "Jumper:SolderJumper-3_P1.3mm_Open_RoundedPad1.0x1.5mm_NumberLabels" H 7575 3250 50  0001 C CNN
+F 3 "~" H 7575 3250 50  0001 C CNN
+F 4 "ok" H 7575 3250 50  0001 C CNN "Vorrätig"
+	1    7575 3250
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	7625 3250 8175 3250
+	7775 3250 8175 3250
 Wire Wire Line
-	6650 3250 7225 3250
-Text GLabel 7425 3450 3    50   Input ~ 0
+	6650 3250 7375 3250
+Text GLabel 7575 3450 3    50   Input ~ 0
 AMP_VOL-
 Wire Wire Line
-	7425 3450 7425 3400
+	7575 3450 7575 3400
 Text GLabel 675  10675 3    50   Input ~ 0
 PWR_DOWN
 Connection ~ 1475 10375
@@ -3489,8 +3489,6 @@ Wire Wire Line
 	4825 8800 4775 8800
 Wire Wire Line
 	4775 8800 4775 8525
-Wire Bus Line
-	8475 1000 8475 4600
 Connection ~ 4775 8525
 Wire Wire Line
 	4775 8525 5200 8525
@@ -3522,4 +3520,10 @@ F 3 "" H 4725 2325 50  0000 C CNN
 	1    4725 2325
 	1    0    0    -1  
 $EndComp
+Text GLabel 6900 3850 2    50   Input ~ 0
+AMP_PWR_EN
+Wire Wire Line
+	6650 3850 6900 3850
+Wire Bus Line
+	8475 1000 8475 4600
 $EndSCHEMATC
