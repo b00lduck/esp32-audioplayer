@@ -22,14 +22,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <Wire.h>
+#include <NeoPixelBus.h>
 
 #include "config.h"
 #include "tools.h"
 #include "buttons.h"
 #include "VS1053.h"
-#ifdef OLED
-  #include "oled.h"
-#endif
 #include "rfid.h"
 #include "sd.h"
 #include "mapper.h"
@@ -40,78 +38,53 @@ VS1053          vs1053(VS1053_XCS_PIN, VS1053_XDCS_PIN, VS1053_DREQ_PIN, VS1053_
 RFID            rfid(MFRC522_CS_PIN, MFRC522_RST_PIN);
 SDCard          sd(SD_CS_PIN);
 
-#ifdef OLED
-  Oled            oled(DISPLAY_ADDRESS);
-  Fatal           fatal(oled);
-  Player          player(fatal, oled, vs1053);
-#else
-  Fatal           fatal;
-  Player          player(fatal, vs1053);
-#endif
+Fatal           fatal;
+Player          player(fatal, vs1053);
 
 Mapper          mapper;
 Buttons         buttons;
 
+NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> pixels(4, WS2812_DATA_PIN);
+
 void setup() {
 
-  Serial.begin(115200);                            
-  Serial.println("\nStarting...");
+  pixels.Begin();
+  pixels.SetPixelColor(0, RgbColor(20,0,0));
+  pixels.SetPixelColor(1, RgbColor(0,20,0));
+  pixels.SetPixelColor(2, RgbColor(0,20,0));
+  pixels.SetPixelColor(3, RgbColor(20,0,0));  
+  pixels.Show();
 
-  // Initialize GPIOs for LEDs
-  // led1 green
-  pinMode(LED1, OUTPUT);
-  digitalWrite(LED1, LOW);
-  
-  // led2 white (player state)
-  pinMode(LED2, OUTPUT);
-  digitalWrite(LED2, LOW);
-  
-  // led3 red
-//  pinMode(LED3, OUTPUT);
-//  digitalWrite(LED3, LOW);
+  // Set shutdown pin to high to prevent false power down
+  pinMode(SHUTDOWN_PIN, OUTPUT);
+  digitalWrite(SHUTDOWN_PIN, HIGH); 
 
-  // Initialize GPIOs for "amplifier enable"
-  pinMode(AMP_ENABLE, OUTPUT);
-  digitalWrite(AMP_ENABLE, LOW); 
+  // Initialize GPIOs for "amplifier enable" and shut it down
+  pinMode(AMP_ENABLE_PIN, OUTPUT);
+  digitalWrite(AMP_ENABLE_PIN, LOW); 
 
   // Initialize buttons
   buttons.init();
 
   // Initialize GPIO for battery voltage
   pinMode(ADC_BATT, ANALOG);
-  pinMode(LOW_BATT, INPUT);
-  pinMode(SHUTDOWN, OUTPUT);
-  digitalWrite(SHUTDOWN, LOW);
 
-  Serial.println("GPIO init completed.");
-
-  // Initialize I²C bus
-  Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
-  #ifdef OLED
-    oled.init();
-    oled.loadingBar(0);  
-  #endif  
-  Wire.setClock(TWI_CLOCK);
-  Serial.println("I²C init completed.");
+  Serial.begin(115200);                            
+  Serial.println("MP3 player V2 now Booting...");
 
   // Initialize SPI bus
   SPI.begin(SPI_SCK_PIN, SPI_MISO_PIN, SPI_MOSI_PIN);
-  #ifdef OLED
-    oled.loadingBar(25);
-  #endif
-  Serial.println("SPI init completed.");
+  Serial.println("[ OK ] SPI init completed");
 
   // Initialize RFID reader
   rfid.init();
-
-  #ifdef OLED
-    oled.loadingBar(50);
-  #endif
-  
+  Serial.println("[ OK ] RFID init completed");
+ 
   // Initialize SD card reader
   if (!sd.init()) {
       fatal.fatal("SD card error", "init failed");
   }
+  Serial.println("[ OK ] SD/MMC init completed");
 
   Mapper::MapperError err = mapper.init(); 
   if (err != Mapper::MapperError::OK) {
@@ -136,58 +109,69 @@ void setup() {
     }    
   }
 
+  pixels.SetPixelColor(0, RgbColor(0,0,0));
+  pixels.SetPixelColor(1, RgbColor(0,20,0));
+  pixels.SetPixelColor(2, RgbColor(0,20,0));
+  pixels.SetPixelColor(3, RgbColor(0,0,0));
+  pixels.Show();   
+
   // initialize player
   player.init();
+  Serial.println("[ OK ] MP3 init completed");
 
-  player.play("/startup.mp3");
-
-  oled.clear();  
+  //player.play("/startup.mp3");
 }
 
 uint16_t lpf = 0;
-
+uint16_t showBatt = 5000;
 
 void loop() {
 
   bool changed = buttons.read();
-
-  #ifdef OLED
-  if (changed) {
-    oled.buttons(buttons.state);
-  }  
-  #endif  
 
   // Cheapo one pole IIR low pass filter with unknown cutoff frequency (because sample rate is unknown).
   // This is good enough for battery monitoring though.
   //
   // lpf:
   // 0 is 0V battery voltage  
-  // 1000 is approx. 4.12V battery voltage
+  // 1000 is approx. 4.3V battery voltage
   // in between linear (voltage divider)
   uint16_t batt = analogRead(ADC_BATT);
-  uint16_t newLpf = (float)lpf * 0.95 + (float)batt * 0.05;
+  uint16_t newLpf = (float)lpf * 0.90 + (float)batt * 0.1;
   lpf = newLpf;
 
+  // ADC Reference: 4096 = 3300mV
+  // Divider: 4.2V batt -> 2100mV
 
-  uint8_t lowBattFromPowerModule = digitalRead(LOW_BATT);
-  if (lowBattFromPowerModule == 0) {
-    pinMode(SHUTDOWN, OUTPUT);
-    digitalWrite(SHUTDOWN, 1);
+  showBatt++;
+  if (showBatt > 500) {
+    Serial.printf("[BATT] %1.2fV (%d)\n", lpf/ADC_DIVISOR, lpf);
+    showBatt = 0;
+
+    Serial.printf("[PLYR] idle time %d\n", player.idleTime);
   }
-
-  if (player.idleTime > 700000000) { // approx 15 min shutdown timer
-    pinMode(SHUTDOWN, OUTPUT);
-    digitalWrite(SHUTDOWN, 1);
+  
+  if (player.idleTime > 28860044) { // approx 15 min shutdown timer
+    Serial.println("[HALT] idle shutdown");
+    pixels.SetPixelColor(0, RgbColor(0,0,0));
+    pixels.SetPixelColor(1, RgbColor(0,0,0));
+    pixels.SetPixelColor(2, RgbColor(0,0,0));
+    pixels.SetPixelColor(3, RgbColor(0,0,0));
+    pixels.Show();
+    sleep(1);
+    digitalWrite(SHUTDOWN_PIN, LOW);
+    sleep(30);
   }
   
   // Volume Control
-  if (buttons.buttonDown(0)) {
+  if (buttons.buttonDown(4)) {
     player.increaseVolume();
   }
 
-  if (buttons.buttonDown(2)) {
+  if (buttons.buttonDown(0)) {
     player.decreaseVolume();
   }
+
 
   RFID::CardState cardState = rfid.checkCardState();
   
@@ -199,9 +183,6 @@ void loop() {
         switch(err) {
           case Mapper::MapperError::ID_NOT_FOUND:
             Serial.println(F("Card not found in mapping"));
-            #ifdef OLED
-              oled.trackName("Unknown card");
-            #endif
             player.stop();        
           case Mapper::MapperError::LINE_TOO_LONG:
             fatal.fatal("Mapping error", "Long line/missing newline");         
@@ -229,5 +210,4 @@ void loop() {
   }
 
   player.process();
-
 }

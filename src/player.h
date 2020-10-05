@@ -22,9 +22,6 @@
 #include <FS.h>
 #include "Arduino.h"
 #include "fatal.h"
-#ifdef OLED
-  #include "oled.h"
-#endif
 #include "VS1053.h"
 #include "ringbuffer.h"
 
@@ -36,9 +33,6 @@ class Player {
     playerState_t state;
     playerState_t oldState;
     Fatal fatal;
-    #ifdef OLED
-      Oled oled;
-    #endif
     VS1053 vs1053;
     RingBuffer ringBuffer;
 
@@ -57,11 +51,7 @@ class Player {
     uint32_t lastTime;
 
   public:
-    #ifdef OLED
-      Player(Fatal fatal, Oled oled, VS1053 vs1053);
-    #else
-      Player(Fatal fatal, VS1053 vs1053);
-    #endif
+    Player(Fatal fatal, VS1053 vs1053);
     void init();
     void play(char* filename);
     void stop();

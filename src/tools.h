@@ -18,6 +18,7 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
+ #include "Arduino.h"
  
 void dumpByteArray(byte *buffer, byte bufferSize);
 

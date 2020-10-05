@@ -1,56 +1,45 @@
 
-// Digital pins for LEDs
-#define LED1                    26
-#define LED2                    27
-//#define LED3                    14
-//#define LED4                    12
+// Buttons
+#define BUTTON0_PIN         22 // vol -
+#define BUTTON1_PIN         39 // left
+#define BUTTON2_PIN         36 // on/play/pause
+#define BUTTON3_PIN         35 // right
+#define BUTTON4_PIN         21 // vol +
 
-// Digital pin for power down
-#define SHUTDOWN 12
+// Amplifier power enable
+#define AMP_ENABLE_PIN      25
 
-// Digital pins for buttons
-#define BUTTON1                 36
-#define BUTTON2                 39
-#define BUTTON3                 34
-#define HEADPHONE_SWITCH        35
+// Power down
+#define SHUTDOWN_PIN        27
 
-// Amplifier enable/disable (power saving)
-#define AMP_ENABLE              25
+// WS2812 data line
+#define WS2812_DATA_PIN     26
 
 // Battery monitoring
-#define ADC_BATT                 32
-#define LOW_BATT                 33
+#define ADC_BATT            32
+#define ADC_DIVISOR         550.
 
-// Digital pins for VS1053 
-#define VS1053_XCS_PIN          15
-#define VS1053_XDCS_PIN         16
-#define VS1053_DREQ_PIN         17
-#define VS1053_XRESET_PIN       2 
+// MP3 decode (VS1053)
+#define VS1053_XCS_PIN      15
+#define VS1053_XDCS_PIN     16
+#define VS1053_DREQ_PIN     17
+#define VS1053_XRESET_PIN   2 
 
-// Digital pins for SD card
-#define SD_CS_PIN               5
+// Common SPI config (RFID and MMC/SD)
+#define SPI_SCK_PIN         18
+#define SPI_MISO_PIN        19
+#define SPI_MOSI_PIN        23
 
-// Digital pins for MFRC522
-#define MFRC522_CS_PIN          4
-#define MFRC522_RST_PIN         13
+// MMC/SD card
+#define SD_CS_PIN           5
 
-#define SPI_SCK_PIN             18
-#define SPI_MISO_PIN            19
-#define SPI_MOSI_PIN            23
+// RFID (MFRC522)
+#define MFRC522_CS_PIN      4
+#define MFRC522_RST_PIN     13
 
-// Digital pins for I²C 
-#define I2C_SDA_PIN             21
-#define I2C_SCL_PIN             22
-
-// Display I²C address
-#define DISPLAY_ADDRESS         0x3c
 
 // Number of bytes for the card ID
 #define ID_BYTE_ARRAY_LENGTH    4
-
-#define OLED
-#define TWI_CLOCK 600000UL
-
 
 //#define FAIL_ON_FILE_NOT_FOUND
 #define FAST_BOOT

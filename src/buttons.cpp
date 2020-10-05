@@ -24,18 +24,20 @@
 Buttons::Buttons() : oldState(0), state(0) {}
 
 void Buttons::init() {
-  pinMode(BUTTON1, INPUT);
-  pinMode(BUTTON2, INPUT);
-  pinMode(BUTTON3, INPUT);
-  pinMode(HEADPHONE_SWITCH, INPUT);
+  pinMode(BUTTON0_PIN, INPUT_PULLUP);
+  pinMode(BUTTON1_PIN, INPUT_PULLUP);
+  pinMode(BUTTON2_PIN, INPUT_PULLUP);
+  pinMode(BUTTON3_PIN, INPUT_PULLUP);
+  pinMode(BUTTON4_PIN, INPUT_PULLUP);
 }
 
 bool Buttons::read() {
 
-    state = (digitalRead(BUTTON1)) |  
-            (digitalRead(BUTTON2)) << 1 | 
-            (digitalRead(BUTTON3)) << 2 |
-            (digitalRead(HEADPHONE_SWITCH)) << 3;
+    state = (digitalRead(BUTTON0_PIN)) |  
+            (digitalRead(BUTTON1_PIN)) << 1 | 
+            (digitalRead(BUTTON2_PIN)) << 2 |
+            (digitalRead(BUTTON3_PIN)) << 3 |
+            (digitalRead(BUTTON4_PIN)) << 4;
             
     state ^= 255;
 

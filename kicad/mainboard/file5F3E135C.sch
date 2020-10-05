@@ -1,0 +1,1521 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 2 2
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5F475ED7
+P 3900 2750
+AR Path="/5F475ED7" Ref="#PWR?"  Part="1" 
+AR Path="/5F3E135D/5F475ED7" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 3900 2600 50  0001 C CNN
+F 1 "+3V3" H 3900 2925 50  0000 C CNN
+F 2 "" H 3900 2750 50  0001 C CNN
+F 3 "" H 3900 2750 50  0001 C CNN
+	1    3900 2750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F475EDF
+P 4325 3500
+AR Path="/5F475EDF" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475EDF" Ref="C?"  Part="1" 
+F 0 "C?" H 4440 3546 50  0000 L CNN
+F 1 "100n" H 4440 3455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 4363 3350 50  0001 C CNN
+F 3 "~" H 4325 3500 50  0001 C CNN
+F 4 "X5R" H 4325 3500 50  0001 C CNN "Type"
+F 5 "ok" H 4325 3500 50  0001 C CNN "Vorrätig"
+	1    4325 3500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F475EE7
+P 4750 3500
+AR Path="/5F475EE7" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475EE7" Ref="C?"  Part="1" 
+F 0 "C?" H 4865 3546 50  0000 L CNN
+F 1 "100n" H 4865 3455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 4788 3350 50  0001 C CNN
+F 3 "~" H 4750 3500 50  0001 C CNN
+F 4 "X5R" H 4750 3500 50  0001 C CNN "Type"
+F 5 "ok" H 4750 3500 50  0001 C CNN "Vorrätig"
+	1    4750 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3900 2750 3900 2850
+Wire Wire Line
+	4750 3350 4750 3250
+Connection ~ 4750 3250
+Wire Wire Line
+	3900 3250 3925 3250
+Wire Wire Line
+	4325 3350 4325 3250
+Connection ~ 4325 3250
+Wire Wire Line
+	4325 3250 4750 3250
+Wire Wire Line
+	4750 3650 4750 3700
+Connection ~ 4750 3700
+Wire Wire Line
+	4325 3650 4325 3700
+Connection ~ 4325 3700
+Wire Wire Line
+	4325 3700 4750 3700
+$Comp
+L power:GND #PWR?
+U 1 1 5F475EF9
+P 2350 3750
+AR Path="/5F475EF9" Ref="#PWR?"  Part="1" 
+AR Path="/5F3E135D/5F475EF9" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 2350 3500 50  0001 C CNN
+F 1 "GND" H 2350 3600 50  0000 C CNN
+F 2 "" H 2350 3750 50  0000 C CNN
+F 3 "" H 2350 3750 50  0000 C CNN
+	1    2350 3750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2350 3750 2350 3700
+Wire Wire Line
+	2350 3700 2450 3700
+Wire Wire Line
+	2450 3700 2450 3650
+Connection ~ 2350 3700
+Wire Wire Line
+	2350 3700 2350 3650
+Wire Wire Line
+	2850 2850 2925 2850
+Wire Wire Line
+	2850 3050 2925 3050
+Wire Wire Line
+	2925 3050 2925 2850
+Connection ~ 2925 2850
+Wire Wire Line
+	3075 2925 3075 2850
+Wire Wire Line
+	2925 2850 3075 2850
+Connection ~ 3075 2850
+Wire Wire Line
+	2450 3700 3075 3700
+Wire Wire Line
+	3075 3700 3075 3225
+Connection ~ 2450 3700
+Connection ~ 3075 3700
+$Comp
+L Device:L L?
+U 1 1 5F475F12
+P 2450 2325
+AR Path="/5F475F12" Ref="L?"  Part="1" 
+AR Path="/5F3E135D/5F475F12" Ref="L?"  Part="1" 
+F 0 "L?" V 2525 2325 50  0000 C CNN
+F 1 "2.2u" V 2400 2325 50  0000 C CNN
+F 2 "Inductor_SMD:L_Taiyo-Yuden_NR-30xx" H 2450 2325 50  0001 C CNN
+F 3 "https://www.mouser.de/datasheet/2/396/wound04_e-1290968.pdf" H 2450 2325 50  0001 C CNN
+F 4 "" V 2450 2325 50  0001 C CNN "Type"
+F 5 "" H 2450 2325 50  0001 C CNN "Farnell"
+F 6 "963-NR6028T2R2N" H 2450 2325 50  0001 C CNN "Mouser"
+	1    2450 2325
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2850 2650 2900 2650
+Wire Wire Line
+	2900 2650 2900 2325
+Wire Wire Line
+	2900 2325 2600 2325
+Wire Wire Line
+	2300 2325 2000 2325
+Wire Wire Line
+	2000 2325 2000 2650
+Wire Wire Line
+	2000 2650 2050 2650
+Wire Wire Line
+	1400 2850 1450 2850
+Wire Wire Line
+	1450 3300 1450 2850
+Connection ~ 1450 2850
+Wire Wire Line
+	1450 2850 1675 2850
+Wire Wire Line
+	2350 3700 1825 3700
+Wire Wire Line
+	1450 3700 1450 3600
+Wire Wire Line
+	2050 3250 1825 3250
+Wire Wire Line
+	1825 2950 2050 2950
+$Comp
+L Device:C C?
+U 1 1 5F475F28
+P 1825 3450
+AR Path="/5F475F28" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475F28" Ref="C?"  Part="1" 
+F 0 "C?" H 1940 3496 50  0000 L CNN
+F 1 "100n" H 1940 3405 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 1863 3300 50  0001 C CNN
+F 3 "~" H 1825 3450 50  0001 C CNN
+F 4 "X5R" H 1825 3450 50  0001 C CNN "Type"
+F 5 "ok" H 1825 3450 50  0001 C CNN "Vorrätig"
+	1    1825 3450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1825 3700 1825 3600
+Connection ~ 1825 3700
+Wire Wire Line
+	1825 3700 1450 3700
+Wire Wire Line
+	1825 3300 1825 3250
+Connection ~ 1825 3250
+$Comp
+L Device:C C?
+U 1 1 5F475F36
+P 1450 3450
+AR Path="/5F475F36" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475F36" Ref="C?"  Part="1" 
+F 0 "C?" H 1565 3496 50  0000 L CNN
+F 1 "22u" H 1565 3405 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1210_3225Metric" H 1488 3300 50  0001 C CNN
+F 3 "" H 1450 3450 50  0001 C CNN
+F 4 "X7R" H 1450 3450 50  0001 C CNN "Type"
+F 5 "" H 1450 3450 50  0001 C CNN "Farnell"
+F 6 "963-EMK325B7226MMHP" H 1450 3450 50  0001 C CNN "Mouser"
+	1    1450 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F475F3F
+P 3075 3075
+AR Path="/5F475F3F" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475F3F" Ref="C?"  Part="1" 
+F 0 "C?" H 3190 3121 50  0000 L CNN
+F 1 "22u" H 3190 3030 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1210_3225Metric" H 3113 2925 50  0001 C CNN
+F 3 "" H 3075 3075 50  0001 C CNN
+F 4 "X7R" H 3075 3075 50  0001 C CNN "Type"
+F 5 "" H 3075 3075 50  0001 C CNN "Farnell"
+F 6 "963-EMK325B7226MMHP" H 3075 3075 50  0001 C CNN "Mouser"
+	1    3075 3075
+	1    0    0    -1  
+$EndComp
+Connection ~ 3900 2850
+Wire Wire Line
+	3900 2850 3900 3250
+Connection ~ 6450 3700
+Wire Wire Line
+	6875 3700 6875 3650
+Wire Wire Line
+	6450 3700 6875 3700
+Connection ~ 6450 3250
+Wire Wire Line
+	6875 3250 6875 3350
+Wire Wire Line
+	6450 3250 6875 3250
+$Comp
+L Device:C C?
+U 1 1 5F475F4F
+P 6875 3500
+AR Path="/5F475F4F" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475F4F" Ref="C?"  Part="1" 
+F 0 "C?" H 6990 3546 50  0000 L CNN
+F 1 "100n" H 6990 3455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 6913 3350 50  0001 C CNN
+F 3 "~" H 6875 3500 50  0001 C CNN
+F 4 "X5R" H 6875 3500 50  0001 C CNN "Type"
+F 5 "ok" H 6875 3500 50  0001 C CNN "Vorrätig"
+	1    6875 3500
+	1    0    0    -1  
+$EndComp
+Connection ~ 6025 3700
+Wire Wire Line
+	6450 3700 6450 3650
+Wire Wire Line
+	6025 3700 6450 3700
+Connection ~ 6025 3250
+Wire Wire Line
+	6450 3250 6025 3250
+Wire Wire Line
+	6450 3350 6450 3250
+$Comp
+L Device:C C?
+U 1 1 5F475F5D
+P 6450 3500
+AR Path="/5F475F5D" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475F5D" Ref="C?"  Part="1" 
+F 0 "C?" H 6565 3546 50  0000 L CNN
+F 1 "100n" H 6565 3455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 6488 3350 50  0001 C CNN
+F 3 "~" H 6450 3500 50  0001 C CNN
+F 4 "X5R" H 6450 3500 50  0001 C CNN "Type"
+F 5 "ok" H 6450 3500 50  0001 C CNN "Vorrätig"
+	1    6450 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5600 3700 6025 3700
+Wire Wire Line
+	5600 3650 5600 3700
+Wire Wire Line
+	6025 3700 6025 3650
+Wire Wire Line
+	5600 3250 6025 3250
+Wire Wire Line
+	5600 3350 5600 3250
+Wire Wire Line
+	6025 3250 6025 3350
+$Comp
+L Device:C C?
+U 1 1 5F475F6B
+P 6025 3500
+AR Path="/5F475F6B" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475F6B" Ref="C?"  Part="1" 
+F 0 "C?" H 6140 3546 50  0000 L CNN
+F 1 "100n" H 6140 3455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 6063 3350 50  0001 C CNN
+F 3 "~" H 6025 3500 50  0001 C CNN
+F 4 "X5R" H 6025 3500 50  0001 C CNN "Type"
+F 5 "ok" H 6025 3500 50  0001 C CNN "Vorrätig"
+	1    6025 3500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F475F73
+P 5600 3500
+AR Path="/5F475F73" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475F73" Ref="C?"  Part="1" 
+F 0 "C?" H 5715 3546 50  0000 L CNN
+F 1 "100n" H 5715 3455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 5638 3350 50  0001 C CNN
+F 3 "~" H 5600 3500 50  0001 C CNN
+F 4 "X5R" H 5600 3500 50  0001 C CNN "Type"
+F 5 "ok" H 5600 3500 50  0001 C CNN "Vorrätig"
+	1    5600 3500
+	1    0    0    -1  
+$EndComp
+Connection ~ 5600 3250
+Connection ~ 5600 3700
+$Comp
+L Connector:TestPoint_Probe TP?
+U 1 1 5F475F7C
+P 3900 2850
+AR Path="/5F475F7C" Ref="TP?"  Part="1" 
+AR Path="/5F3E135D/5F475F7C" Ref="TP?"  Part="1" 
+F 0 "TP?" H 4050 3000 50  0000 L CNN
+F 1 "TestPoint_3V3" H 4050 2925 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.5mm" H 4100 2850 50  0001 C CNN
+F 3 "~" H 4100 2850 50  0001 C CNN
+F 4 "ok" H 3900 2850 50  0001 C CNN "Vorrätig"
+	1    3900 2850
+	1    0    0    -1  
+$EndComp
+Wire Notes Line
+	1125 2100 7775 2100
+Wire Notes Line
+	7775 2100 7775 3950
+Wire Notes Line
+	7775 3950 1125 3950
+Wire Notes Line
+	1125 3950 1125 2100
+Text Notes 1175 2225 0    50   ~ 0
+3.3V Supply (Step Up/Down)
+Wire Wire Line
+	3075 2850 3900 2850
+Text GLabel 1400 2850 0    50   Input ~ 0
+BATT
+Text GLabel 2000 3050 0    50   Input ~ 0
+EN
+Wire Wire Line
+	1825 2950 1825 3250
+Wire Wire Line
+	2000 3050 2050 3050
+Wire Wire Line
+	4750 3250 5200 3250
+Wire Wire Line
+	4750 3700 5200 3700
+Wire Wire Line
+	3075 3700 3925 3700
+$Comp
+L Regulator_Switching:TPS63001 U?
+U 1 1 5F475F91
+P 2450 3050
+AR Path="/5F475F91" Ref="U?"  Part="1" 
+AR Path="/5F3E135D/5F475F91" Ref="U?"  Part="1" 
+F 0 "U?" H 2225 3600 50  0000 C CNN
+F 1 "TPS63001" H 2450 3375 50  0000 C CNN
+F 2 "Package_SON:Texas_DRC0010J_ThermalVias" H 3300 2500 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tps63000.pdf" H 2150 3600 50  0001 C CNN
+F 4 "3008242" H 2450 3050 50  0001 C CNN "Farnell"
+F 5 "595-TPS63001DRCR" H 2450 3050 50  0001 C CNN "Mouser"
+	1    2450 3050
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5F475F98
+P 1675 3050
+AR Path="/5F475F98" Ref="R?"  Part="1" 
+AR Path="/5F3E135D/5F475F98" Ref="R?"  Part="1" 
+F 0 "R?" H 1775 3100 50  0000 C CNN
+F 1 "100" H 1800 3000 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 1605 3050 50  0001 C CNN
+F 3 "~" H 1675 3050 50  0001 C CNN
+F 4 "ok" H 1675 3050 50  0001 C CNN "Vorrätig"
+	1    1675 3050
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1675 2900 1675 2850
+Connection ~ 1675 2850
+Wire Wire Line
+	1675 2850 2050 2850
+Wire Wire Line
+	1675 3200 1675 3250
+Wire Wire Line
+	1675 3250 1825 3250
+$Comp
+L Device:C C?
+U 1 1 5F475FA5
+P 5200 3500
+AR Path="/5F475FA5" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475FA5" Ref="C?"  Part="1" 
+F 0 "C?" H 5315 3546 50  0000 L CNN
+F 1 "100n" H 5315 3455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 5238 3350 50  0001 C CNN
+F 3 "~" H 5200 3500 50  0001 C CNN
+F 4 "X5R" H 5200 3500 50  0001 C CNN "Type"
+F 5 "ok" H 5200 3500 50  0001 C CNN "Vorrätig"
+	1    5200 3500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F475FAD
+P 3925 3500
+AR Path="/5F475FAD" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475FAD" Ref="C?"  Part="1" 
+F 0 "C?" H 4040 3546 50  0000 L CNN
+F 1 "100n" H 4040 3455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 3963 3350 50  0001 C CNN
+F 3 "~" H 3925 3500 50  0001 C CNN
+F 4 "X5R" H 3925 3500 50  0001 C CNN "Type"
+F 5 "ok" H 3925 3500 50  0001 C CNN "Vorrätig"
+	1    3925 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3925 3350 3925 3250
+Connection ~ 3925 3250
+Wire Wire Line
+	3925 3250 4325 3250
+Wire Wire Line
+	3925 3650 3925 3700
+Connection ~ 3925 3700
+Wire Wire Line
+	3925 3700 4325 3700
+Wire Wire Line
+	5200 3350 5200 3250
+Connection ~ 5200 3250
+Wire Wire Line
+	5200 3250 5600 3250
+Wire Wire Line
+	5200 3650 5200 3700
+Connection ~ 5200 3700
+Wire Wire Line
+	5200 3700 5600 3700
+$Comp
+L Device:C C?
+U 1 1 5F475FC1
+P 7300 3500
+AR Path="/5F475FC1" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F475FC1" Ref="C?"  Part="1" 
+F 0 "C?" H 7415 3546 50  0000 L CNN
+F 1 "100n" H 7415 3455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 7338 3350 50  0001 C CNN
+F 3 "~" H 7300 3500 50  0001 C CNN
+F 4 "X5R" H 7300 3500 50  0001 C CNN "Type"
+F 5 "ok" H 7300 3500 50  0001 C CNN "Vorrätig"
+	1    7300 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6875 3250 7300 3250
+Wire Wire Line
+	7300 3250 7300 3350
+Connection ~ 6875 3250
+Wire Wire Line
+	7300 3700 6875 3700
+Wire Wire Line
+	7300 3650 7300 3700
+Connection ~ 6875 3700
+$Comp
+L power:+1V8 #PWR?
+U 1 1 5F4E90D7
+P 3100 4550
+AR Path="/5F4E90D7" Ref="#PWR?"  Part="1" 
+AR Path="/5F3E135D/5F4E90D7" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 3100 4400 50  0001 C CNN
+F 1 "+1V8" H 3115 4723 50  0000 C CNN
+F 2 "" H 3100 4550 50  0001 C CNN
+F 3 "" H 3100 4550 50  0001 C CNN
+	1    3100 4550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F4E90DF
+P 3100 4950
+AR Path="/5F4E90DF" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F4E90DF" Ref="C?"  Part="1" 
+F 0 "C?" H 3215 4996 50  0000 L CNN
+F 1 "100n" H 3215 4905 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 3138 4800 50  0001 C CNN
+F 3 "~" H 3100 4950 50  0001 C CNN
+F 4 "X5R" H 3100 4950 50  0001 C CNN "Type"
+F 5 "ok" H 3100 4950 50  0001 C CNN "Vorrätig"
+	1    3100 4950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F4E90E7
+P 3525 4950
+AR Path="/5F4E90E7" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F4E90E7" Ref="C?"  Part="1" 
+F 0 "C?" H 3640 4996 50  0000 L CNN
+F 1 "100n" H 3640 4905 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 3563 4800 50  0001 C CNN
+F 3 "~" H 3525 4950 50  0001 C CNN
+F 4 "X5R" H 3525 4950 50  0001 C CNN "Type"
+F 5 "ok" H 3525 4950 50  0001 C CNN "Vorrätig"
+	1    3525 4950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F4E90EF
+P 3950 4950
+AR Path="/5F4E90EF" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F4E90EF" Ref="C?"  Part="1" 
+F 0 "C?" H 4065 4996 50  0000 L CNN
+F 1 "100n" H 4065 4905 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 3988 4800 50  0001 C CNN
+F 3 "~" H 3950 4950 50  0001 C CNN
+F 4 "X5R" H 3950 4950 50  0001 C CNN "Type"
+F 5 "ok" H 3950 4950 50  0001 C CNN "Vorrätig"
+	1    3950 4950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F4E90F7
+P 4375 4950
+AR Path="/5F4E90F7" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F4E90F7" Ref="C?"  Part="1" 
+F 0 "C?" H 4490 4996 50  0000 L CNN
+F 1 "100n" H 4490 4905 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 4413 4800 50  0001 C CNN
+F 3 "~" H 4375 4950 50  0001 C CNN
+F 4 "X5R" H 4375 4950 50  0001 C CNN "Type"
+F 5 "ok" H 4375 4950 50  0001 C CNN "Vorrätig"
+	1    4375 4950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4375 4700 4375 4800
+Connection ~ 3100 4700
+Wire Wire Line
+	3100 4700 3100 4800
+Wire Wire Line
+	3950 4800 3950 4700
+Connection ~ 3950 4700
+Wire Wire Line
+	3950 4700 4375 4700
+Wire Wire Line
+	3525 4800 3525 4700
+Connection ~ 3525 4700
+Wire Wire Line
+	3525 4700 3950 4700
+Wire Wire Line
+	4375 5150 4375 5100
+Wire Wire Line
+	3950 5100 3950 5150
+Connection ~ 3950 5150
+Wire Wire Line
+	3950 5150 4375 5150
+Wire Wire Line
+	3525 5100 3525 5150
+Connection ~ 3525 5150
+Wire Wire Line
+	3525 5150 3950 5150
+Wire Wire Line
+	3100 5100 3100 5150
+Connection ~ 3100 5150
+Wire Wire Line
+	3100 5150 3525 5150
+$Comp
+L power:GND #PWR?
+U 1 1 5F4E9110
+P 2125 5200
+AR Path="/5F4E9110" Ref="#PWR?"  Part="1" 
+AR Path="/5F3E135D/5F4E9110" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 2125 4950 50  0001 C CNN
+F 1 "GND" H 2125 5050 50  0000 C CNN
+F 2 "" H 2125 5200 50  0000 C CNN
+F 3 "" H 2125 5200 50  0000 C CNN
+	1    2125 5200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2125 5200 2125 5150
+Wire Wire Line
+	2500 4700 2575 4700
+Wire Wire Line
+	2575 4750 2575 4700
+Connection ~ 2575 4700
+Connection ~ 2125 5150
+Wire Wire Line
+	2125 5150 2125 5025
+Wire Wire Line
+	2575 5150 2575 5050
+$Comp
+L Device:C C?
+U 1 1 5F4E9121
+P 2575 4900
+AR Path="/5F4E9121" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F4E9121" Ref="C?"  Part="1" 
+F 0 "C?" H 2690 4946 50  0000 L CNN
+F 1 "1u" H 2690 4855 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 2613 4750 50  0001 C CNN
+F 3 "" H 2575 4900 50  0001 C CNN
+F 4 "X7R" H 2575 4900 50  0001 C CNN "Type"
+F 5 "" H 2575 4900 50  0001 C CNN "Farnell"
+F 6 "ok" H 2575 4900 50  0001 C CNN "Vorrätig"
+F 7 "963-EMK212B7105KG-T" H 2575 4900 50  0001 C CNN "Mouser"
+	1    2575 4900
+	1    0    0    -1  
+$EndComp
+Connection ~ 2575 5150
+Wire Wire Line
+	2575 5150 3100 5150
+Wire Wire Line
+	2575 4700 3100 4700
+Wire Wire Line
+	3100 4700 3525 4700
+$Comp
+L Connector:TestPoint_Probe TP?
+U 1 1 5F4E912C
+P 3100 4700
+AR Path="/5F4E912C" Ref="TP?"  Part="1" 
+AR Path="/5F3E135D/5F4E912C" Ref="TP?"  Part="1" 
+F 0 "TP?" H 3250 4850 50  0000 L CNN
+F 1 "TestPoint_1V8" H 3250 4775 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.5mm" H 3300 4700 50  0001 C CNN
+F 3 "~" H 3300 4700 50  0001 C CNN
+F 4 "ok" H 3100 4700 50  0001 C CNN "Vorrätig"
+	1    3100 4700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3100 4550 3100 4700
+Wire Notes Line
+	1125 5425 5175 5425
+Wire Notes Line
+	5175 4275 1125 4275
+Wire Notes Line
+	1125 5425 1125 4275
+Wire Notes Line
+	5175 5425 5175 4275
+Text Notes 1175 4400 0    50   ~ 0
+1.8V Supply (Linear)
+Wire Wire Line
+	1450 4700 1750 4700
+Text GLabel 1450 4700 0    50   Input ~ 0
+BATT
+Text GLabel 1450 4850 0    50   Input ~ 0
+EN
+Wire Wire Line
+	1450 4850 1750 4850
+$Comp
+L audioplayer:NCP115 U?
+U 1 1 5F4E913E
+P 2125 4775
+AR Path="/5F4E913E" Ref="U?"  Part="1" 
+AR Path="/5F3E135D/5F4E913E" Ref="U?"  Part="1" 
+F 0 "U?" H 2125 5215 50  0000 C CNN
+F 1 "NCP115" H 2125 5124 50  0000 C CNN
+F 2 "Package_SO:TSOP-5_1.65x3.05mm_P0.95mm" H 2125 4775 50  0001 C CNN
+F 3 "http://www.farnell.com/datasheets/2711386.pdf" H 2125 4775 50  0001 C CNN
+F 4 "2981135" H 2125 4775 50  0001 C CNN "Farnell"
+F 5 "863-NCP115ASN180T1G" H 2125 4775 50  0001 C CNN "Mouser"
+	1    2125 4775
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2125 5150 2575 5150
+Wire Wire Line
+	3975 6450 4350 6450
+$Comp
+L Device:C C?
+U 1 1 5F54BA9F
+P 4350 6700
+AR Path="/5F54BA9F" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F54BA9F" Ref="C?"  Part="1" 
+F 0 "C?" H 4465 6746 50  0000 L CNN
+F 1 "1u" H 4465 6655 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 4388 6550 50  0001 C CNN
+F 3 "" H 4350 6700 50  0001 C CNN
+F 4 "X7R" H 4350 6700 50  0001 C CNN "Type"
+F 5 "" H 4350 6700 50  0001 C CNN "Farnell"
+F 6 "ok" H 4350 6700 50  0001 C CNN "Vorrätig"
+F 7 "963-EMK212B7105KG-T" H 4350 6700 50  0001 C CNN "Mouser"
+	1    4350 6700
+	1    0    0    -1  
+$EndComp
+Connection ~ 3975 6450
+$Comp
+L power:+6V #PWR?
+U 1 1 5F54BAA6
+P 3975 5950
+AR Path="/5F54BAA6" Ref="#PWR?"  Part="1" 
+AR Path="/5F3E135D/5F54BAA6" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 3975 5800 50  0001 C CNN
+F 1 "+6V" H 3990 6123 50  0000 C CNN
+F 2 "" H 3975 5950 50  0001 C CNN
+F 3 "" H 3975 5950 50  0001 C CNN
+	1    3975 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F54BAB0
+P 3975 6700
+AR Path="/5F54BAB0" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F54BAB0" Ref="C?"  Part="1" 
+F 0 "C?" H 4090 6746 50  0000 L CNN
+F 1 "1u" H 4090 6655 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 4013 6550 50  0001 C CNN
+F 3 "" H 3975 6700 50  0001 C CNN
+F 4 "X7R" H 3975 6700 50  0001 C CNN "Type"
+F 5 "" H 3975 6700 50  0001 C CNN "Farnell"
+F 6 "ok" H 3975 6700 50  0001 C CNN "Vorrätig"
+F 7 "963-EMK212B7105KG-T" H 3975 6700 50  0001 C CNN "Mouser"
+	1    3975 6700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3975 6450 3975 6550
+Wire Wire Line
+	3975 5950 3975 6025
+$Comp
+L Regulator_Switching:MT3608 U?
+U 1 1 5F54BABA
+P 2425 6450
+AR Path="/5F54BABA" Ref="U?"  Part="1" 
+AR Path="/5F3E135D/5F54BABA" Ref="U?"  Part="1" 
+F 0 "U?" H 2250 6700 50  0000 C CNN
+F 1 "MT3608" H 2425 6475 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23-6" H 2475 6200 50  0001 L CIN
+F 3 "https://www.olimex.com/Products/Breadboarding/BB-PWR-3608/resources/MT3608.pdf" H 2175 6900 50  0001 C CNN
+F 4 "-" H 2425 6450 50  0001 C CNN "Farnell"
+F 5 "OK" H 2425 6450 50  0001 C CNN "aliexpress"
+	1    2425 6450
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5F54BAC0
+P 1700 7075
+AR Path="/5F54BAC0" Ref="#PWR?"  Part="1" 
+AR Path="/5F3E135D/5F54BAC0" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 1700 6825 50  0001 C CNN
+F 1 "GND" H 1700 6925 50  0000 C CNN
+F 2 "" H 1700 7075 50  0000 C CNN
+F 3 "" H 1700 7075 50  0000 C CNN
+	1    1700 7075
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2125 6550 2100 6550
+Connection ~ 2075 6025
+$Comp
+L Device:C C?
+U 1 1 5F54BACB
+P 1700 6300
+AR Path="/5F54BACB" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F54BACB" Ref="C?"  Part="1" 
+F 0 "C?" H 1815 6346 50  0000 L CNN
+F 1 "22u" H 1815 6255 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1210_3225Metric" H 1738 6150 50  0001 C CNN
+F 3 "" H 1700 6300 50  0001 C CNN
+F 4 "X7R" H 1700 6300 50  0001 C CNN "Type"
+F 5 "" H 1700 6300 50  0001 C CNN "Farnell"
+F 6 "963-EMK325B7226MMHP" H 1700 6300 50  0001 C CNN "Mouser"
+	1    1700 6300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:D_Schottky D?
+U 1 1 5F54BAD3
+P 2975 6025
+AR Path="/5F54BAD3" Ref="D?"  Part="1" 
+AR Path="/5F3E135D/5F54BAD3" Ref="D?"  Part="1" 
+F 0 "D?" H 2975 5808 50  0000 C CNN
+F 1 "D_Schottky" H 2975 5899 50  0000 C CNN
+F 2 "Diode_SMD:D_SMA" H 2975 6025 50  0001 C CNN
+F 3 "http://www.farnell.com/datasheets/1647937.pdf" H 2975 6025 50  0001 C CNN
+F 4 "2211964" H 2975 6025 50  0001 C CNN "Farnell"
+F 5 "652-CD214A-F150" H 2975 6025 50  0001 C CNN "Mouser"
+	1    2975 6025
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	2725 6350 2800 6350
+$Comp
+L Device:L L?
+U 1 1 5F54BADC
+P 2425 6025
+AR Path="/5F54BADC" Ref="L?"  Part="1" 
+AR Path="/5F3E135D/5F54BADC" Ref="L?"  Part="1" 
+F 0 "L?" V 2500 6025 50  0000 C CNN
+F 1 "22u" V 2375 6025 50  0000 C CNN
+F 2 "Inductor_SMD:L_Taiyo-Yuden_NR-60xx" H 2425 6025 50  0001 C CNN
+F 3 "https://www.mouser.de/datasheet/2/396/wound04_e-1290968.pdf" H 2425 6025 50  0001 C CNN
+F 4 "" H 2425 6025 50  0001 C CNN "Farnell"
+F 5 "963-NR6028T220M" H 2425 6025 50  0001 C CNN "Mouser"
+	1    2425 6025
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2575 6025 2800 6025
+Wire Wire Line
+	2800 6025 2800 6350
+Connection ~ 2800 6025
+Wire Wire Line
+	2800 6025 2825 6025
+Wire Wire Line
+	2075 6025 2275 6025
+Wire Wire Line
+	1700 6150 1700 6025
+Wire Wire Line
+	1700 6025 2075 6025
+Connection ~ 1700 6025
+Wire Wire Line
+	1700 6450 1700 7000
+Connection ~ 1700 7000
+$Comp
+L Device:R R?
+U 1 1 5F54BAED
+P 3175 6300
+AR Path="/5F54BAED" Ref="R?"  Part="1" 
+AR Path="/5F3E135D/5F54BAED" Ref="R?"  Part="1" 
+F 0 "R?" H 3325 6350 50  0000 C CNN
+F 1 "100k" H 3325 6250 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 3105 6300 50  0001 C CNN
+F 3 "~" H 3175 6300 50  0001 C CNN
+F 4 "ok" H 3175 6300 50  0001 C CNN "Vorrätig"
+	1    3175 6300
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5F54BAF4
+P 3350 6825
+AR Path="/5F54BAF4" Ref="R?"  Part="1" 
+AR Path="/5F3E135D/5F54BAF4" Ref="R?"  Part="1" 
+F 0 "R?" H 3500 6875 50  0000 C CNN
+F 1 "2.7k" H 3500 6775 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 3280 6825 50  0001 C CNN
+F 3 "~" H 3350 6825 50  0001 C CNN
+F 4 "ok" H 3350 6825 50  0001 C CNN "Vorrätig"
+	1    3350 6825
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2725 6550 2750 6550
+Wire Wire Line
+	3175 6550 3175 6450
+Connection ~ 3175 6550
+Wire Wire Line
+	1700 7000 1700 7075
+Wire Wire Line
+	2125 6350 2075 6350
+Wire Wire Line
+	2075 6350 2075 6025
+Connection ~ 3650 6025
+Wire Wire Line
+	3650 7000 3650 6625
+Wire Wire Line
+	3650 6325 3650 6025
+$Comp
+L Device:C C?
+U 1 1 5F54BB06
+P 3650 6475
+AR Path="/5F54BB06" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F54BB06" Ref="C?"  Part="1" 
+F 0 "C?" H 3765 6521 50  0000 L CNN
+F 1 "22u" H 3765 6430 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1210_3225Metric" H 3688 6325 50  0001 C CNN
+F 3 "" H 3650 6475 50  0001 C CNN
+F 4 "X7R" H 3650 6475 50  0001 C CNN "Type"
+F 5 "" H 3650 6475 50  0001 C CNN "Farnell"
+F 6 "963-EMK325B7226MMHP" H 3650 6475 50  0001 C CNN "Mouser"
+	1    3650 6475
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3650 7000 3975 7000
+Connection ~ 3650 7000
+Wire Wire Line
+	3650 6025 3975 6025
+Connection ~ 3975 6025
+Wire Wire Line
+	3975 6025 3975 6450
+Wire Wire Line
+	4350 6550 4350 6450
+Connection ~ 3975 7000
+Wire Wire Line
+	3975 7000 4350 7000
+Wire Wire Line
+	3975 6850 3975 7000
+Wire Wire Line
+	4350 6850 4350 7000
+Wire Wire Line
+	2425 6750 2425 7000
+Wire Wire Line
+	1700 7000 2425 7000
+Connection ~ 2425 7000
+Wire Wire Line
+	1400 6025 1700 6025
+$Comp
+L Connector:TestPoint_Probe TP?
+U 1 1 5F54BB1B
+P 3975 6025
+AR Path="/5F54BB1B" Ref="TP?"  Part="1" 
+AR Path="/5F3E135D/5F54BB1B" Ref="TP?"  Part="1" 
+F 0 "TP?" H 4125 6175 50  0000 L CNN
+F 1 "TestPoint_5V5" H 4125 6100 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.5mm" H 4175 6025 50  0001 C CNN
+F 3 "~" H 4175 6025 50  0001 C CNN
+F 4 "ok" H 3975 6025 50  0001 C CNN "Vorrätig"
+	1    3975 6025
+	1    0    0    -1  
+$EndComp
+Wire Notes Line
+	1100 5700 5150 5700
+Wire Notes Line
+	5150 5700 5150 7300
+Wire Notes Line
+	5150 7300 1100 7300
+Wire Notes Line
+	1100 7300 1100 5700
+Text Notes 1150 5800 0    50   ~ 0
+6V Supply (Step Up)
+Text GLabel 1400 6025 0    50   Input ~ 0
+BATT
+Text GLabel 2100 6550 0    50   Input ~ 0
+EN
+Connection ~ 4350 7000
+Wire Wire Line
+	4350 7000 4725 7000
+Wire Wire Line
+	4725 6850 4725 7000
+Connection ~ 4350 6450
+Wire Wire Line
+	4350 6450 4725 6450
+Wire Wire Line
+	4725 6550 4725 6450
+$Comp
+L Device:CP C?
+U 1 1 5F54BB30
+P 4725 6700
+AR Path="/5F54BB30" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F54BB30" Ref="C?"  Part="1" 
+F 0 "C?" H 4843 6746 50  0000 L CNN
+F 1 "220u" H 4843 6655 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm" H 4763 6550 50  0001 C CNN
+F 3 "~" H 4725 6700 50  0001 C CNN
+F 4 "Electrolytic" H 4725 6700 50  0001 C CNN "Type"
+F 5 "ok" H 4725 6700 50  0001 C CNN "Vorrätig"
+	1    4725 6700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5F54BB37
+P 3475 6300
+AR Path="/5F54BB37" Ref="R?"  Part="1" 
+AR Path="/5F3E135D/5F54BB37" Ref="R?"  Part="1" 
+F 0 "R?" H 3625 6350 50  0000 C CNN
+F 1 "100k" H 3625 6250 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 3405 6300 50  0001 C CNN
+F 3 "~" H 3475 6300 50  0001 C CNN
+F 4 "ok" H 3475 6300 50  0001 C CNN "Vorrätig"
+	1    3475 6300
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	3475 6150 3475 6025
+Wire Wire Line
+	3125 6025 3175 6025
+Connection ~ 3475 6025
+Wire Wire Line
+	3475 6025 3650 6025
+Wire Wire Line
+	3475 6450 3475 6550
+Wire Wire Line
+	3175 6150 3175 6025
+Connection ~ 3175 6025
+Wire Wire Line
+	3175 6025 3475 6025
+$Comp
+L Device:R R?
+U 1 1 5F54BB46
+P 2950 6825
+AR Path="/5F54BB46" Ref="R?"  Part="1" 
+AR Path="/5F3E135D/5F54BB46" Ref="R?"  Part="1" 
+F 0 "R?" H 3100 6875 50  0000 C CNN
+F 1 "2.7k" H 3100 6775 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 2880 6825 50  0001 C CNN
+F 3 "~" H 2950 6825 50  0001 C CNN
+F 4 "ok" H 2950 6825 50  0001 C CNN "Vorrätig"
+	1    2950 6825
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	3175 6550 3475 6550
+Wire Wire Line
+	3500 6825 3525 6825
+Wire Wire Line
+	3525 6825 3525 7000
+Connection ~ 3525 7000
+Wire Wire Line
+	3525 7000 3650 7000
+Wire Wire Line
+	2425 7000 3525 7000
+Wire Wire Line
+	3100 6825 3200 6825
+Wire Wire Line
+	2800 6825 2750 6825
+Wire Wire Line
+	2750 6825 2750 6550
+Connection ~ 2750 6550
+Wire Wire Line
+	2750 6550 3175 6550
+$Comp
+L Timer:LMC555xM U?
+U 1 1 5F5CA70B
+P 7300 5125
+AR Path="/5F5CA70B" Ref="U?"  Part="1" 
+AR Path="/5F3E135D/5F5CA70B" Ref="U?"  Part="1" 
+F 0 "U?" H 7000 5475 50  0000 C CNN
+F 1 "LMC555xM" H 7300 5150 50  0000 C CNN
+F 2 "Package_SO:VSSOP-8_3.0x3.0mm_P0.65mm" H 8150 4725 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/lmc555.pdf" H 8150 4725 50  0001 C CNN
+F 4 "" H 7300 5125 50  0001 C CNN "Farnell"
+F 5 "926-LMC555CMMX/NOPB" H 7300 5125 50  0001 C CNN "Mouser"
+	1    7300 5125
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F5CA714
+P 6750 5550
+AR Path="/5F5CA714" Ref="C?"  Part="1" 
+AR Path="/5F3E135D/5F5CA714" Ref="C?"  Part="1" 
+F 0 "C?" H 6865 5596 50  0000 L CNN
+F 1 "10n" H 6865 5505 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 6788 5400 50  0001 C CNN
+F 3 "https://www.mouser.de/datasheet/2/281/murata_03052018_GRM_Series_1-1310166.pdf" H 6750 5550 50  0001 C CNN
+F 4 "C0G" H 6750 5550 50  0001 C CNN "Type"
+F 5 "" H 6750 5550 50  0001 C CNN "Vorrätig"
+F 6 "81-GRM1885C1E103JA1D" H 6750 5550 50  0001 C CNN "Mouser"
+	1    6750 5550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6800 5125 6750 5125
+Wire Wire Line
+	6750 5125 6750 5400
+Wire Wire Line
+	6750 5700 6750 5725
+Wire Wire Line
+	6750 5725 7300 5725
+Wire Wire Line
+	7300 5725 7300 5525
+Text GLabel 7300 4500 1    50   Input ~ 0
+BATT
+Wire Wire Line
+	7300 4725 7300 4550
+Text GLabel 7925 4925 2    50   Input ~ 0
+EN
+$Comp
+L Device:R R?
+U 1 1 5F5CA723
+P 6325 4750
+AR Path="/5F5CA723" Ref="R?"  Part="1" 
+AR Path="/5F3E135D/5F5CA723" Ref="R?"  Part="1" 
+F 0 "R?" V 6400 4750 50  0000 C CNN
+F 1 "10k" V 6325 4750 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 6255 4750 50  0001 C CNN
+F 3 "~" H 6325 4750 50  0001 C CNN
+F 4 "ok" H 6325 4750 50  0001 C CNN "Vorrätig"
+	1    6325 4750
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5F5CA72A
+P 6125 4750
+AR Path="/5F5CA72A" Ref="R?"  Part="1" 
+AR Path="/5F3E135D/5F5CA72A" Ref="R?"  Part="1" 
+F 0 "R?" V 6200 4750 50  0000 C CNN
+F 1 "10k" V 6125 4750 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 6055 4750 50  0001 C CNN
+F 3 "~" H 6125 4750 50  0001 C CNN
+F 4 "ok" H 6125 4750 50  0001 C CNN "Vorrätig"
+	1    6125 4750
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6800 5325 6125 5325
+Wire Wire Line
+	6125 5325 6125 4900
+Wire Wire Line
+	6125 4600 6125 4550
+Wire Wire Line
+	6125 4550 6325 4550
+Connection ~ 7300 4550
+Wire Wire Line
+	7300 4550 7300 4500
+Wire Wire Line
+	6325 4600 6325 4550
+Connection ~ 6325 4550
+Wire Wire Line
+	6325 4550 7300 4550
+$Comp
+L power:GND #PWR?
+U 1 1 5F5CA739
+P 7300 5775
+AR Path="/5F5CA739" Ref="#PWR?"  Part="1" 
+AR Path="/5F3E135D/5F5CA739" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 7300 5525 50  0001 C CNN
+F 1 "GND" H 7300 5625 50  0000 C CNN
+F 2 "" H 7300 5775 50  0000 C CNN
+F 3 "" H 7300 5775 50  0000 C CNN
+	1    7300 5775
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7300 5775 7300 5725
+Connection ~ 7300 5725
+$Comp
+L Connector:TestPoint_Probe TP?
+U 1 1 5F5CA742
+P 7850 4925
+AR Path="/5F5CA742" Ref="TP?"  Part="1" 
+AR Path="/5F3E135D/5F5CA742" Ref="TP?"  Part="1" 
+F 0 "TP?" H 8000 5075 50  0000 L CNN
+F 1 "TestPoint_EN" H 8000 5000 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.5mm" H 8050 4925 50  0001 C CNN
+F 3 "~" H 8050 4925 50  0001 C CNN
+F 4 "ok" H 7850 4925 50  0001 C CNN "Vorrätig"
+	1    7850 4925
+	0    -1   -1   0   
+$EndComp
+Connection ~ 7850 4925
+Wire Wire Line
+	7850 4925 7925 4925
+Wire Wire Line
+	7800 4925 7850 4925
+Text GLabel 6000 5325 0    50   Input ~ 0
+PWR_DOWN
+Text GLabel 5900 4925 0    50   Input ~ 0
+PWR_UP
+Wire Wire Line
+	6000 5325 6125 5325
+Connection ~ 6125 5325
+Wire Wire Line
+	6800 4925 6325 4925
+Wire Wire Line
+	6325 4925 6325 4900
+Wire Wire Line
+	6125 5400 6125 5325
+$Comp
+L power:GND #PWR?
+U 1 1 5F5CA752
+P 6225 5850
+AR Path="/5F5CA752" Ref="#PWR?"  Part="1" 
+AR Path="/5F3E135D/5F5CA752" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 6225 5600 50  0001 C CNN
+F 1 "GND" H 6225 5700 50  0000 C CNN
+F 2 "" H 6225 5850 50  0000 C CNN
+F 3 "" H 6225 5850 50  0000 C CNN
+	1    6225 5850
+	1    0    0    -1  
+$EndComp
+Connection ~ 6325 4925
+Wire Wire Line
+	6325 4925 5900 4925
+Wire Wire Line
+	6325 4925 6325 5400
+$Comp
+L Diode:MMBZxx D?
+U 1 1 5F5CA75B
+P 6225 5600
+AR Path="/5F5CA75B" Ref="D?"  Part="1" 
+AR Path="/5F3E135D/5F5CA75B" Ref="D?"  Part="1" 
+F 0 "D?" H 6413 5646 50  0000 L CNN
+F 1 "3.3V" H 6413 5555 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 6375 5500 50  0001 L CNN
+F 3 "http://www.onsemi.com/pub/Collateral/MMBZ5V6ALT1-D.PDF" V 6125 5600 50  0001 C CNN
+	1    6225 5600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6225 5850 6225 5800
+Text GLabel 9675 4775 2    50   Input ~ 0
+BATT
+$Comp
+L power:GND #PWR?
+U 1 1 5F620C3F
+P 9500 5500
+AR Path="/5F620C3F" Ref="#PWR?"  Part="1" 
+AR Path="/5F3E135D/5F620C3F" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 9500 5250 50  0001 C CNN
+F 1 "GND" H 9500 5350 50  0000 C CNN
+F 2 "" H 9500 5500 50  0000 C CNN
+F 3 "" H 9500 5500 50  0000 C CNN
+	1    9500 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Male J?
+U 1 1 5F620C46
+P 8550 4775
+AR Path="/5F620C46" Ref="J?"  Part="1" 
+AR Path="/5F3E135D/5F620C46" Ref="J?"  Part="1" 
+F 0 "J?" V 8550 4850 50  0000 C CNN
+F 1 "LiPo" V 8475 4725 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal" H 8550 4775 50  0001 C CNN
+F 3 "~" H 8550 4775 50  0001 C CNN
+F 4 "ok" H 8550 4775 50  0001 C CNN "Vorrätig"
+	1    8550 4775
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Fuse F?
+U 1 1 5F620C4D
+P 8975 4775
+AR Path="/5F620C4D" Ref="F?"  Part="1" 
+AR Path="/5F3E135D/5F620C4D" Ref="F?"  Part="1" 
+F 0 "F?" V 8778 4775 50  0000 C CNN
+F 1 "1A F" V 8869 4775 50  0000 C CNN
+F 2 "Fuse:Fuseholder_TR5_Littelfuse_No560_No460" V 8905 4775 50  0001 C CNN
+F 3 "~" H 8975 4775 50  0001 C CNN
+F 4 "ok" H 8975 4775 50  0001 C CNN "Vorrätig"
+	1    8975 4775
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:TestPoint_Probe TP?
+U 1 1 5F620C54
+P 9500 4775
+AR Path="/5F620C54" Ref="TP?"  Part="1" 
+AR Path="/5F3E135D/5F620C54" Ref="TP?"  Part="1" 
+F 0 "TP?" V 9425 4800 50  0000 L CNN
+F 1 "TestPoint_Batt" V 9350 4800 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.5mm" H 9700 4775 50  0001 C CNN
+F 3 "~" H 9700 4775 50  0001 C CNN
+F 4 "ok" H 9500 4775 50  0001 C CNN "Vorrätig"
+	1    9500 4775
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:TestPoint_Probe TP?
+U 1 1 5F620C5B
+P 9600 5450
+AR Path="/5F620C5B" Ref="TP?"  Part="1" 
+AR Path="/5F3E135D/5F620C5B" Ref="TP?"  Part="1" 
+F 0 "TP?" V 9625 5550 50  0000 L CNN
+F 1 "TestPoint_GND" V 9550 5550 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.5mm" H 9800 5450 50  0001 C CNN
+F 3 "~" H 9800 5450 50  0001 C CNN
+F 4 "ok" H 9600 5450 50  0001 C CNN "Vorrätig"
+	1    9600 5450
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8750 4775 8825 4775
+Connection ~ 9225 4775
+Wire Wire Line
+	9225 4775 9125 4775
+Wire Wire Line
+	9000 4875 9000 5450
+Wire Wire Line
+	8750 4875 9000 4875
+Wire Wire Line
+	9000 5450 9025 5450
+$Comp
+L Device:R R?
+U 1 1 5F620C68
+P 9225 4975
+AR Path="/5F620C68" Ref="R?"  Part="1" 
+AR Path="/5F3E135D/5F620C68" Ref="R?"  Part="1" 
+F 0 "R?" V 9325 4975 50  0000 C CNN
+F 1 "100k" V 9125 4950 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 9155 4975 50  0001 C CNN
+F 3 "~" H 9225 4975 50  0001 C CNN
+F 4 "ok" H 9225 4975 50  0001 C CNN "Vorrätig"
+	1    9225 4975
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	9225 4775 9225 4825
+Wire Wire Line
+	9225 5150 9225 5125
+$Comp
+L Transistor_FET:DMN2056U Q?
+U 1 1 5F620C72
+P 9225 5350
+AR Path="/5F620C72" Ref="Q?"  Part="1" 
+AR Path="/5F3E135D/5F620C72" Ref="Q?"  Part="1" 
+F 0 "Q?" V 9525 5350 50  0000 C CNN
+F 1 "DMN2020LSN" V 9625 5350 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SC-59" H 9425 5275 50  0001 L CIN
+F 3 "http://www.farnell.com/datasheets/2040084.pdf" H 9225 5350 50  0001 L CNN
+F 4 "2543536" H 9225 5350 50  0001 C CNN "Farnell"
+F 5 "621-DMN2020LSN-7" H 9225 5350 50  0001 C CNN "Mouser"
+	1    9225 5350
+	0    -1   1    0   
+$EndComp
+Wire Wire Line
+	9425 5450 9500 5450
+Wire Wire Line
+	9500 5450 9500 5500
+Wire Wire Line
+	9500 5450 9600 5450
+Connection ~ 9500 5450
+Wire Wire Line
+	9500 4775 9225 4775
+Wire Wire Line
+	9500 4775 9675 4775
+Connection ~ 9500 4775
+Wire Wire Line
+	9375 3750 10175 3750
+Wire Wire Line
+	10175 3700 10175 3750
+Wire Wire Line
+	9375 2325 9900 2325
+Connection ~ 9375 2325
+Wire Wire Line
+	10175 2325 10175 2350
+Wire Wire Line
+	10175 2700 10175 2675
+Wire Wire Line
+	10175 3025 10175 3000
+$Comp
+L Device:LED D?
+U 1 1 5F73B48F
+P 10175 2850
+F 0 "D?" V 10214 2732 50  0000 R CNN
+F 1 "green" V 10123 2732 50  0000 R CNN
+F 2 "LED_SMD:LED_0805_2012Metric" H 10175 2850 50  0001 C CNN
+F 3 "https://www.farnell.com/datasheets/2045909.pdf" H 10175 2850 50  0001 C CNN
+F 4 "1318243" H 10175 2850 50  0001 C CNN "Farnell"
+F 5 "710-150080VS75000" H 10175 2850 50  0001 C CNN "Mouser"
+	1    10175 2850
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	10175 3400 10175 3375
+$Comp
+L Device:LED D?
+U 1 1 5F73B498
+P 10175 3225
+F 0 "D?" V 10214 3107 50  0000 R CNN
+F 1 "red" V 10123 3107 50  0000 R CNN
+F 2 "LED_SMD:LED_0805_2012Metric" H 10175 3225 50  0001 C CNN
+F 3 "https://www.farnell.com/datasheets/622356.pdf" H 10175 3225 50  0001 C CNN
+F 4 "1318244" H 10175 3225 50  0001 C CNN "Farnell"
+F 5 "710-150080RS75000" H 10175 3225 50  0001 C CNN "Mouser"
+	1    10175 3225
+	0    -1   -1   0   
+$EndComp
+Connection ~ 10175 3025
+Wire Wire Line
+	10175 3025 10175 3075
+Wire Wire Line
+	9775 3025 10175 3025
+$Comp
+L Device:R R?
+U 1 1 5F73B4A2
+P 10175 2500
+F 0 "R?" H 10105 2454 50  0000 R CNN
+F 1 "1k" H 10105 2545 50  0000 R CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 10105 2500 50  0001 C CNN
+F 3 "~" H 10175 2500 50  0001 C CNN
+F 4 "ok" H 10175 2500 50  0001 C CNN "Vorrätig"
+	1    10175 2500
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5F73B4A9
+P 10175 3550
+F 0 "R?" H 10105 3504 50  0000 R CNN
+F 1 "1k" H 10105 3595 50  0000 R CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 10105 3550 50  0001 C CNN
+F 3 "~" H 10175 3550 50  0001 C CNN
+F 4 "ok" H 10175 3550 50  0001 C CNN "Vorrätig"
+	1    10175 3550
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	9775 2825 9825 2825
+Text GLabel 9825 2825 2    50   Input ~ 0
+BATT
+Connection ~ 8650 2325
+Wire Wire Line
+	8650 3750 8650 3050
+Wire Wire Line
+	8650 2325 8650 2750
+Wire Wire Line
+	9375 2325 8650 2325
+Wire Wire Line
+	9375 2625 9375 2325
+$Comp
+L Device:C C?
+U 1 1 5F73B4B9
+P 8650 2900
+F 0 "C?" H 8765 2946 50  0000 L CNN
+F 1 "22u" H 8765 2855 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1210_3225Metric" H 8688 2750 50  0001 C CNN
+F 3 "" H 8650 2900 50  0001 C CNN
+F 4 "X7R" H 8650 2900 50  0001 C CNN "Type"
+F 5 "" H 8650 2900 50  0001 C CNN "Farnell"
+F 6 "963-EMK325B7226MMHP" H 8650 2900 50  0001 C CNN "Mouser"
+	1    8650 2900
+	1    0    0    -1  
+$EndComp
+Connection ~ 9375 3750
+Wire Wire Line
+	9375 3800 9375 3750
+$Comp
+L power:GND #PWR?
+U 1 1 5F73B4C1
+P 9375 3800
+F 0 "#PWR?" H 9375 3550 50  0001 C CNN
+F 1 "GND" H 9375 3650 50  0000 C CNN
+F 2 "" H 9375 3800 50  0000 C CNN
+F 3 "" H 9375 3800 50  0000 C CNN
+	1    9375 3800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9375 3750 9375 3225
+Wire Wire Line
+	8925 3025 8975 3025
+$Comp
+L Battery_Management:MCP73831-2-OT U?
+U 1 1 5F73B4CB
+P 9375 2925
+F 0 "U?" H 9375 3406 50  0000 C CNN
+F 1 "MCP73831-2-OT" H 9375 3315 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23-5" H 9425 2675 50  0001 L CIN
+F 3 "https://4donline.ihs.com/images/VipMasterIC/IC/MCHP/MCHPS05673/MCHPS05673-1.pdf?hkey=6D3A4C79FDBF58556ACFDE234799DDF0" H 9225 2875 50  0001 C CNN
+F 4 "1332158" H 9375 2925 50  0001 C CNN "Farnell"
+F 5 "579-MCP73832T2DFI/OT" H 9375 2925 50  0001 C CNN "Mouser"
+	1    9375 2925
+	1    0    0    -1  
+$EndComp
+Wire Notes Line
+	8250 2125 10550 2125
+Wire Notes Line
+	10550 2125 10550 4025
+Wire Notes Line
+	10550 4025 8250 4025
+Wire Notes Line
+	8250 4025 8250 2125
+Text Notes 8700 2250 0    50   ~ 0
+Battery Charging
+Wire Wire Line
+	8650 3750 8925 3750
+$Comp
+L Device:R R?
+U 1 1 5F73B4D8
+P 8925 3575
+F 0 "R?" H 9125 3525 50  0000 R CNN
+F 1 "1k" H 9075 3625 50  0000 R CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 8855 3575 50  0001 C CNN
+F 3 "~" H 8925 3575 50  0001 C CNN
+F 4 "ok" H 8925 3575 50  0001 C CNN "Vorrätig"
+	1    8925 3575
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	8925 3750 8925 3725
+Connection ~ 8925 3750
+Wire Wire Line
+	8925 3750 9375 3750
+Wire Wire Line
+	8925 3050 8925 3025
+Wire Wire Line
+	8925 3425 8925 3350
+$Comp
+L Device:R R?
+U 1 1 5F73B4E4
+P 8925 3200
+F 0 "R?" H 9125 3150 50  0000 R CNN
+F 1 "1k" H 9075 3225 50  0000 R CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 8855 3200 50  0001 C CNN
+F 3 "~" H 8925 3200 50  0001 C CNN
+F 4 "ok" H 8925 3200 50  0001 C CNN "Vorrätig"
+	1    8925 3200
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5F73B4EB
+P 9900 2500
+F 0 "R?" H 9830 2454 50  0000 R CNN
+F 1 "1k" H 9830 2545 50  0000 R CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 9830 2500 50  0001 C CNN
+F 3 "~" H 9900 2500 50  0001 C CNN
+F 4 "ok" H 9900 2500 50  0001 C CNN "Vorrätig"
+	1    9900 2500
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	9900 2350 9900 2325
+Connection ~ 9900 2325
+Wire Wire Line
+	9900 2325 10175 2325
+Wire Wire Line
+	9900 2650 9900 2675
+Wire Wire Line
+	9900 2675 10175 2675
+Connection ~ 10175 2675
+Wire Wire Line
+	10175 2675 10175 2650
+Text GLabel 8550 2325 0    50   Input ~ 0
+VBUS
+Wire Wire Line
+	8550 2325 8650 2325
+$EndSCHEMATC

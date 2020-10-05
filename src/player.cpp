@@ -23,23 +23,20 @@
 #include "VS1053.h"
 #include <SD.h>
 
-  Player::Player(Fatal fatal, Oled oled, VS1053 vs1053) : 
-      state(STOPPED), 
-      oldState(INITIALIZING),
-      fatal(fatal),     
-      #ifdef OLED
-        oled(oled),
-      #endif
-      vs1053(vs1053),
-      ringBuffer(20000),
-      dataFile(),
-      currentVolume(65),      
-      lastTime(0),
-      idleTime(0) {}
+Player::Player(Fatal fatal, VS1053 vs1053) : 
+    state(STOPPED), 
+    oldState(INITIALIZING),
+    fatal(fatal),     
+    vs1053(vs1053),
+    ringBuffer(20000),
+    dataFile(),
+    currentVolume(65),      
+    lastTime(0),
+    idleTime(0) {}
 
 void Player::init() {
   // Initialize audio decoder
-  vs1053.begin();
+  //vs1053.begin();
   #ifndef FAST_BOOT
     vs1053.printDetails();
   #endif
@@ -107,8 +104,7 @@ void Player::playNextFile() {
 
   Serial.printf("Playing next file in playlist (%d/%d)\n", playlistIndex + 1, playlistLen);
 
-  digitalWrite(AMP_ENABLE, HIGH);  // enable amplifier
-  digitalWrite(LED2, HIGH);
+  digitalWrite(AMP_ENABLE_PIN, HIGH);  // enable amplifier
   
   char* filename = playlist[playlistIndex];
 
@@ -149,12 +145,11 @@ void Player::next() {
 }
 
 void Player::stop() {  
-  digitalWrite(AMP_ENABLE, LOW);  // disable amplifier
-  digitalWrite(LED2, LOW);
+  digitalWrite(AMP_ENABLE_PIN, LOW);  // disable amplifier
   dataFile.close();
-  vs1053.processByte(0, true);
-  vs1053.setVolume(0);                  
-  vs1053.stopSong();                       
+  //vs1053.processByte(0, true);
+  //vs1053.setVolume(0);                  
+  //vs1053.stopSong();                       
   ringBuffer.empty();                            
   state = STOPPED; 
   clearPlaylist();
@@ -196,9 +191,6 @@ void Player::process() {
       break;
 
     case STOPPED:
-      #ifdef OLED
-        oled.trackName("");
-      #endif
       idleTime += timeGone;
       break;    
     
@@ -213,7 +205,6 @@ void Player::setVolume(uint8_t volume) {
   if (currentVolume < 1) {
     currentVolume = 1;
   }
-  oled.volumeBar(currentVolume);
   vs1053.setVolume(currentVolume);
  }
 

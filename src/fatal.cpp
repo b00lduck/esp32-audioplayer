@@ -21,18 +21,11 @@
 #include "config.h"
 #include "fatal.h"
 
-#ifdef OLED
-  Fatal::Fatal(Oled oled) : oled(oled) {}
-#else
-  Fatal::Fatal() {}
-#endif
+Fatal::Fatal() {}
 
 void Fatal::fatal(char* title, char* message) {
-  Serial.println(F("FATAL ERROR OCCURED"));
+  Serial.println(F("[AAAH] Oh noes. A fatal error occured:"));
   Serial.println(title);
   Serial.println(message);
-  #ifdef OLED
-    oled.fatalErrorMessage(title, message);
-  #endif
 }
 
