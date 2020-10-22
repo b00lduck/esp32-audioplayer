@@ -3907,10 +3907,4 @@ Text Label 5075 1375 0    50   ~ 0
 RST
 Text Label 4875 2025 0    50   ~ 0
 GPIO0
-Text Label 3150 2425 0    50   ~ 0
-DTR
-Text Label 3150 2025 0    50   ~ 0
-RTS
-Text Label 1425 3700 0    50   ~ 0
-VBUS
 $EndSCHEMATC

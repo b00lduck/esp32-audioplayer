@@ -1,4 +1,4 @@
-18169546304569111
+18172752468657974
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -80002,6 +80002,13 @@ varistor SIOV
 0
 2
 2
+XC6192AA05ER-G
+XC6192AA05ERG
+USP-8B06
+Integrated Circuit
+0
+9
+9
 audioplayer
 Crystal_SMD_ABLS7M
 SMD Crystal HC-49-SD http://cdn-reichelt.de/documents/datenblatt/B400/xxx-HC49-SMD.pdf, 11.4x4.7mm^2 package
@@ -80016,6 +80023,13 @@ ESP32-WROOM
 0
 39
 39
+audioplayer
+LQFP-48_7x7mm_P0.5mm-less-solder
+LQFP, 48 Pin (https://www.analog.com/media/en/technical-documentation/data-sheets/ltc2358-16.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+LQFP QFP
+0
+48
+48
 audioplayer
 RFID-RC522
 

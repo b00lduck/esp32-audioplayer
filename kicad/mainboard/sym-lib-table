@@ -1,4 +1,5 @@
 (sym_lib_table
   (lib (name audioplayer-rescue)(type Legacy)(uri ${KIPRJMOD}/audioplayer-rescue.lib)(options "")(descr ""))
   (lib (name audioplayer)(type Legacy)(uri ${KIPRJMOD}/audioplayer.lib)(options "")(descr ""))
+  (lib (name XC6192AA05ER-G)(type Legacy)(uri ${KIPRJMOD}/XC6192AA05ER-G.lib)(options "")(descr ""))
 )

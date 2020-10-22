@@ -1,0 +1,12 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP XC6192AA05ER-G
+D Power Switch ICs - Power Distribution Power Saving Push Button Load Switch
+F https://www.torex.co.jp/file/xc6192/XC6192-j.pdf
+$ENDCMP
+#
+$CMP XC6193BANNER-G
+D Power Switch ICs - Power Distribution Power Saving Push Button Load Switch
+$ENDCMP
+#
+#End Doc Library
