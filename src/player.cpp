@@ -30,13 +30,13 @@ Player::Player(Fatal fatal, VS1053 vs1053) :
     vs1053(vs1053),
     ringBuffer(20000),
     dataFile(),
-    currentVolume(65),      
+    currentVolume(100),      
     lastTime(0),
     idleTime(0) {}
 
 void Player::init() {
   // Initialize audio decoder
-  //vs1053.begin();
+  vs1053.begin();
   #ifndef FAST_BOOT
     vs1053.printDetails();
   #endif

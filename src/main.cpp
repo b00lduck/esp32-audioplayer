@@ -119,7 +119,7 @@ void setup() {
   player.init();
   Serial.println("[ OK ] MP3 init completed");
 
-  //player.play("/startup.mp3");
+  player.play("/startup.mp3");
 }
 
 uint16_t lpf = 0;
@@ -151,13 +151,15 @@ void loop() {
     Serial.printf("[PLYR] idle time %d\n", player.idleTime);
   }
   
-  if (player.idleTime > 28860044) { // approx 15 min shutdown timer
+  if (player.idleTime > 2886004) { //  shutdown timer
     Serial.println("[HALT] idle shutdown");
     pixels.SetPixelColor(0, RgbColor(0,0,0));
     pixels.SetPixelColor(1, RgbColor(0,0,0));
     pixels.SetPixelColor(2, RgbColor(0,0,0));
     pixels.SetPixelColor(3, RgbColor(0,0,0));
     pixels.Show();
+    pinMode(BUTTON2_PIN, OUTPUT);
+    digitalWrite(BUTTON2_PIN, HIGH);
     sleep(1);
     digitalWrite(SHUTDOWN_PIN, LOW);
     sleep(30);
