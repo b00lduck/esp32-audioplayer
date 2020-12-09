@@ -1,4 +1,4 @@
-update=Mon 19 Oct 2020 01:49:48 PM CEST
+update=Thu 29 Oct 2020 10:18:02 AM CET
 version=1
 last_client=kicad
 [cvpcb]
@@ -42,8 +42,8 @@ TrackWidth4=0.5
 TrackWidth5=0.6
 TrackWidth6=0.75
 TrackWidth7=1
-ViaDiameter1=0.8
-ViaDrill1=0.4
+ViaDiameter1=0.9
+ViaDrill1=0.5
 dPairWidth1=0.2
 dPairGap1=0.25
 dPairViaGap1=0.25
@@ -242,8 +242,8 @@ Enabled=0
 Name=Default
 Clearance=0.2
 TrackWidth=0.4
-ViaDiameter=0.8
-ViaDrill=0.4
+ViaDiameter=0.9
+ViaDrill=0.5
 uViaDiameter=0.8
 uViaDrill=0.4
 dPairWidth=0.2

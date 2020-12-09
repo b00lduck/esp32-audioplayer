@@ -7,7 +7,7 @@
 #define BUTTON4_PIN         21 // vol +
 
 // Amplifier power enable
-#define AMP_ENABLE_PIN      33
+#define AMP_ENABLE_PIN      25
 
 // Power down
 #define SHUTDOWN_PIN        27
@@ -17,7 +17,7 @@
 
 // Battery monitoring
 #define ADC_BATT            32
-#define ADC_DIVISOR         550.
+#define ADC_DIVISOR         245.
 
 // MP3 decode (VS1053)
 #define VS1053_XCS_PIN      15

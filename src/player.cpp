@@ -163,8 +163,12 @@ void Player::process() {
     Serial.printf("Player state is now %d, was %d.\n", state, oldState);
     oldState = state;
   }
-         
-  uint32_t timeGone = millis() - lastTime;
+        
+  uint32_t timeGone = 0;
+  if (lastTime > 0){
+    timeGone = millis() - lastTime;
+  } 
+  lastTime = millis();
 
   switch (state) {
 
