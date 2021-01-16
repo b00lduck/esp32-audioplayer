@@ -2,7 +2,7 @@
 <export version="D">
   <design>
     <source>/home/daniel/dev/ws_audioplay/esp32-audioplayer/kicad/mainboard/audioplayer.sch</source>
-    <date>Wed 02 Dec 2020 03:03:33 PM CET</date>
+    <date>Wed 16 Dec 2020 09:11:10 PM CET</date>
     <tool>Eeschema 5.1.8</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>

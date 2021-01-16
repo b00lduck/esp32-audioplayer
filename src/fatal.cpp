@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright 2018 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2018-2021 D.Zerlett <daniel@zerlett.eu>
  * 
  * This file is part of esp32-audioplayer.
  * 
@@ -23,7 +23,7 @@
 
 Fatal::Fatal() {}
 
-void Fatal::fatal(char* title, char* message) {
+void Fatal::fatal(const char* title, const char* message) {
   Serial.println(F("[AAAH] Oh noes. A fatal error occured:"));
   Serial.println(title);
   Serial.println(message);

@@ -17,7 +17,7 @@
 
 // Battery monitoring
 #define ADC_BATT            32
-#define ADC_DIVISOR         245.
+#define ADC_DIVISOR         250.
 
 // MP3 decode (VS1053)
 #define VS1053_XCS_PIN      15
@@ -37,11 +37,10 @@
 #define MFRC522_CS_PIN      4
 #define MFRC522_RST_PIN     13
 
-
 // Number of bytes for the card ID
-#define ID_BYTE_ARRAY_LENGTH    4
+#define CARD_ID_BYTE_ARRAY_LENGTH  4
+#define CARD_ID_STRING_LENGTH      (CARD_ID_BYTE_ARRAY_LENGTH * 2 + 1)
 
-//#define FAIL_ON_FILE_NOT_FOUND
-//#define FAST_BOOT
-#define MAX_PLAYLIST_LENGTH 32
-#define MAX_FILENAME_LENGTH 64
+#define MAX_FILENAME_STRING_LENGTH     (50 + 1)
+
+#define ENABLE_CORS

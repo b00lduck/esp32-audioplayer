@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright 2018 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2018-2021 D.Zerlett <daniel@zerlett.eu>
  * 
  * This file is part of esp32-audioplayer.
  * 
@@ -18,6 +18,7 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
+#pragma once
 #include "Arduino.h"
 #include "config.h"
 #include <MFRC522.h>
@@ -35,8 +36,16 @@ class RFID {
     RFID(uint8_t _csPin, uint8_t _rstPin);
     void init();
     CardState checkCardState();
+    void currentCardAsString(char *buf);
 
-    byte currentCard[ID_BYTE_ARRAY_LENGTH];
+    byte currentCard[CARD_ID_BYTE_ARRAY_LENGTH];    
+
+    /**
+     * Format 4-Byte array to string like "0A1B2C3D"
+     */
+    static void formatCardId(char cardIdAsString[CARD_ID_STRING_LENGTH], byte *buffer) {
+        snprintf(cardIdAsString, CARD_ID_STRING_LENGTH, "%02X%02X%02X%02X", buffer[0], buffer[1], buffer[2], buffer[3]);
+    }
 
   private:
     uint8_t csPin;
@@ -44,6 +53,8 @@ class RFID {
     MFRC522 mfrc522;
 
     bool cardPresent = false;    
+    bool cardError = false;
+
     uint8_t cardFailCount = 0;    
 
     bool cardChanged(byte *buffer, byte bufferSize);

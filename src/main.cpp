@@ -25,31 +25,42 @@
 #include <NeoPixelBus.h>
 
 #include "config.h"
-#include "tools.h"
+#include "config_wifi.h"
 #include "buttons.h"
-#include "VS1053.h"
+#include "player/VS1053.h"
+#include "player/player.h"
+#include "storage/sd.h"
+#include "storage/mapper.h"
+#include "http/http.h"
+
 #include "rfid.h"
-#include "sd.h"
-#include "mapper.h"
-#include "player.h"
 #include "fatal.h"
 
-VS1053          vs1053(VS1053_XCS_PIN, VS1053_XDCS_PIN, VS1053_DREQ_PIN, VS1053_XRESET_PIN);
-RFID            rfid(MFRC522_CS_PIN, MFRC522_RST_PIN);
-SDCard          sd(SD_CS_PIN);
+VS1053    vs1053(VS1053_XCS_PIN, VS1053_XDCS_PIN, VS1053_DREQ_PIN, VS1053_XRESET_PIN);
+RFID      rfid(MFRC522_CS_PIN, MFRC522_RST_PIN);
+SDCard    sd(SD_CS_PIN);
 
-Fatal           fatal;
-Player          player(fatal, vs1053);
+Fatal     fatal;
+Player    player(fatal, vs1053);
 
-Mapper          mapper;
-Buttons         buttons;
+Mapper    mapper;
+Buttons   buttons;
+HTTP      http(&rfid, &mapper, &sd);
 
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> pixels(4, WS2812_DATA_PIN);
 
 void setup() {
 
+  Serial.begin(115200);                            
+  Serial.println("MP3 player V2 now Booting...");
+
   pixels.Begin();
-  pixels.ClearTo(RgbColor(10,10,0));
+  pixels.ClearTo(RgbColor(10,0,10));
+  pixels.Show();
+
+  http.init();
+
+  pixels.ClearTo(RgbColor(0,10,10));
   pixels.Show();
 
   // Set shutdown pin to input
@@ -64,9 +75,6 @@ void setup() {
 
   // Initialize GPIO for battery voltage
   pinMode(ADC_BATT, ANALOG);
-
-  Serial.begin(115200);                            
-  Serial.println("MP3 player V2 now Booting...");
 
   // Initialize SPI bus
   SPI.begin(SPI_SCK_PIN, SPI_MISO_PIN, SPI_MOSI_PIN);
@@ -89,22 +97,8 @@ void setup() {
     pixels.ClearTo(RgbColor(0,30,0));
     pixels.Show();
     switch(err) {
-      case Mapper::MapperError::MALFORMED_LINE_SYNTAX:
-        fatal.fatal("Mapping error", "Syntax error");
-      case Mapper::MapperError::MALFORMED_CARD_ID:
-        fatal.fatal("Mapping error", "Illegal char in ID");
-      case Mapper::MapperError::LINE_TOO_SHORT:
-        fatal.fatal("Mapping error", "Line too short");    
-      case Mapper::MapperError::LINE_TOO_LONG:
-        fatal.fatal("Mapping error", "Line too long");
-      case Mapper::MapperError::MAPPING_FILE_NOT_FOUND:
-        fatal.fatal("Mapping error", "Mapping file not found");      
-      case Mapper::MapperError::MALFORMED_FILE_NAME:
-        fatal.fatal("Mapping error", "Malformed file name");   
-      #ifdef FAIL_ON_FILE_NOT_FOUND      
-        case Mapper::MapperError::REFERENCED_FILE_NOT_FOUND:
-          fatal.fatal("Mapping error", "Referenced file not found");   
-      #endif      
+      default:
+        break;
     }    
   }
 
@@ -114,7 +108,9 @@ void setup() {
   pixels.ClearTo(RgbColor(0,10,0));
   pixels.Show();   
 
-  player.play("/startup.mp3");
+  Playlist startupPlaylist;
+  startupPlaylist.addEntry("/system/startup.mp3");
+  player.play(&startupPlaylist);
 }
 
 uint16_t lpf = 0;
@@ -139,14 +135,15 @@ void loop() {
   // Divider: 4.2V batt -> 980mV
 
   showBatt++;
-  if (showBatt > 200) {
+  if (showBatt > 2000) {
     Serial.printf("[BATT] %1.2fV (%d)\n", lpf/ADC_DIVISOR, lpf);
     showBatt = 0;
 
     Serial.printf("[PLYR] idle time %d\n", player.idleTime);
+    Serial.printf("[HEAP] %d\n", ESP.getFreeHeap());
   }
   
-  #define IDLE_SHUTDOWN_TIMEOUT 60000
+  #define IDLE_SHUTDOWN_TIMEOUT 600000 // milliseconds
   #define IDLE_SHUTDOWN_FADE_LEN 10000
   #define IDLE_SHUTDOWN_FADE_START (IDLE_SHUTDOWN_TIMEOUT-IDLE_SHUTDOWN_FADE_LEN)
 
@@ -166,7 +163,6 @@ void loop() {
       digitalWrite(SHUTDOWN_PIN, HIGH);
     }
   }
-
  
   // Volume Control
   if (buttons.buttonDown(4)) {
@@ -177,30 +173,29 @@ void loop() {
     player.decreaseVolume();
   }
 
-
   RFID::CardState cardState = rfid.checkCardState();
   
   switch(cardState) {
     case RFID::CardState::NEW_CARD:
       {
+        /*
         char filename[MAX_FILENAME_STRING_LENGTH];
         Mapper::MapperError err = mapper.resolveIdToFilename(rfid.currentCard, filename);    
         switch(err) {
-          case Mapper::MapperError::ID_NOT_FOUND:
+          case Mapper::MapperError::CARD_ID_NOT_FOUND:
             Serial.println(F("Card not found in mapping"));
-            player.stop();        
-          case Mapper::MapperError::LINE_TOO_LONG:
-            fatal.fatal("Mapping error", "Long line/missing newline");         
-          case Mapper::MapperError::MAPPING_FILE_NOT_FOUND:
-            fatal.fatal("Mapping error", "Mapping file not found");         
-          #ifdef FAIL_ON_FILE_NOT_FOUND  
-            case Mapper::MapperError::REFERENCED_FILE_NOT_FOUND:
-              fatal.fatal("Mapping error", "Data file not found"); 
-          #endif              
+            player.stop();
+            break;     
           case OK:
             player.play(filename);
+            break;
+          default:
+            fatal.fatal("Mapping error", "Unknown error");
+            break;
         } 
-      }
+      */
+     }
+      
       break;
     case RFID::CardState::REMOVED_CARD:
       Serial.println("removed card");

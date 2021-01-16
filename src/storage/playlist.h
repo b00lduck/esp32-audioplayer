@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright 2018-2021 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2021 D.Zerlett <daniel@zerlett.eu>
  * 
  * This file is part of esp32-audioplayer.
  * 
@@ -19,20 +19,20 @@
  *  
  */
 #pragma once
-#include "Arduino.h"
 
-class Buttons {
+#define MAX_PLAYLIST_LENGTH 32
+#define MAX_PLAYLIST_ENTRY_LENGTH 64
 
-  private:
-    uint8_t oldState;
+class Playlist { 
 
-  public:
-    Buttons();
-    void init();
-    bool read();
+  public:  
 
-    bool buttonDown(uint8_t id);
+    unsigned char numEntries = 0;
+    unsigned currentEntryIndex = 0;
+    char entries[MAX_PLAYLIST_LENGTH][MAX_PLAYLIST_ENTRY_LENGTH];
 
-    uint8_t state;
-
+    Playlist();   
+    void addEntry(const char *entry);
+    void sort();
+    char* getNextEntry();
 };

@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright 2018-2021 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2021 D.Zerlett <daniel@zerlett.eu>
  * 
  * This file is part of esp32-audioplayer.
  * 
@@ -18,21 +18,9 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
+
 #pragma once
-#include "Arduino.h"
 
-class Buttons {
-
-  private:
-    uint8_t oldState;
-
-  public:
-    Buttons();
-    void init();
-    bool read();
-
-    bool buttonDown(uint8_t id);
-
-    uint8_t state;
-
-};
+bool stringEndsWith(const char *str, const char *suffix);
+void stringToUpper(char *str);
+bool filenameHasExtension(const char *filename, const char *extension);

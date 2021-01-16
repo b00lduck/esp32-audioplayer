@@ -18,21 +18,23 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-#pragma once
 #include "Arduino.h"
 
-class Buttons {
+class RingBuffer {
 
   private:
-    uint8_t oldState;
+    uint32_t size;
+    uint8_t* buf;                                 
+    uint16_t windex;                            
+    uint16_t rindex;                
+    uint16_t count;                              
 
   public:
-    Buttons();
-    void init();
-    bool read();
-
-    bool buttonDown(uint8_t id);
-
-    uint8_t state;
+    RingBuffer ( uint32_t size );
+    bool space();
+    uint16_t avail();
+    void put(uint8_t b);
+    uint8_t get();
+    void empty();
 
 };

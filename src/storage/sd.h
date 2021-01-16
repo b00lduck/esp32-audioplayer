@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright 2018-2021 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2018 D.Zerlett <daniel@zerlett.eu>
  * 
  * This file is part of esp32-audioplayer.
  * 
@@ -20,19 +20,32 @@
  */
 #pragma once
 #include "Arduino.h"
+#include "config.h"
+#include <SD.h>
 
-class Buttons {
+class SDCard {
 
+  public:  
+    SDCard(uint8_t _csPin);
+    bool init();
+
+    static bool assureDirectory(const char path[]) {
+        Serial.printf("[SD-Card] Assuring directory %s\n", path);
+        File chk = SD.open(path);
+        if(!chk){
+            return SD.mkdir(path);
+        } 
+        if (!chk.isDirectory()) {
+            Serial.println(F("[SD-Card] There is a file named 'upload' in the root of the SD card. Please remove this file from the card."));
+            return false;
+        }
+        return true;
+    }
+    
   private:
-    uint8_t oldState;
+    uint8_t csPin;
 
-  public:
-    Buttons();
-    void init();
-    bool read();
-
-    bool buttonDown(uint8_t id);
-
-    uint8_t state;
-
+    void printDirectory();
 };
+
+

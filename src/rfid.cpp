@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright 2018 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2018-2021 D.Zerlett <daniel@zerlett.eu>
  * 
  * This file is part of esp32-audioplayer.
  * 
@@ -19,7 +19,6 @@
  *  
  */
 #include "rfid.h"
-#include "tools.h"
 
 RFID::RFID(uint8_t _csPin, uint8_t _rstPin) : 
   csPin(_csPin),
@@ -29,8 +28,8 @@ RFID::RFID(uint8_t _csPin, uint8_t _rstPin) :
 
 void RFID::init() {
    mfrc522.PCD_Init();  
-   mfrc522.PCD_DumpVersionToSerial(); 
-  // mfrc522.PCD_SetAntennaGain(mfrc522.RxGain_max);
+   mfrc522.PCD_DumpVersionToSerial();
+   mfrc522.PCD_SetAntennaGain(mfrc522.RxGain_max);
 }
 
 RFID::CardState RFID::checkCardState() {
@@ -39,12 +38,14 @@ RFID::CardState RFID::checkCardState() {
     if (mfrc522.PICC_ReadCardSerial()) {
       cardFailCount = 0;    
       if (cardChanged(mfrc522.uid.uidByte, mfrc522.uid.size)) {
-        newCard(mfrc522.uid.uidByte, mfrc522.uid.size);        
+        newCard(mfrc522.uid.uidByte, mfrc522.uid.size);                
         return CardState::NEW_CARD;        
       }      
     } else {
         Serial.println(F("Error reading card"));
-        cardPresent = false;   
+        cardPresent = false;
+        cardError = true;
+        memset(currentCard, 0, sizeof(currentCard));
         return CardState::FAULTY_CARD;                   
     }
   } else {
@@ -53,6 +54,7 @@ RFID::CardState RFID::checkCardState() {
       if (cardFailCount > 1) {
           Serial.println(F("Card removed"));
           cardPresent = false;   
+          cardError = false;
           memset(currentCard, 0, sizeof(currentCard));
           return CardState::REMOVED_CARD;                 
       }     
@@ -67,7 +69,7 @@ RFID::CardState RFID::checkCardState() {
  * return true if card ID has changed
  */
 bool RFID::cardChanged(byte *buffer, byte bufferSize) {
-  for (uint8_t i = 0; i < bufferSize; i++) {
+  for (uint8_t i = 0; i < CARD_ID_BYTE_ARRAY_LENGTH; i++) {
     if (buffer[i] != currentCard[i]) {
       return true;
     }
@@ -80,11 +82,20 @@ bool RFID::cardChanged(byte *buffer, byte bufferSize) {
  */
 void RFID::newCard(byte *buffer, byte bufferSize) {
   cardPresent = true;
-  if (bufferSize > sizeof(currentCard)) {
-    bufferSize = sizeof(currentCard);
-  }
-  memcpy(currentCard, buffer, bufferSize);
-  Serial.print(F("New Card with UID"));
-  dumpByteArray(mfrc522.uid.uidByte, mfrc522.uid.size);  
+  cardError = false;
+
+  // only copy first ID_BYTE_ARRAY_LENGTH bytes of ID
+  memcpy(currentCard, buffer, CARD_ID_BYTE_ARRAY_LENGTH);
+  
+  Serial.print(F("New Card with UID "));
+
+  char buf[CARD_ID_STRING_LENGTH];
+  currentCardAsString(buf);
+  Serial.print(buf);
   Serial.println(F(" detected."));  
+}
+
+void RFID::currentCardAsString(char buf[CARD_ID_STRING_LENGTH]) {
+    
+  snprintf(buf, CARD_ID_STRING_LENGTH, "%02X%02X%02X%02X", currentCard[0], currentCard[1], currentCard[2], currentCard[3]);
 }

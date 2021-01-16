@@ -18,37 +18,45 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-#include "config.h"
-#include "buttons.h"
+#include "ringbuffer.h"
 
-Buttons::Buttons() : oldState(0), state(0) {}
-
-void Buttons::init() {
-  pinMode(BUTTON0_PIN, INPUT_PULLUP);
-  pinMode(BUTTON1_PIN, INPUT_PULLUP);
-  pinMode(BUTTON2_PIN, INPUT_PULLUP);
-  pinMode(BUTTON3_PIN, INPUT_PULLUP);
-  pinMode(BUTTON4_PIN, INPUT_PULLUP);
+RingBuffer::RingBuffer(uint32_t s)  {
+  size = s;
+  buf = (uint8_t *) malloc (size);
+  rindex = size - 1;
+  windex = 0;
+  count = 0;
 }
 
-bool Buttons::read() {
-
-    state = (digitalRead(BUTTON0_PIN)) |  
-            (digitalRead(BUTTON1_PIN)) << 1 | 
-            (digitalRead(BUTTON2_PIN)) << 2 |
-            (digitalRead(BUTTON3_PIN)) << 3 |
-            (digitalRead(BUTTON4_PIN)) << 4;
-            
-    state ^= 255;
-
-    if (oldState != state) {
-        oldState  = state;
-        return true;
-    }
-    return false;
+// True is at least one byte of free space is available
+bool RingBuffer::space() {
+  return ( count < size );     
 }
 
-bool Buttons::buttonDown(uint8_t id) {
-    return (state & (1 << id)) != 0;
+// Return number of bytes available
+uint16_t RingBuffer::avail() {
+  return count;                     
 }
 
+// Put one byte in the ringbuffer
+void RingBuffer::put(uint8_t b) {
+  *(buf + windex) = b;
+  if ( ++windex == size ) {
+    windex = 0;
+  }
+  count++;
+}
+
+uint8_t RingBuffer::get() {
+  if ( ++rindex == size ) { 
+    rindex = 0;                   
+  }
+  count--;                         
+  return *(buf + rindex);
+}
+
+void RingBuffer::empty() {
+  windex = 0;                
+  rindex = size - 1;
+  count = 0;
+}

@@ -19,20 +19,47 @@
  *  
  */
 #pragma once
+#include <FS.h>
 #include "Arduino.h"
+#include "fatal.h"
+#include "VS1053.h"
+#include "ringbuffer.h"
+#include "../storage/mapper.h"
 
-class Buttons {
+enum playerState_t {INITIALIZING, PLAYING, STOPPED};
+
+class Player {
 
   private:
-    uint8_t oldState;
+    playerState_t state;
+    playerState_t oldState;
+    Fatal fatal;
+    VS1053 vs1053;
+    RingBuffer ringBuffer;
+
+    File dataFile;
+
+    Playlist *playlist;
+
+    uint8_t currentVolume;
+
+    void playNextFile();    
+    
+
+    void setVolume(uint8_t volume);
+
+    uint32_t lastTime;
 
   public:
-    Buttons();
+    Player(Fatal fatal, VS1053 vs1053);
     void init();
-    bool read();
+    void play(Playlist *playlist);
+    void stop();
+    void process();
+    void next();
 
-    bool buttonDown(uint8_t id);
+    void increaseVolume();
+    void decreaseVolume();
 
-    uint8_t state;
-
+    uint32_t idleTime;
 };
