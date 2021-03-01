@@ -48,7 +48,7 @@
       }
     },
     created() {
-      //this.fetchData()
+      this.fetchData()
     },
     name: "Mappings",
   }; 
@@ -56,8 +56,6 @@
 
 <style scoped>
   .mappings {
-    border: 1px solid black;
-    text-align: left;
     width: 500px;    
   }
   li {

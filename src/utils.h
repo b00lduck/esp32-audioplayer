@@ -23,4 +23,5 @@
 
 bool stringEndsWith(const char *str, const char *suffix);
 void stringToUpper(char *str);
+void stringToLower(char *str);
 bool filenameHasExtension(const char *filename, const char *extension);

@@ -1,10 +1,37 @@
 <template>
-  <div class="card">
-    <br />
-    <h1>Card ID:</h1>
-    <h2 v-if="!error">{{ id }}</h2>    
-    <h2 v-if="error">ERROR</h2><br>    
-  </div>
+    <b-card class="card" header="Card info">    
+      <div v-if="error">ERROR</div>
+      <div v-if="!error">
+        
+        <b-row>
+          <b-col sm="4">
+            <b-label for="cardId">Card ID:</b-label>
+          </b-col>
+          <b-col sm="8">
+            <b-form-input size="sm" id="cardId" v-model="card.id" disabled />
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col sm="4">
+            <b-label for="cardName">Card name:</b-label>
+          </b-col>
+          <b-col sm="8">
+            <b-form-input size="sm" id="cardName" v-model="card.name" disabled />
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col sm="4">
+            <b-label for="cardStatus">Card status:</b-label>
+          </b-col>
+          <b-col sm="8">
+            <b-form-input size="sm" id="cardStatus" v-model="card.status" disabled />
+          </b-col>
+        </b-row>        
+
+      </div>
+    </b-card>
 </template>
 
 <script>
@@ -22,31 +49,40 @@
               const error = new Error(res.statusText);
               throw error;
             }
-            return res.text()
+            return res.json()
           })
           .then((data) => {
-            this.id = data
+            if (data.id == "00000000") {
+              data.id = "no card"
+              data.name = "n/a"
+              data.status = "n/a"
+            }
+            this.card = data
           })
           .catch((err) => {
             this.error = true
             console.log(err)
-            setTimeout(this.fetchData, 1000);
+            setTimeout(this.fetchData, 5000);
           })
           .then(() => {
             this.loading = false;
-            setTimeout(this.fetchData, 1000);
+            setTimeout(this.fetchData, 2000);
           });
       }
     },
     data() {
       return {
-        id: "no card",
+        card: {
+          id: "",
+          name: "",
+          status: ""
+        },
         loading: false,
         error: false
       }
     },
     created() {
-      //this.fetchData()
+      this.fetchData()
     },
     name: "Cardview",
   }; 
@@ -54,10 +90,6 @@
 
 <style scoped>
 .card {
-  border: 1px solid black;
-  border-radius: 10px;
-  width: 300px;
-  height: 170px;
-  margin: auto;
+  width: 600px;
 }
 </style>

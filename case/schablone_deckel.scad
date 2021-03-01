@@ -1,22 +1,16 @@
-$fn=20;
+$fn=50;
 
-height=25;
-width=100;
+height=120;
+width=110;
 
 drill=0.5;
 flat=5;
 
-difference() {    
-    rounded_square([width,height],[5,5,5,5], true);    
-    for(i=[0:17.4:35]) {
-        translate([i,0]) circle(drill);
-        translate([-i,0]) circle(drill);
-    }
-    
+difference() {
+    square([width,height], true);
+    translate([0,2]) rounded_square([85,15],[3,3,3,3], true);    
 }
-
-//translate([0,6/2 - drill + flat]) square([width,6], true);
-
+    
 module rounded_square(dim, corners=[10,10,10,10], center=false){
   w=dim[0];
   h=dim[1];

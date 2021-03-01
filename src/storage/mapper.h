@@ -45,9 +45,14 @@ class Mapper {
       CARDS_DIRECTORY_NOT_FOUND,
 
       /**
-       * Root directory not present on SD card
+       * Directory not present on SD card
        */
       DIRECTORY_NOT_FOUND,
+
+      /**
+       * File not present on SD card
+       */
+      FILE_NOT_FOUND,
 
       /**
        * The desired ID was not found
@@ -89,9 +94,11 @@ class Mapper {
 
     MapperError createFileIterator(File *it, const char *dir);
     MapperError nextFile(File *it, char name[256], char type[16]);
+
+    MapperError readMetaFile(char cardIdString[CARD_ID_STRING_LENGTH], MappingMeta *meta);
     
   private:
-    MapperError readMetaFile(char cardIdString[CARD_ID_STRING_LENGTH], MappingMeta *meta);
+    
     uint16_t readNameFromMetaFile(char str[MAX_CARD_NAME_STRING_LENGTH], File *stream);
     bool stringEndsWith(const char *str, const char *suffix);
     

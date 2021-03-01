@@ -1,29 +1,42 @@
 <template>
 
-  <div class="filebrowser">
-    <h1>Filebrowser</h1>
-    <h2>Current path: {{ path }}</h2>
+  <b-card class="filebrowser" header="Filebrowser">
 
-    <button v-on:click="goParent()">parent dir</button>
-    <button v-on:click="goRoot()">root dir</button>
+    <b-button-toolbar>
+      <b-button-group class="mx-2">
+        <b-button  class="loading" variant="primary">
+          <b-spinner v-if="loading" small/>
+          <b-icon v-if="!loading" size="md" icon="arrow-clockwise"/>
+        </b-button>
+      </b-button-group>
+
+      <b-input-group size="md">        
+        <b-form-input disabled v-bind:value="path"></b-form-input>
+      </b-input-group>
+      <b-button-group class="mx-2">
+        <b-button :disabled="isParent()" v-on:click="goParent()">parent dir</b-button>
+        <b-button :disabled="isParent()" v-on:click="goRoot()">root dir</b-button>
+      </b-button-group>      
+    </b-button-toolbar>
+
+    <br/>
     
-    <h4 v-if="loading">loading...</h4>
 
     <b-list-group v-if="!loading">
       <b-list-group-item 
           v-on:click="goDir(file)" 
-          class="d-flex justify-content-between align-items-center" 
+          class="d-flex justify-content-between align-items-center text-align-left" 
           v-for="(file, index) in data" 
           :key="index"
           v-bind:class="file.type">       
 
         <b-icon v-bind:icon="icon(file.type)" scale="2" />
 
-        {{ file.name }}
+        <div>{{ file.name }}</div>
       </b-list-group-item>
     </b-list-group>
 
-  </div>
+  </b-card>
 </template>
 
 <script>
@@ -32,7 +45,9 @@
       icon: function(icon) {
         return {
           "directory": "folder",
-          "file": "file-earmark"
+          "file_audio": "file-earmark-music",
+          "file_text": "file-earmark-text",
+          "file_other": "file-earmark"
         }[icon]
       },
 
@@ -58,6 +73,10 @@
           this.path = dir.name;
           this.fetchData();          
         }          
+      },
+
+      isParent: function() {
+        return (this.path == "/")
       },
 
       fetchData: function() {
@@ -107,9 +126,7 @@
 
 <style scoped>
   .filebrowser {
-    border: 1px solid black;
-    text-align: left;
-    width: 500px; 
+    width: 600px; 
   }
 
   .directory {
@@ -118,5 +135,9 @@
 
   .directory:hover {
     background-color: #bbb;
+  }
+
+  .loading {
+    width: 45px;
   }
 </style>

@@ -34,6 +34,7 @@ Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char *path)
   
   File dir = SD.open(path, FILE_READ);
   if(!dir){
+      Serial.println("Could not open path for playlist creation! Proceeding with empty plalist.");
       return OK;
   }
 
@@ -51,7 +52,7 @@ Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char *path)
       }
       file = dir.openNextFile();
   }
-  playlist->sort();
+  //playlist->sort();
   return OK;
 }
 
@@ -122,16 +123,17 @@ Mapper::MapperError Mapper::nextMapping(File *it, Mapper::Mapping *mapping) {
       char name[CARD_ID_STRING_LENGTH];
       strncpy(name, entry.name() + strlen(CARDS_DIRECTORY) + 1, CARD_ID_STRING_LENGTH);
       MapperError err;
-      
+            
       err = readMetaFile(name, &mapping->mappingMeta);
       if (err != OK) {
-        Serial.println("Error 42");
+        Serial.println("Could not read meta file");
         return err;
       }
 
+      Serial.printf("creating playlist for %s\n", entry.name());
       err = createPlaylist(&mapping->playlist, entry.name());
       if (err != OK) {
-        Serial.println("Error 43");
+        Serial.println("Could not create playlist");
         return err;
       }
 
@@ -141,13 +143,13 @@ Mapper::MapperError Mapper::nextMapping(File *it, Mapper::Mapping *mapping) {
 }
 
 /**
- * Create directory iterator to be used from the HTTP interface to get al list of all files and directories in the given path.
+ * Create directory iterator to be used from the HTTP interface to get a list of all files and directories in the given path.
  */
 Mapper::MapperError Mapper::createFileIterator(File *it, const char *dir) {  
-  *it = SD.open(dir, FILE_READ);
+  *it = SD.open(dir, FILE_READ);  
   if (!*it) {    
     return DIRECTORY_NOT_FOUND;
-  } 
+  }  
   return OK;
 }
 

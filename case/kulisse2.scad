@@ -1,4 +1,4 @@
-$fn=20;
+$fn=50;
 
 height=25;
 width=100;
@@ -8,10 +8,19 @@ flat=5;
 
 difference() {    
     rounded_square([width,height],[5,5,5,5], true);    
-    for(i=[0:17.4:35]) {
-        translate([i,0]) circle(drill);
-        translate([-i,0]) circle(drill);
+    translate([0,0]) circle(drill);
+    
+    translate([1.2,0]) {
+        translate([17.6,0]) circle(drill);
+        translate([34.2,0]) circle(drill);
+        translate([-18,0]) circle(drill);
+        translate([-35,0]) circle(drill);
     }
+    
+    translate([-45,-7.5]) circle(drill);    
+    translate([45,-7.5]) circle(drill);
+    
+    translate([-27,-13.5]) rounded_square([13,4],[0,0,1,1], true);   
     
 }
 

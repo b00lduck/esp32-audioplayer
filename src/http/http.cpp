@@ -23,7 +23,6 @@
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <SPIFFS.h> 
 
 HTTP::HTTP(RFID *rfid, Mapper *mapper, SDCard *sd) : 
   server(80),
@@ -97,11 +96,6 @@ void HTTP::init() {
     }
   });
 
-  // Serve frontend UI from SPIFFS
-  if(!SPIFFS.begin()){ 
-    Serial.println(F("An Error has occurred while mounting SPIFFS"));  
-  }  
-  server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");  
   server.onNotFound(notFound);
   server.begin(); 
 }

@@ -19,11 +19,12 @@
  *  
  */
 #include "http.h"
+#include "utils.h"
 
 void HTTP::handlerCardGet(AsyncWebServerRequest *request) {  
   File it;
   Mapper::MapperError err = mapper->createMappingIterator(&it);
-  if (err != OK) {
+  if (err != Mapper::MapperError::OK) {
     AsyncWebServerResponse *response = request->beginResponse(500, F("text/plain"), "Could not create cards list.");    
     request->send(response);
     return;
@@ -34,12 +35,22 @@ void HTTP::handlerCardGet(AsyncWebServerRequest *request) {
     addCorsHeader(response);
   #endif
   response->print("[");
-  Mapper::Mapping m;
-  err = mapper->nextMapping(&it, &m);
-    
-  while (err != Mapper::MapperError::NO_MORE_CARDS) {
-        
+
+
+  bool first = true;
+  do {
+
+    Mapper::Mapping m;
+    err = mapper->nextMapping(&it, &m);
+
     if (err == Mapper::MapperError::OK) {
+
+      if (first) {
+        first = false;      
+      } else {
+        response->println(",");
+      }
+
       response->printf("{\"cardId\":\"%s\", \"name\":\"%s\", \"files\": [", m.mappingMeta.cardId, m.mappingMeta.name);         
       for(uint8_t i=0; i<m.playlist.numEntries; i++) {
         response->printf("\"%s\"", m.playlist.entries[i]);
@@ -48,25 +59,39 @@ void HTTP::handlerCardGet(AsyncWebServerRequest *request) {
         }
       }          
       response->print("]}");
-    }
 
-    err = mapper->nextMapping(&it, &m);
-    if (err == Mapper::MapperError::OK) {
-      response->println(",");
-    }
-    
-  }
+    } 
+
+  } while (err != Mapper::MapperError::NO_MORE_CARDS);
+
   response->print("]");
   request->send(response);
 }
 
 
 void HTTP::handlerCurrentCardGet(AsyncWebServerRequest *request) {  
-  char buf[CARD_ID_STRING_LENGTH];
-  rfid->currentCardAsString(buf);
-  AsyncWebServerResponse *response = request->beginResponse(200, F("text/plain"), buf);
+  char cardId[CARD_ID_STRING_LENGTH];
+  rfid->currentCardAsString(cardId);
+
+  Serial.println("reading meta file");
+
+  stringToLower(cardId);
+  
+  Mapper::MappingMeta meta;
+  Mapper::MapperError err = mapper->readMetaFile(cardId, &meta);
+
+  if (err != Mapper::MapperError::OK) {
+    request->send(request->beginResponse(500, F("text/plain"), "Could not read meta file"));
+    return;
+  }
+  
+  AsyncResponseStream *response = request->beginResponseStream(F("application/json"));
   #ifdef ENABLE_CORS
     addCorsHeader(response);
   #endif
+
+  response->printf("{\"id\":\"%s\",\"status\":\"empty\",\"name\":\"%s\"}", cardId, meta.name);
+
   request->send(response);
+
 }

@@ -27,7 +27,8 @@ void HTTP::handlerFileGet(AsyncWebServerRequest *request) {
   
   if (strlen(path) == 0) {
       path = "/";      
-  }
+  } 
+
   Mapper::MapperError err = mapper->createFileIterator(&it, path);
     
   switch(err) {
