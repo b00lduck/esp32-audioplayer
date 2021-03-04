@@ -28,6 +28,7 @@
 #define META_FILE_NAME                 "meta.txt"
 #define CARDS_DIRECTORY                "/cards"
 #define META_FILE_PATH_LENGTH          (6+1+8+1+8+1)
+#define CARD_DIRECTORY_PATH_LENGTH     (6+1+8+1)
 
 class Mapper {
   public:  
@@ -60,9 +61,14 @@ class Mapper {
       CARD_ID_NOT_FOUND,
 
       /**
+       * the meta file could not be found
+       */
+      META_FILE_NOT_FOUND,
+
+      /**
        * the meta file could not be read
        */
-      META_FILE_ERROR,      
+      META_FILE_ERROR,
             
       /**
        * No more card mappings to be read
@@ -90,16 +96,16 @@ class Mapper {
 
     MapperError createMappingIterator(File *file);
     MapperError nextMapping(File *file, Mapper::Mapping *mapping);
-    MapperError createPlaylist(Playlist *playlist, const char *path);
+    MapperError createPlaylist(Playlist *playlist, const char cardIdString[CARD_ID_STRING_LENGTH]);
 
     MapperError createFileIterator(File *it, const char *dir);
     MapperError nextFile(File *it, char name[256], char type[16]);
 
-    MapperError readMetaFile(char cardIdString[CARD_ID_STRING_LENGTH], MappingMeta *meta);
+    MapperError readMetaFile(MappingMeta *meta, char cardIdString[CARD_ID_STRING_LENGTH]);
     
   private:
     
-    uint16_t readNameFromMetaFile(char str[MAX_CARD_NAME_STRING_LENGTH], File *stream);
+    uint16_t readNameFromMetaFile(File *stream, char str[MAX_CARD_NAME_STRING_LENGTH]);
     bool stringEndsWith(const char *str, const char *suffix);
     
 };

@@ -30,9 +30,12 @@ Mapper::MapperError Mapper::init() {
     return MapperError::OK;
 }
 
-Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char *path) {
+Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char cardIdString[CARD_ID_STRING_LENGTH]) {
   
-  File dir = SD.open(path, FILE_READ);
+  char cardDirPath[CARD_DIRECTORY_PATH_LENGTH];
+  snprintf(cardDirPath, CARD_DIRECTORY_PATH_LENGTH, "%s/%8s", CARDS_DIRECTORY, cardIdString);
+
+  File dir = SD.open(cardDirPath, FILE_READ);
   if(!dir){
       Serial.println("Could not open path for playlist creation! Proceeding with empty plalist.");
       return OK;
@@ -56,34 +59,30 @@ Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char *path)
   return OK;
 }
 
-Mapper::MapperError Mapper::readMetaFile(char cardIdString[CARD_ID_STRING_LENGTH], MappingMeta *meta) {
+Mapper::MapperError Mapper::readMetaFile(MappingMeta *meta, char cardIdString[CARD_ID_STRING_LENGTH]) {
 
   char metaFilePath[META_FILE_PATH_LENGTH];
   snprintf(metaFilePath, META_FILE_PATH_LENGTH, "%s/%8s/%s", CARDS_DIRECTORY, cardIdString, META_FILE_NAME);
 
-  // set card ID
+  // Set card ID
   strncpy(meta->cardId, cardIdString, CARD_ID_STRING_LENGTH);
   
-  // default name is card ID
-  strncpy(meta->name, cardIdString, CARD_ID_STRING_LENGTH);
-
-  Serial.printf("Reading meta file %s\n", metaFilePath);
-
+  // Try to open the meta file
   File metaFile = SD.open(metaFilePath, FILE_READ);
   if (metaFile) {
-    uint8_t nameLen = readNameFromMetaFile(meta->name, &metaFile);
+    uint8_t nameLen = readNameFromMetaFile(&metaFile, meta->name);
     // if no name could be read, use card ID as name  
     if (nameLen == 0) {
       Serial.println(F("Card name not found. Using card ID as name."));
       strncpy(meta->name, cardIdString, CARD_ID_STRING_LENGTH);
-    }
-  }
-  Serial.printf("Card %s name is: %s\n", cardIdString, meta->name);
-  
-  return MapperError::OK;
+    }    
+    return MapperError::OK;
+  } else {
+    return MapperError::META_FILE_NOT_FOUND;
+  } 
 }
 
-uint16_t Mapper::readNameFromMetaFile(char str[MAX_CARD_NAME_STRING_LENGTH], File *stream) {
+uint16_t Mapper::readNameFromMetaFile(File *stream, char str[MAX_CARD_NAME_STRING_LENGTH]) {
   uint16_t i = 0;  
   memset(str, 0, MAX_CARD_NAME_STRING_LENGTH); 
   while (i < (MAX_CARD_NAME_STRING_LENGTH - 1)) {   
@@ -120,11 +119,11 @@ Mapper::MapperError Mapper::nextMapping(File *it, Mapper::Mapping *mapping) {
 
     if (entry.isDirectory()) {
 
-      char name[CARD_ID_STRING_LENGTH];
-      strncpy(name, entry.name() + strlen(CARDS_DIRECTORY) + 1, CARD_ID_STRING_LENGTH);
+      char cardId[CARD_ID_STRING_LENGTH];
+      strncpy(cardId, entry.name() + strlen(CARDS_DIRECTORY) + 1, CARD_ID_STRING_LENGTH);
       MapperError err;
             
-      err = readMetaFile(name, &mapping->mappingMeta);
+      err = readMetaFile(&mapping->mappingMeta, cardId);
       if (err != OK) {
         Serial.println("Could not read meta file");
         return err;

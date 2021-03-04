@@ -21,6 +21,12 @@
 #include "http.h"
 #include "utils.h"
 
+
+void HTTP::handlerCardPost(AsyncWebServerRequest *request) {  
+  const char *cardId = request->pathArg(0).c_str();
+  Serial.printf("initialize CARD ID %s", cardId);
+}
+
 void HTTP::handlerCardGet(AsyncWebServerRequest *request) {  
   File it;
   Mapper::MapperError err = mapper->createMappingIterator(&it);
@@ -72,26 +78,44 @@ void HTTP::handlerCardGet(AsyncWebServerRequest *request) {
 void HTTP::handlerCurrentCardGet(AsyncWebServerRequest *request) {  
   char cardId[CARD_ID_STRING_LENGTH];
   rfid->currentCardAsString(cardId);
-
-  Serial.println("reading meta file");
-
   stringToLower(cardId);
-  
-  Mapper::MappingMeta meta;
-  Mapper::MapperError err = mapper->readMetaFile(cardId, &meta);
 
-  if (err != Mapper::MapperError::OK) {
-    request->send(request->beginResponse(500, F("text/plain"), "Could not read meta file"));
-    return;
-  }
-  
   AsyncResponseStream *response = request->beginResponseStream(F("application/json"));
   #ifdef ENABLE_CORS
     addCorsHeader(response);
   #endif
 
-  response->printf("{\"id\":\"%s\",\"status\":\"empty\",\"name\":\"%s\"}", cardId, meta.name);
+  if (strncmp(cardId, "00000000", CARD_ID_STRING_LENGTH) == 0) {     
+      response->setCode(204);
+  } else {
+    Mapper::MappingMeta meta;
+    Mapper::MapperError err = mapper->readMetaFile(&meta, cardId);
+    if (err == Mapper::MapperError::OK) {
+      Playlist p;
+      mapper->createPlaylist(&p, cardId);  
+      response->printf("{\"id\":\"%s\",\"state\":\"ok\",\"numEntries\":%d,\"name\":\"%s\", \"entries\":[", cardId, p.numEntries, meta.name);
 
-  request->send(response);
+      char* entry = NULL;
+      bool first = true;
+      do {
+        entry = p.getNextEntry();
+        if (entry) {
+          if (!first) {
+            response->print(",");            
+          }
+          first = false;
+          response->printf("\"%s\"", entry + CARD_DIRECTORY_PATH_LENGTH);       
+        }
+      } while(entry);
+          
+      response->print("]}");
+
+    } else {
+      response->printf("{\"id\":\"%s\",\"state\":\"uninitialized\"}", cardId);
+    }
+
+  }
+
+  request->send(response);  
 
 }

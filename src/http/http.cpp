@@ -53,6 +53,8 @@ void HTTP::handlerCors(AsyncWebServerRequest *request) {
 
 void HTTP::init() {
 
+  WiFi.persistent(false);
+
   // connect to WiFi
   WiFi.disconnect(true, true);
   delay(1000);
@@ -64,11 +66,14 @@ void HTTP::init() {
   Serial.println(WiFi.localIP());
 
   // create server and routes
-  const char cardUrl[] = "/api/card";
-  server.on(cardUrl, HTTP_GET, std::bind(&HTTP::handlerCardGet, this, std::placeholders::_1));
-
   const char currentCardUrl[] = "/api/card/current"; 
   server.on(currentCardUrl, HTTP_GET, std::bind(&HTTP::handlerCurrentCardGet, this, std::placeholders::_1));
+
+  const char cardWithIdUrl[] = "^\\/api\\/card\\/([0-9a-fA-F]{8})$";
+  server.on(cardWithIdUrl, HTTP_POST, std::bind(&HTTP::handlerCardPost, this, std::placeholders::_1));
+
+  const char cardUrl[] = "/api/card";
+  server.on(cardUrl, HTTP_GET, std::bind(&HTTP::handlerCardGet, this, std::placeholders::_1));
 
   const char fileUrl[] = "^\\/api\\/file(\\/.*)*$";
   server.on(fileUrl, HTTP_GET, std::bind(&HTTP::handlerFileGet, this, std::placeholders::_1));

@@ -1,17 +1,27 @@
 <template>
 
   <div class="mappings">
+
+    <!--
     <ul>
       <li v-for="(mapping, index) in data" :key="index">
-        {{ mapping }}
+        {{ mapping.name }}        
+          <ul>
+            <li v-for="(entry, index1) in mapping.files" :key="index+index1">
+              {{entry}}
+            </li>
+          </ul>        
       </li>
     </ul>  
+    -->
+
   </div>
 </template>
 
 <script>
 
   export default {
+    
     methods: {
       fetchData: function() {
         this.loading = true
@@ -32,11 +42,11 @@
           .catch((err) => {
             this.error = true
             console.log(err)
-            setTimeout(this.fetchData, 1000);
+            //setTimeout(this.fetchData, 5000);
           })
           .then(() => {
             this.loading = false;
-            setTimeout(this.fetchData, 1000);
+            //setTimeout(this.fetchData, 1000);
           });
       }
     },

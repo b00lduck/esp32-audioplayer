@@ -51,7 +51,7 @@ HTTP      http(&rfid, &mapper, &sd);
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> pixels(4, WS2812_DATA_PIN);
 
 void setup() {
-
+ 
   Serial.begin(115200);                            
   Serial.println("MP3 player V2 now Booting...");
 

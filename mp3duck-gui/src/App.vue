@@ -2,21 +2,20 @@
   <div id="app">
     <h1>MP3 Duck</h1>
     <Cardview />
-    <Mappings />
     <Filebrowser />
   </div>
 </template>
 
 <script>
 import Cardview from './components/Cardview.vue'
-import Mappings from './components/Mappings.vue'
 import Filebrowser from './components/Filebrowser.vue'
+import '@progress/kendo-ui' 
+import '@progress/kendo-theme-default/dist/all.css'
 
 export default {
   name: 'App',
   components: {
     Cardview,
-    Mappings,
     Filebrowser
   }
 }

@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright 2018 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2018-2021 D.Zerlett <daniel@zerlett.eu>
  * 
  * This file is part of esp32-audioplayer.
  * 
@@ -46,6 +46,7 @@ class HTTP {
 
     void handlerCurrentCardGet(AsyncWebServerRequest *request);  
     void handlerCardGet(AsyncWebServerRequest *request);
+    void handlerCardPost(AsyncWebServerRequest *request);
     void handlerFileGet(AsyncWebServerRequest *request);
     
     bool uploadInProgress;
@@ -53,5 +54,3 @@ class HTTP {
     File uploadFile;
 
 };
-
-
