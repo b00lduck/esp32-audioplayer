@@ -21,10 +21,62 @@
 #include "http.h"
 #include "utils.h"
 
+void HTTP::handlerCardPut(AsyncWebServerRequest *request) {  
+  int params = request->params();  
+  
+  const char *cardId = request->pathArg(0).c_str();
+  if (strlen(cardId) > CARD_ID_STRING_LENGTH) {
+    request->send(request->beginResponse(400));    
+    return;
+  }
+
+  for(int i=0;i<params;i++){
+    AsyncWebParameter* p = request->getParam(i);
+    if (p->isPost() && p->name().equals("name")) {
+      char* cardName = (char*) p->name().c_str();
+      if (strlen(cardName) > MAX_CARD_NAME_STRING_LENGTH) {
+        request->send(request->beginResponse(400));    
+        return;        
+      }
+      Mapper::MapperError err = mapper->writeNameToMetaFile(cardId, cardName);
+      if (err == Mapper::MapperError::CARD_ID_NOT_FOUND) {
+        request->send(request->beginResponse(404));    
+        return;        
+      }
+    }  
+  }
+
+  AsyncWebServerResponse *response = request->beginResponse(204);
+  #ifdef ENABLE_CORS
+    addCorsHeader(response);
+  #endif
+  request->send(response);    
+}
 
 void HTTP::handlerCardPost(AsyncWebServerRequest *request) {  
-  const char *cardId = request->pathArg(0).c_str();
-  Serial.printf("initialize CARD ID %s", cardId);
+  int params = request->params();  
+
+  const char *cardId = request->pathArg(0).c_str();  
+  char *name = "untitled";
+
+  for(int i=0;i<params;i++){
+    AsyncWebParameter* p = request->getParam(i);
+    if (p->isPost() && p->name().equals("name")) {
+      name = (char*) p->name().c_str();
+    }  
+  }
+  Mapper::MapperError err = mapper->initializeCard(cardId, name);  
+
+  AsyncWebServerResponse *response;
+  if (err != Mapper::MapperError::OK) {
+    response = request->beginResponse(500, F("text/plain"), "Could not initialize card.");        
+  } else {
+    response = request->beginResponse(204);    
+  }
+  #ifdef ENABLE_CORS
+    addCorsHeader(response);
+  #endif  
+  request->send(response);    
 }
 
 void HTTP::handlerCardGet(AsyncWebServerRequest *request) {  
@@ -115,7 +167,5 @@ void HTTP::handlerCurrentCardGet(AsyncWebServerRequest *request) {
     }
 
   }
-
   request->send(response);  
-
 }

@@ -22,7 +22,7 @@
             <b-col sm="8">              
                 <b-button-group style="width: 100%;">
                   <b-form-input size="sm" v-bind:disabled="card.state === 'uninitialized'" v-bind:value="cardName"></b-form-input>
-                  <b-button size="sm" variant="primary" v-bind:disabled="card.state === 'uninitialized'">rename</b-button>
+                  <b-button v-on:click="renameCard" size="sm" variant="primary" v-bind:disabled="card.state === 'uninitialized'">rename</b-button>
                   <b-button v-on:click="initCard" size="sm" variant="primary" v-bind:disabled="card.state !== 'uninitialized'">initialize</b-button>      
                 </b-button-group>
             </b-col>
@@ -70,7 +70,8 @@
     methods: {
       initCard: function() {
         return fetch("http://192.168.2.149/api/card/" + this.card.id, {
-          method: "post"
+          method: "post",
+          body: "name=" + this.cardName
         })
         .then((res) => {
             if (!res.ok) {
@@ -79,6 +80,18 @@
             }            
           })
       },
+      renameCard: function() {
+        return fetch("http://192.168.2.149/api/card/" + this.card.id, {
+          method: "post",
+          body: "name=" + this.cardName
+        })
+        .then((res) => {
+            if (!res.ok) {
+              const error = new Error(res.statusText);
+              throw error;
+            }            
+          })
+      },      
       fetchData: function() {
         this.loading = true
 

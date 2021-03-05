@@ -43,10 +43,10 @@ class HTTP {
       void addCorsHeader(AsyncWebServerResponse *response);
       void handlerCors(AsyncWebServerRequest *request);
     #endif 
-
     void handlerCurrentCardGet(AsyncWebServerRequest *request);  
-    void handlerCardGet(AsyncWebServerRequest *request);
-    void handlerCardPost(AsyncWebServerRequest *request);
+    void handlerCardGet(AsyncWebServerRequest *request);    
+    void handlerCardPost(AsyncWebServerRequest *request);                             
+    void handlerCardPut(AsyncWebServerRequest *request);                             
     void handlerFileGet(AsyncWebServerRequest *request);
     
     bool uploadInProgress;

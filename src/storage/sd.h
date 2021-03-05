@@ -30,13 +30,13 @@ class SDCard {
     bool init();
 
     static bool assureDirectory(const char path[]) {
-        Serial.printf("[SD-Card] Assuring directory %s\n", path);
+        Serial.printf("[SD-Card] Assuring directory %s\n", path);        
+        if (!SD.exists(path)) {
+          return SD.mkdir(path);
+        }
         File chk = SD.open(path);
-        if(!chk){
-            return SD.mkdir(path);
-        } 
         if (!chk.isDirectory()) {
-            Serial.println(F("[SD-Card] There is a file named 'upload' in the root of the SD card. Please remove this file from the card."));
+            Serial.printf("[SD-Card] There is a file named %s on the SD card. Please remove this file from the card.", path);
             return false;
         }
         return true;
@@ -44,7 +44,6 @@ class SDCard {
     
   private:
     uint8_t csPin;
-
     void printDirectory();
 };
 

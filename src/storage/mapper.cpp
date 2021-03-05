@@ -26,14 +26,44 @@
 #include "../utils.h"
 
 Mapper::MapperError Mapper::init() {
-    SDCard::assureDirectory("/cards");
-    return MapperError::OK;
+  SDCard::assureDirectory("/cards");
+  return MapperError::OK;
+}
+
+Mapper::MapperError Mapper::writeNameToMetaFile(const char cardIdString[CARD_ID_STRING_LENGTH], const char cardName[MAX_CARD_NAME_STRING_LENGTH]) {  
+
+  char cardDirPath[CARD_DIRECTORY_PATH_LENGTH];
+  this->cardDirPath(cardDirPath, cardIdString);
+
+  if (!SD.exists(cardDirPath)) {
+    return Mapper::CARD_ID_NOT_FOUND;
+  }
+
+  char metaFilePath[META_FILE_PATH_LENGTH];
+  this->metaFilePath(metaFilePath, cardIdString);
+
+  if (SD.exists(metaFilePath)) {
+    SD.remove(metaFilePath);
+  }
+
+  File f = SD.open(metaFilePath, FILE_WRITE);
+  f.println(cardName);
+  f.close();
+
+  return MapperError::OK;
+}
+
+Mapper::MapperError Mapper::initializeCard(const char cardIdString[CARD_ID_STRING_LENGTH], const char cardName[MAX_CARD_NAME_STRING_LENGTH]) {
+  char cardDirPath[CARD_DIRECTORY_PATH_LENGTH];
+  this->cardDirPath(cardDirPath, cardIdString);
+  SDCard::assureDirectory(cardDirPath);
+  return this->writeNameToMetaFile(cardIdString, cardName);
 }
 
 Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char cardIdString[CARD_ID_STRING_LENGTH]) {
   
   char cardDirPath[CARD_DIRECTORY_PATH_LENGTH];
-  snprintf(cardDirPath, CARD_DIRECTORY_PATH_LENGTH, "%s/%8s", CARDS_DIRECTORY, cardIdString);
+  this->cardDirPath(cardDirPath, cardIdString);  
 
   File dir = SD.open(cardDirPath, FILE_READ);
   if(!dir){
@@ -43,7 +73,7 @@ Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char cardId
 
   File file = dir.openNextFile();
   uint8_t n = 0;
-  while(file){
+  while(file) {
       if(!file.isDirectory()){
           char entry[MAX_PLAYLIST_ENTRY_LENGTH];
           snprintf(entry, MAX_PLAYLIST_ENTRY_LENGTH, file.name() + strlen(CARDS_DIRECTORY) + CARD_ID_STRING_LENGTH + 1);
@@ -56,18 +86,22 @@ Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char cardId
       file = dir.openNextFile();
   }
   //playlist->sort();
-  return OK;
+  return MapperError::OK;
 }
 
-Mapper::MapperError Mapper::readMetaFile(MappingMeta *meta, char cardIdString[CARD_ID_STRING_LENGTH]) {
+Mapper::MapperError Mapper::readMetaFile(MappingMeta *meta, const char cardIdString[CARD_ID_STRING_LENGTH]) {
 
   char metaFilePath[META_FILE_PATH_LENGTH];
-  snprintf(metaFilePath, META_FILE_PATH_LENGTH, "%s/%8s/%s", CARDS_DIRECTORY, cardIdString, META_FILE_NAME);
+  this->metaFilePath(metaFilePath, cardIdString);
 
   // Set card ID
   strncpy(meta->cardId, cardIdString, CARD_ID_STRING_LENGTH);
   
   // Try to open the meta file
+  if (!SD.exists(metaFilePath)) {
+    return MapperError::META_FILE_NOT_FOUND;
+  }
+
   File metaFile = SD.open(metaFilePath, FILE_READ);
   if (metaFile) {
     uint8_t nameLen = readNameFromMetaFile(&metaFile, meta->name);
@@ -78,7 +112,7 @@ Mapper::MapperError Mapper::readMetaFile(MappingMeta *meta, char cardIdString[CA
     }    
     return MapperError::OK;
   } else {
-    return MapperError::META_FILE_NOT_FOUND;
+    return MapperError::META_FILE_ERROR;
   } 
 }
 
@@ -87,7 +121,7 @@ uint16_t Mapper::readNameFromMetaFile(File *stream, char str[MAX_CARD_NAME_STRIN
   memset(str, 0, MAX_CARD_NAME_STRING_LENGTH); 
   while (i < (MAX_CARD_NAME_STRING_LENGTH - 1)) {   
     int16_t ch = stream->read();
-    if ((ch < 0) || (ch == 10)) {
+    if ((ch < 0) || (ch == 10) || (ch == 13)) {
       break;
     }
     str[i++] = ch;
@@ -185,4 +219,12 @@ Mapper::MapperError Mapper::nextFile(File *it, char name[MAX_FILENAME_STRING_LEN
     }
     return OK;
   }
+}
+
+void Mapper::metaFilePath(char metaFilePath[META_FILE_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_LENGTH]) {
+  snprintf(metaFilePath, META_FILE_PATH_LENGTH, "%s/%8s/%s", CARDS_DIRECTORY, cardIdString, META_FILE_NAME);
+}
+
+void Mapper::cardDirPath(char cardDirPath[CARD_DIRECTORY_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_LENGTH]) {
+  snprintf(cardDirPath, CARD_DIRECTORY_PATH_LENGTH, "%s/%8s", CARDS_DIRECTORY, cardIdString);
 }
