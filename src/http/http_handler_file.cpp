@@ -20,6 +20,51 @@
  */
 #include "http.h"
 
+void HTTP::handlerFilePostUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {  
+  
+  if(!index){
+    if (uploadInProgress) {
+      Serial.println("upload already in progress");
+      request->send(409);
+      return;
+    }
+    if (filename.length() > 255) {
+      Serial.println("filename too long");
+      request->send(400);
+      return;
+    }
+    
+    const char *path = request->pathArg(0).c_str();
+    if ((!path) || (strlen(path) == 0)) {
+      Serial.println("no path given");
+      request->send(400);
+      return;
+    }
+
+    Serial.printf("UploadStart: %s\n", filename.c_str());
+    uploadInProgress = true;    
+    snprintf(uploadPath, 300, "/%s/%s", path, filename.c_str());
+    if (strlen(uploadPath) > MAX_UPLOAD_PATH_LEN) {
+      Serial.println("upload path too long");
+      request->send(400);
+      return;
+    }
+
+    uploadFile = SD.open(uploadPath, FILE_WRITE);      
+  }
+  
+  Serial.printf("Writing %d bytes at %d to %s\n", len, index, uploadPath);
+  uploadFile.seek(index);
+  uploadFile.write(data, len);
+
+  if(final){    
+    Serial.printf("UploadEnd: %s, %u B\n", filename.c_str(), index+len);
+    uploadFile.close();
+    uploadInProgress = false;
+  }
+
+}
+
 void HTTP::handlerFileGet(AsyncWebServerRequest *request) {  
 
   File it;

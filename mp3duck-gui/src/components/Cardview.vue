@@ -1,7 +1,7 @@
 <template>
 
     <b-card class="card" header="Card info">    
-      <div v-if="error">HTTP error</div>
+      <div v-if="error">HTTP error<br>{{error}}</div>
       <div v-if="!error">
         <div v-if="!card">no card</div>
         <div v-if="card">
@@ -21,8 +21,8 @@
             </b-col>
             <b-col sm="8">              
                 <b-button-group style="width: 100%;">
-                  <b-form-input size="sm" v-bind:disabled="card.state === 'uninitialized'" v-bind:value="cardName"></b-form-input>
-                  <b-button v-on:click="renameCard" size="sm" variant="primary" v-bind:disabled="card.state === 'uninitialized'">rename</b-button>
+                  <b-form-input size="sm" v-bind:disabled="card.state === 'uninitialized'" v-model="cardName"/>
+                  <b-button v-on:click="initCard" size="sm" variant="primary" v-bind:disabled="card.state === 'uninitialized'">rename</b-button>
                   <b-button v-on:click="initCard" size="sm" variant="primary" v-bind:disabled="card.state !== 'uninitialized'">initialize</b-button>      
                 </b-button-group>
             </b-col>
@@ -37,12 +37,14 @@
             </b-col>
           </b-row>                
 
-          <b-row v-if="card.numEntries">
+          <b-row>
             <b-col sm="4">
               <label for="numEntries">Playlist entries:</label>
             </b-col>
             <b-col sm="8">
-                <b-button-group style="width: 100%; padding-top: 2px;"
+              <div v-if="card.numEntries">
+                <b-button-group                   
+                  style="width: 100%; padding-top: 2px;"
                   class="d-flex justify-content-between align-items-center text-align-left" 
                   v-for="(entry, index) in card.entries" :key="index">
                   <b-button size="sm" disabled style="width: 45px">{{index+1}}</b-button>
@@ -51,10 +53,11 @@
                     <b-icon size="sm" icon="x-circle"/>
                   </b-button>                      
                 </b-button-group>
+              </div>
 
-                <b-button-group style="width: 100%;">                  
-                  <b-button size="sm" variant="primary" v-bind:disabled="card.state === 'uninitialized'">add entry</b-button>      
-                </b-button-group>
+              <b-button-group style="width: 100%;">                  
+                <b-button size="sm" variant="primary" v-bind:disabled="card.state === 'uninitialized'">add entry</b-button>      
+              </b-button-group>
 
             </b-col>
           </b-row>                
@@ -71,7 +74,10 @@
       initCard: function() {
         return fetch("http://192.168.2.149/api/card/" + this.card.id, {
           method: "post",
-          body: "name=" + this.cardName
+          headers: {
+            "content-type": "application/x-www-form-urlencoded"
+          },
+          body: "name=" + encodeURIComponent(this.cardName)
         })
         .then((res) => {
             if (!res.ok) {
@@ -79,19 +85,7 @@
               throw error;
             }            
           })
-      },
-      renameCard: function() {
-        return fetch("http://192.168.2.149/api/card/" + this.card.id, {
-          method: "post",
-          body: "name=" + this.cardName
-        })
-        .then((res) => {
-            if (!res.ok) {
-              const error = new Error(res.statusText);
-              throw error;
-            }            
-          })
-      },      
+      },  
       fetchData: function() {
         this.loading = true
 
@@ -112,20 +106,18 @@
             }            
           })
           .then((data) => {
-            this.card = data
-            if (data && data.name) {
-              this.cardName = data.name
-            } else if (data && data.id) {
-              this.cardName = "Untitled " + data.id
+
+            if (data === null) {
+              this.card = null
             } else {
-              this.cardName = ""
+              if (this.card === null || this.card.id != data.id) {
+                this.card = data
+                this.cardName = data.name
+              }
             }
-            
           })
           .catch((err) => {
-            this.error = true
-            console.log(err)
-            //setTimeout(this.fetchData, 5000);
+            this.error = err
           })
           .then(() => {
             this.loading = false;

@@ -84,25 +84,13 @@ void HTTP::init() {
   const char fileUrl[] = "^\\/api\\/file(\\/.*)*$";
   server.on(fileUrl, HTTP_GET, std::bind(&HTTP::handlerFileGet, this, std::placeholders::_1));
 
-
-  server.onFileUpload([this](AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final){
-    if(!index) {
-      Serial.printf("UploadStart: %s\n", filename.c_str());
-      uploadInProgress = true;
-      snprintf(uploadPath, 264, "/upload/%s", filename.c_str());
-      uploadFile = SD.open(uploadPath, FILE_WRITE);      
-    }
-    
-    Serial.printf("Writing %d bytes at %d to %s\n", len, index, uploadPath);
-    uploadFile.seek(index);
-    uploadFile.write(data, len);
-    
-    if(final) {   
-      Serial.printf("UploadEnd: %s (%u)\n", uploadPath, index+len);
-      uploadFile.close();
-      uploadInProgress = false;
-    }
-  });
+  const char fileUploadUrl[] = "^\\/api\\/file\\/(.*)$";
+  server.on(fileUploadUrl, HTTP_POST, 
+    [](AsyncWebServerRequest *request){
+      request->send(200);
+    },
+    std::bind(&HTTP::handlerFilePostUpload, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6)
+  );
 
   server.onNotFound(notFound);
   server.begin(); 

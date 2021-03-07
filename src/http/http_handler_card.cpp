@@ -61,10 +61,14 @@ void HTTP::handlerCardPost(AsyncWebServerRequest *request) {
 
   for(int i=0;i<params;i++){
     AsyncWebParameter* p = request->getParam(i);
+    Serial.printf("pname: %s\n", p->name());
     if (p->isPost() && p->name().equals("name")) {
-      name = (char*) p->name().c_str();
+      name = (char*) p->value().c_str();
     }  
   }
+
+  Serial.printf("card name: %s\n", name);
+
   Mapper::MapperError err = mapper->initializeCard(cardId, name);  
 
   AsyncWebServerResponse *response;

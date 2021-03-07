@@ -26,6 +26,8 @@
 #include "../storage/sd.h"
 #include "../storage/mapper.h"
 
+#define MAX_UPLOAD_PATH_LEN 300
+
 class HTTP {
 
   public: 
@@ -49,8 +51,11 @@ class HTTP {
     void handlerCardPut(AsyncWebServerRequest *request);                             
     void handlerFileGet(AsyncWebServerRequest *request);
     
+    void handlerFilePost(AsyncWebServerRequest *request);
+    void handlerFilePostUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
+    
     bool uploadInProgress;
-    char uploadPath[264]; // "/upload/<max 255>" 1+6+1+255+1=264
+    char uploadPath[MAX_UPLOAD_PATH_LEN]; // "/cards/12341234/<max 255>" 1+5+1+8+255+1=271
     File uploadFile;
 
 };
