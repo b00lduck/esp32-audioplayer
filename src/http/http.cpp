@@ -84,11 +84,12 @@ void HTTP::init() {
   const char fileUrl[] = "^\\/api\\/file(\\/.*)*$";
   server.on(fileUrl, HTTP_GET, std::bind(&HTTP::handlerFileGet, this, std::placeholders::_1));
 
+  const char fileDeleteUrl[] = "^\\/api\\/file(\\/.*)$";
+  server.on(fileDeleteUrl, HTTP_DELETE, std::bind(&HTTP::handlerFileDelete, this, std::placeholders::_1));
+
   const char fileUploadUrl[] = "^\\/api\\/file\\/(.*)$";
   server.on(fileUploadUrl, HTTP_POST, 
-    [](AsyncWebServerRequest *request){
-      request->send(200);
-    },
+    std::bind(&HTTP::handlerFilePost, this, std::placeholders::_1),
     std::bind(&HTTP::handlerFilePostUpload, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6)
   );
 

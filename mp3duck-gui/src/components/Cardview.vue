@@ -43,20 +43,11 @@
             </b-col>
             <b-col sm="8">
               <div v-if="card.numEntries">
-                <b-button-group                   
-                  style="width: 100%; padding-top: 2px;"
-                  class="d-flex justify-content-between align-items-center text-align-left" 
-                  v-for="(entry, index) in card.entries" :key="index">
-                  <b-button size="sm" disabled style="width: 45px">{{index+1}}</b-button>
-                  <b-form-input size="sm" v-bind:value="entry" disabled />
-                  <b-button variant="danger" size="sm">
-                    <b-icon size="sm" icon="x-circle"/>
-                  </b-button>                      
-                </b-button-group>
+                <playlist-entry v-for="(entry, index) in card.entries" :key="index" v-bind:entry="entry"/>
               </div>
-
               <b-button-group style="width: 100%;">                  
-                <b-button size="sm" variant="primary" v-bind:disabled="card.state === 'uninitialized'">add entry</b-button>      
+                <b-button size="sm" variant="primary" @click="onPickFile" v-bind:disabled="card.state === 'uninitialized'">add entry</b-button>
+                <input type="file" style="display: none" accept="audio/*" ref="fileInput" @change="onFilePicked"/>
               </b-button-group>
 
             </b-col>
@@ -68,9 +59,38 @@
 </template>
 
 <script>
+import PlaylistEntry from './PlaylistEntry.vue';
 
   export default {
+  components: { PlaylistEntry },
     methods: {
+
+      onPickFile () {
+        this.$refs.fileInput.click()
+      },
+      onFilePicked (event) {
+        const files = event.target.files
+
+        const formData = new FormData()
+        formData.append('file', files[0])
+
+        return fetch("http://192.168.2.149/api/file/cards/" + this.card.id, {
+          method: "post",
+          body: formData
+        })
+        .then((res) => {
+          if (!res.ok) {
+            const error = new Error(res.statusText);
+            throw error;
+          }            
+        })
+        .catch((err) => {
+          this.error = err
+        })   
+
+      },
+
+
       initCard: function() {
         return fetch("http://192.168.2.149/api/card/" + this.card.id, {
           method: "post",

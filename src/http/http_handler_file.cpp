@@ -20,8 +20,12 @@
  */
 #include "http.h"
 
+void HTTP::handlerFilePost(AsyncWebServerRequest *request) {  
+  AsyncWebServerResponse *response = request->beginResponse(204);      
+  request->send(response);
+}
+
 void HTTP::handlerFilePostUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {  
-  
   if(!index){
     if (uploadInProgress) {
       Serial.println("upload already in progress");
@@ -53,12 +57,12 @@ void HTTP::handlerFilePostUpload(AsyncWebServerRequest *request, String filename
     uploadFile = SD.open(uploadPath, FILE_WRITE);      
   }
   
-  Serial.printf("Writing %d bytes at %d to %s\n", len, index, uploadPath);
+  Serial.print(".");
   uploadFile.seek(index);
   uploadFile.write(data, len);
 
   if(final){    
-    Serial.printf("UploadEnd: %s, %u B\n", filename.c_str(), index+len);
+    Serial.printf("\nUploadEnd: %s, %u B\n", filename.c_str(), index+len);
     uploadFile.close();
     uploadInProgress = false;
   }
@@ -106,5 +110,31 @@ void HTTP::handlerFileGet(AsyncWebServerRequest *request) {
     }    
   }
   response->print("]");
+  request->send(response);
+}
+
+
+void HTTP::handlerFileDelete(AsyncWebServerRequest *request) {  
+
+  const char *path = request->pathArg(0).c_str();
+
+  AsyncWebServerResponse *response; 
+
+  if (strlen(path) == 0) {
+    response = request->beginResponse(400);
+  } else if (!SD.exists(path)) {
+    Serial.printf("File not found: %s\n", path);
+    response = request->beginResponse(404);
+  } else if (!SD.remove(path)) {
+    Serial.printf("Error deleting file: %s\n", path);
+    response = request->beginResponse(500);
+  } else {
+    Serial.printf("Deleted file: %s\n", path);
+    response = request->beginResponse(200);
+  }
+
+  #ifdef ENABLE_CORS
+    addCorsHeader(response);
+  #endif
   request->send(response);
 }

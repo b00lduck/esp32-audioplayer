@@ -45,12 +45,14 @@ class HTTP {
       void addCorsHeader(AsyncWebServerResponse *response);
       void handlerCors(AsyncWebServerRequest *request);
     #endif 
+    
     void handlerCurrentCardGet(AsyncWebServerRequest *request);  
     void handlerCardGet(AsyncWebServerRequest *request);    
     void handlerCardPost(AsyncWebServerRequest *request);                             
-    void handlerCardPut(AsyncWebServerRequest *request);                             
+    void handlerCardPut(AsyncWebServerRequest *request);   
+
     void handlerFileGet(AsyncWebServerRequest *request);
-    
+    void handlerFileDelete(AsyncWebServerRequest *request);
     void handlerFilePost(AsyncWebServerRequest *request);
     void handlerFilePostUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
     

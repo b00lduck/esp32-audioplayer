@@ -67,11 +67,8 @@ void HTTP::handlerCardPost(AsyncWebServerRequest *request) {
     }  
   }
 
-  Serial.printf("card name: %s\n", name);
-
-  Mapper::MapperError err = mapper->initializeCard(cardId, name);  
-
   AsyncWebServerResponse *response;
+  Mapper::MapperError err = mapper->initializeCard(cardId, name);  
   if (err != Mapper::MapperError::OK) {
     response = request->beginResponse(500, F("text/plain"), "Could not initialize card.");        
   } else {
@@ -152,15 +149,15 @@ void HTTP::handlerCurrentCardGet(AsyncWebServerRequest *request) {
       response->printf("{\"id\":\"%s\",\"state\":\"ok\",\"numEntries\":%d,\"name\":\"%s\", \"entries\":[", cardId, p.numEntries, meta.name);
 
       char* entry = NULL;
-      bool first = true;
+      uint16_t index = 0;
       do {
         entry = p.getNextEntry();
         if (entry) {
-          if (!first) {
+          if (index > 0) {
             response->print(",");            
           }
-          first = false;
-          response->printf("\"%s\"", entry + CARD_DIRECTORY_PATH_LENGTH);       
+          index++;
+          response->printf("{\"id\":\"%d\",\"name\":\"%s\",\"path\":\"%s\"}", index, entry + CARD_DIRECTORY_PATH_LENGTH, entry);       
         }
       } while(entry);
           
