@@ -47,8 +47,7 @@ bool NDEF::readWifiConfig(WifiConfig *wifiConfig) {
   readSector(buf + 48, 2, 8, 3);
   mfrc522->PCD_Init();
 
-
-  rc522Utilities.dump_byte_array(buf, 98);
+  //rc522Utilities.dump_byte_array(buf, 98);
 
   // first four sector bytes must be 0,0,3,5c
   if (buf[0] != 0 || buf[1] != 0 || buf[2] != 3 || buf[3] != 0x5c) {
