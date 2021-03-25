@@ -21,10 +21,11 @@
 #include "Arduino.h"
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include "rfid.h"
+#include "rfid/rfid.h"
+#include "rfid/ndef.h"
 #include "config.h"
-#include "../storage/sd.h"
-#include "../storage/mapper.h"
+#include "storage/sd.h"
+#include "storage/mapper.h"
 
 #define MAX_UPLOAD_PATH_LEN 300
 
@@ -32,7 +33,9 @@ class HTTP {
 
   public: 
     HTTP(RFID *rfid, Mapper *mapper, SDCard *sd);
-    void init();   
+    
+    bool start(NDEF::WifiConfig *wificonfig);
+    void shutdown();
 
   private:
     AsyncWebServer server;

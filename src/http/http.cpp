@@ -19,7 +19,6 @@
  *  
  */
 #include "http.h"
-#include "config_wifi.h"
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
@@ -51,18 +50,27 @@ void HTTP::handlerCors(AsyncWebServerRequest *request) {
 }
 #endif
 
-void HTTP::init() {
+bool HTTP::start(NDEF::WifiConfig *wifiConfig) {  
 
   WiFi.persistent(false);
-
-  // connect to WiFi
   WiFi.disconnect(true, true);
-  delay(1000);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  while (WiFi.status() != WL_CONNECTED) {
+
+  uint8_t triesLeft = 30;
+
+  // try connection to WiFi
+  WiFi.begin(wifiConfig->SSID, wifiConfig->password);
+  Serial.printf("Connection to %s with secret %s\n", wifiConfig->SSID, wifiConfig->password);
+  while ((WiFi.status() != WL_CONNECTED) && (triesLeft)){
     delay(1000);
-    Serial.println(F("Connecting to WiFi.."));
+    Serial.print(F("."));
+    triesLeft--;
   }  
+
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println(F("Could not connect to WiFi"));
+    return false;
+  }
+
   Serial.println(WiFi.localIP());
 
   #ifdef ENABLE_CORS
@@ -95,4 +103,14 @@ void HTTP::init() {
 
   server.onNotFound(notFound);
   server.begin(); 
+
+  return true;
 }
+
+void HTTP::shutdown() {  
+  server.end();
+  WiFi.persistent(false);
+  WiFi.disconnect(true, true);
+  Serial.println(F("Stopped HTTP server and disconnected WiFi"));
+}
+

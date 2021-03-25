@@ -21,25 +21,27 @@
 #include "rfid.h"
 
 RFID::RFID(uint8_t _csPin, uint8_t _rstPin) : 
-  csPin(_csPin),
-  rstPin(_rstPin),
-  mfrc522(csPin,rstPin)
-  {}
+  mfrc522(_csPin,_rstPin),
+  ndef(&mfrc522) {}
 
 void RFID::init() {
-   mfrc522.PCD_Init();  
-   mfrc522.PCD_DumpVersionToSerial();
-   mfrc522.PCD_SetAntennaGain(mfrc522.RxGain_max);
+  mfrc522.PCD_Init();  
+  //mfrc522.PCD_DumpVersionToSerial();
+  //mfrc522.PCD_SetAntennaGain(mfrc522.RxGain_max);
 }
 
-RFID::CardState RFID::checkCardState() {
-  
+RFID::CardState RFID::checkCardState(NDEF::WifiConfig *wifiConfig) {
+
   if (mfrc522.PICC_IsNewCardPresent()) {
     if (mfrc522.PICC_ReadCardSerial()) {
       cardFailCount = 0;    
-      if (cardChanged(mfrc522.uid.uidByte, mfrc522.uid.size)) {
-        newCard(mfrc522.uid.uidByte, mfrc522.uid.size);                
-        return CardState::NEW_CARD;        
+      if (cardChanged(mfrc522.uid.uidByte, mfrc522.uid.size)) {        
+        newCard(mfrc522.uid.uidByte, mfrc522.uid.size);
+        if (ndef.readWifiConfig(wifiConfig)) {
+          return CardState::NEW_WIFI_CARD;
+        } else {          
+          return CardState::NEW_MEDIA_CARD;        
+        }                
       }      
     } else {
         Serial.println(F("Error reading card"));
@@ -61,7 +63,7 @@ RFID::CardState RFID::checkCardState() {
     }
   } 
 
-   return CardState::NO_CHANGE;
+  return CardState::NO_CHANGE;
 }
 
 /** 
@@ -93,9 +95,9 @@ void RFID::newCard(byte *buffer, byte bufferSize) {
   currentCardAsString(buf);
   Serial.print(buf);
   Serial.println(F(" detected."));  
+
 }
 
-void RFID::currentCardAsString(char buf[CARD_ID_STRING_LENGTH]) {
-    
+void RFID::currentCardAsString(char buf[CARD_ID_STRING_LENGTH]) {    
   snprintf(buf, CARD_ID_STRING_LENGTH, "%02X%02X%02X%02X", currentCard[0], currentCard[1], currentCard[2], currentCard[3]);
 }

@@ -23,10 +23,11 @@
 #include <string.h>
 #include <Wire.h>
 #include <NeoPixelBus.h>
-#include <ArduinoOTA.h>
+#ifdef OTA_ENABLED
+  #include <ArduinoOTA.h>
+#endif
 
 #include "config.h"
-#include "config_wifi.h"
 #include "buttons.h"
 #include "player/VS1053.h"
 #include "player/player.h"
@@ -34,7 +35,7 @@
 #include "storage/mapper.h"
 #include "http/http.h"
 
-#include "rfid.h"
+#include "rfid/ndef.h"
 #include "fatal.h"
 
 VS1053    vs1053(VS1053_XCS_PIN, VS1053_XDCS_PIN, VS1053_DREQ_PIN, VS1053_XRESET_PIN);
@@ -59,7 +60,7 @@ void setup() {
   pixels.ClearTo(RgbColor(10,0,10));
   pixels.Show();
 
-  http.init();
+  //http.init();
 
   pixels.ClearTo(RgbColor(0,10,10));
   pixels.Show();
@@ -113,43 +114,56 @@ void setup() {
   startupPlaylist.addEntry("/system/startup.mp3");
   player.play(&startupPlaylist);
 
-  // OTA
+  #ifdef OTA_ENABLED
+    ArduinoOTA.onStart([]() {
+        String type;
+        if (ArduinoOTA.getCommand() == U_FLASH) {
+          type = "sketch";
+        } else {
+          // U_SPIFFS
+          type = "filesystem";
+        }
+        // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+        Serial.println("[OTA] Start updating firware");
+      })
+      .onEnd([]() {
+        Serial.println("\n[OTA] End");
+      })
+      .onProgress([](unsigned int progress, unsigned int total) {
+        Serial.printf("[OTA] Progress: %u%%\r", (progress / (total / 100)));
+      })
+      .onError([](ota_error_t error) {
+        Serial.printf("[OTA] Error[%u]: ", error);
+        if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+        else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+        else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+        else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+        else if (error == OTA_END_ERROR) Serial.println("End Failed");
+      });
 
-  ArduinoOTA.onStart([]() {
-      String type;
-      if (ArduinoOTA.getCommand() == U_FLASH) {
-        type = "sketch";
-      } else {
-        // U_SPIFFS
-        type = "filesystem";
-      }
-      // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-      Serial.println("[OTA] Start updating firware");
-    })
-    .onEnd([]() {
-      Serial.println("\n[OTA] End");
-    })
-    .onProgress([](unsigned int progress, unsigned int total) {
-      Serial.printf("[OTA] Progress: %u%%\r", (progress / (total / 100)));
-    })
-    .onError([](ota_error_t error) {
-      Serial.printf("[OTA] Error[%u]: ", error);
-      if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-      else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-      else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-      else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-      else if (error == OTA_END_ERROR) Serial.println("End Failed");
-    });
-
-  ArduinoOTA.begin();  
+    ArduinoOTA.begin();  
+  #endif
 }
 
 uint16_t lpf = 0;
 uint16_t showBatt = 5000;
 
+enum MAIN_MODE {
+  PLAYER,
+  ADMIN
+};
+
+MAIN_MODE mode = PLAYER;
+
+
+
+
+
 void loop() {
 
-  ArduinoOTA.handle();  
+  #ifdef OTA_ENABLED
+    ArduinoOTA.handle();  
+  #endif
 
   bool changed = buttons.read();
 
@@ -175,72 +189,92 @@ void loop() {
     Serial.printf("[PLYR] idle time %d\n", player.idleTime);
     Serial.printf("[HEAP] %d\n", ESP.getFreeHeap());
   }
+
+  NDEF::WifiConfig wifiConfig;
+
+  // Read card
+  RFID::CardState cardState = rfid.checkCardState(&wifiConfig);
   
-  #define IDLE_SHUTDOWN_TIMEOUT 600000 // milliseconds
-  #define IDLE_SHUTDOWN_FADE_LEN 10000
-  #define IDLE_SHUTDOWN_FADE_START (IDLE_SHUTDOWN_TIMEOUT-IDLE_SHUTDOWN_FADE_LEN)
+  switch(mode) {
 
-  if (player.idleTime > IDLE_SHUTDOWN_FADE_START) {
+    case PLAYER:
 
-    uint32_t x = (IDLE_SHUTDOWN_FADE_LEN - (player.idleTime - IDLE_SHUTDOWN_FADE_START)) / float(IDLE_SHUTDOWN_FADE_LEN/10);
+      pixels.ClearTo(RgbColor(0,30,0));
+      pixels.Show();
 
-    pixels.SetPixelColor(0, RgbColor(0,0,0));
-    pixels.SetPixelColor(1, RgbColor(0,x,0));
-    pixels.SetPixelColor(2, RgbColor(0,x,0));
-    pixels.SetPixelColor(3, RgbColor(0,0,0));
-    pixels.Show();
-
-    if (player.idleTime > IDLE_SHUTDOWN_TIMEOUT) { //  shutdown timer
-      Serial.println("[HALT] idle shutdown");
-      pinMode(SHUTDOWN_PIN, OUTPUT);
-      digitalWrite(SHUTDOWN_PIN, HIGH);
-    }
-  }
- 
-  // Volume Control
-  if (buttons.buttonDown(4)) {
-    player.increaseVolume();
-  }
-
-  if (buttons.buttonDown(0)) {
-    player.decreaseVolume();
-  }
-
-  RFID::CardState cardState = rfid.checkCardState();
-  
-  switch(cardState) {
-    case RFID::CardState::NEW_CARD:
-      {
-        /*
-        char filename[MAX_FILENAME_STRING_LENGTH];
-        Mapper::MapperError err = mapper.resolveIdToFilename(rfid.currentCard, filename);    
-        switch(err) {
-          case Mapper::MapperError::CARD_ID_NOT_FOUND:
-            Serial.println(F("Card not found in mapping"));
-            player.stop();
-            break;     
-          case OK:
-            player.play(filename);
-            break;
-          default:
-            fatal.fatal("Mapping error", "Unknown error");
-            break;
-        } 
-      */
-     }
+      if (player.idleTime > IDLE_SHUTDOWN_FADE_START) {
+          if (player.idleTime > IDLE_SHUTDOWN_TIMEOUT) { //  shutdown timer
+            Serial.println("[HALT] idle shutdown");
+            pinMode(SHUTDOWN_PIN, OUTPUT);
+            digitalWrite(SHUTDOWN_PIN, HIGH);
+            sleep(30);
+          }
+        }
       
+        // Volume Control
+        if (buttons.buttonDown(4)) {
+          player.increaseVolume();
+        }
+
+        if (buttons.buttonDown(0)) {
+          player.decreaseVolume();
+        }        
+              
+        switch(cardState) {
+          case RFID::CardState::NEW_MEDIA_CARD:
+            break;
+            //{
+              /*
+              char filename[MAX_FILENAME_STRING_LENGTH];
+              Mapper::MapperError err = mapper.resolveIdToFilename(rfid.currentCard, filename);    
+              switch(err) {
+                case Mapper::MapperError::CARD_ID_NOT_FOUND:
+                  Serial.println(F("Card not found in mapping"));
+                  player.stop();
+                  break;     
+                case OK:
+                  player.play(filename);
+                  break;
+                default:
+                  fatal.fatal("Mapping error", "Unknown error");
+                  break;
+              } 
+            */
+            //}
+
+          case RFID::CardState::NEW_WIFI_CARD:
+            player.stop();
+
+            pixels.ClearTo(RgbColor(30,0,0));
+            pixels.Show();
+
+            if (http.start(&wifiConfig)) {
+              mode = ADMIN;
+            }
+            break;
+            
+          case RFID::CardState::REMOVED_CARD:            
+            player.stop();
+            break;
+          case RFID::CardState::FAULTY_CARD:
+            player.stop();
+            break;
+          case RFID::CardState::NO_CHANGE:
+            break;
+        }
+
+        player.process();
       break;
-    case RFID::CardState::REMOVED_CARD:
-      Serial.println("removed card");
-      player.stop();
+
+    case ADMIN:
+      pixels.ClearTo(RgbColor(30,30,0));
+      pixels.Show();
+      if (changed) {
+        http.shutdown();
+        mode = PLAYER;
+      }
       break;
-    case RFID::CardState::FAULTY_CARD:
-      Serial.println("faulty card");
-      player.stop();
-      break;
-    case RFID::CardState::NO_CHANGE:
-      break;
+
   }
 
-  player.process();
 }

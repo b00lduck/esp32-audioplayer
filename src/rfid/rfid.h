@@ -19,9 +19,10 @@
  *  
  */
 #pragma once
-#include "Arduino.h"
-#include "config.h"
+#include <Arduino.h>
 #include <MFRC522.h>
+#include "config.h"
+#include "ndef.h"
 
 class RFID {
 
@@ -29,28 +30,21 @@ class RFID {
     enum CardState {  
        NO_CHANGE,
        FAULTY_CARD,
-       NEW_CARD,
+       NEW_MEDIA_CARD,
+       NEW_WIFI_CARD,
        REMOVED_CARD
     };
-  
+ 
     RFID(uint8_t _csPin, uint8_t _rstPin);
     void init();
-    CardState checkCardState();
+    
+    CardState checkCardState(NDEF::WifiConfig *wifiConfig);
     void currentCardAsString(char *buf);
-
     byte currentCard[CARD_ID_BYTE_ARRAY_LENGTH];    
-
-    /**
-     * Format 4-Byte array to string like "0A1B2C3D"
-     */
-    static void formatCardId(char cardIdAsString[CARD_ID_STRING_LENGTH], byte *buffer) {
-        snprintf(cardIdAsString, CARD_ID_STRING_LENGTH, "%02X%02X%02X%02X", buffer[0], buffer[1], buffer[2], buffer[3]);
-    }
+    MFRC522 mfrc522;
 
   private:
-    uint8_t csPin;
-    uint8_t rstPin;
-    MFRC522 mfrc522;
+    NDEF ndef;
 
     bool cardPresent = false;    
     bool cardError = false;
@@ -58,8 +52,5 @@ class RFID {
     uint8_t cardFailCount = 0;    
 
     bool cardChanged(byte *buffer, byte bufferSize);
-    void newCard(byte *buffer, byte bufferSize);   
-
+    void newCard(byte *buffer, byte bufferSize);           
 };
-
-

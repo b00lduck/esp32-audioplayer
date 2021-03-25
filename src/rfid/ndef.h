@@ -18,39 +18,26 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
+#pragma once
+#include "Arduino.h"
 #include "config.h"
-#include "buttons.h"
+#include <MFRC522.h>
+#include "rfid/RC522_RFID_Utilities.h"
 
-Buttons::Buttons() : oldState(0), state(0) {}
+class NDEF {
 
-void Buttons::init() {
-  pinMode(BUTTON0_PIN, INPUT_PULLUP);
-  pinMode(BUTTON1_PIN, INPUT);
-  pinMode(BUTTON2_PIN, INPUT_PULLUP);
-  pinMode(BUTTON3_PIN, INPUT);
-  pinMode(BUTTON4_PIN, INPUT_PULLUP);
-}
+  public:
+    NDEF(MFRC522 *mfrc522);
 
-bool Buttons::read() {
+    struct WifiConfig {
+      char SSID[33];
+      char password[64];      
+    };
 
-    state = (digitalRead(BUTTON0_PIN)) |  
-            (digitalRead(BUTTON1_PIN)) << 1 | 
-            (digitalRead(BUTTON2_PIN)) << 2 |
-            (digitalRead(BUTTON3_PIN)) << 3 |
-            (digitalRead(BUTTON4_PIN)) << 4;
+    bool readWifiConfig(WifiConfig *wifiConfig);    
 
-
-    state ^= 255;
-    state &= 0x1f;
-
-    if (oldState != state) {
-        oldState = state;
-        return true;
-    }
-    return false;
-}
-
-bool Buttons::buttonDown(uint8_t id) {
-    return (state & (1 << id)) != 0;
-}
-
+  private:
+    MFRC522 *mfrc522;
+    RC522_RFID_Utilities rc522Utilities;
+    bool readSector(byte* buffer, byte sector, byte block, byte numBlocks);   
+};
