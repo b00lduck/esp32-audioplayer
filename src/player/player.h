@@ -37,26 +37,29 @@ class Player {
     VS1053 vs1053;
     RingBuffer ringBuffer;
 
-    File dataFile;
-
-    Playlist *playlist;
+    File dataFile;    
 
     uint8_t currentVolume;
 
     void playNextFile();    
     
-
     void setVolume(uint8_t volume);
 
     uint32_t lastTime;
 
+    uint16_t trackElapsed;
+
   public:
+
+    Playlist playlist;
+
     Player(Fatal fatal, VS1053 vs1053);
     void init();
-    void play(Playlist *playlist);
-    void stop();
+    void play();
+    void stop(bool disableAmp);
     void process();
     void next();
+    void previous();
 
     void increaseVolume();
     void decreaseVolume();

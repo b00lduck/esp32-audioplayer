@@ -30,7 +30,7 @@ Player::Player(Fatal fatal, VS1053 vs1053) :
     vs1053(vs1053),
     ringBuffer(20000),
     dataFile(),
-    currentVolume(100),      
+    currentVolume(80),      
     lastTime(0),
     idleTime(0) {}
 
@@ -42,21 +42,20 @@ void Player::init() {
   #endif
 }
 
-void Player::play(Playlist *_playlist) {
-  playlist = _playlist;
+void Player::play() {
   playNextFile();
 }
 
 void Player::playNextFile() { 
 
-  char *entry = playlist->getNextEntry();
+  char *entry = playlist.getNextEntry();
   if (entry == NULL) {
     Serial.println("Playlist exhausted.");
-    stop();   
+    stop(true);   
     return;
   }
 
-  Serial.printf("Playing next file in playlist (%d/%d): %s\n", playlist->currentEntryIndex, playlist->numEntries, entry);
+  Serial.printf("Playing next file in playlist (%d/%d): %s\n", playlist.currentEntryIndex, playlist.numEntries, entry);
  
   digitalWrite(AMP_ENABLE_PIN, HIGH);  // enable amplifier
   
@@ -79,27 +78,42 @@ void Player::playNextFile() {
     dataFile.seek(0);
   }  
 
-  delay(300);
+  delay(100);
 
+  trackElapsed = 0;
   state = PLAYING;
   vs1053.setVolume(currentVolume);                 
 
   uint8_t tone[4] = {0,0,15,15};
   vs1053.setTone(tone);
+
 }
 
-void Player::next() {
+void Player::previous() {
+  stop(false);
+  if ((playlist.currentEntryIndex > 1) && (trackElapsed < 2000)){
+    playlist.currentEntryIndex-=2;
+  } else if (playlist.currentEntryIndex > 0) {
+    playlist.currentEntryIndex--;
+  }  
   playNextFile();
 }
 
-void Player::stop() {  
-  digitalWrite(AMP_ENABLE_PIN, LOW);  // disable amplifier
+void Player::next() {
+  stop(false);
+  playNextFile();
+}
+
+void Player::stop(bool disableAmp) {  
+  if (disableAmp) {
+    digitalWrite(AMP_ENABLE_PIN, LOW);  // disable amplifier
+  }
   dataFile.close();
-  //vs1053.processByte(0, true);
-  //vs1053.setVolume(0);                  
-  //vs1053.stopSong();                       
+  vs1053.processByte(0, true);
+  vs1053.setVolume(0);                  
+  vs1053.stopSong();                       
   ringBuffer.empty();                            
-  state = STOPPED;   
+  state = STOPPED;    
 }
 
 void Player::process() {
@@ -116,10 +130,12 @@ void Player::process() {
     timeGone = millis() - lastTime;
   } 
   lastTime = millis();
+  
 
   switch (state) {
 
     case PLAYING:      
+      trackElapsed += timeGone;
       // fill ring buffer with MP3 data
       maxfilechunk = dataFile.available();
       if (maxfilechunk > 1024) {

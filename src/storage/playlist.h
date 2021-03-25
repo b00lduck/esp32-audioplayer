@@ -35,4 +35,5 @@ class Playlist {
     void addEntry(const char *entry);
     void sort();
     char* getNextEntry();
+    void reset();
 };

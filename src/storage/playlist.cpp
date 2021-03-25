@@ -61,3 +61,8 @@ char* Playlist::getNextEntry() {
   currentEntryIndex++;
   return entry;
 }
+
+void Playlist::reset() {
+  currentEntryIndex = 0;
+  numEntries = 0;
+}

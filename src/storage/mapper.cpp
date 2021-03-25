@@ -62,6 +62,8 @@ Mapper::MapperError Mapper::initializeCard(const char cardIdString[CARD_ID_STRIN
 
 Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char cardIdString[CARD_ID_STRING_LENGTH]) {
   
+  playlist->reset();
+
   char cardDirPath[CARD_DIRECTORY_PATH_LENGTH];
   this->cardDirPath(cardDirPath, cardIdString);  
 
@@ -85,6 +87,7 @@ Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char cardId
       }
       file = dir.openNextFile();
   }
+
   //playlist->sort();
   return MapperError::OK;
 }

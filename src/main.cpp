@@ -110,9 +110,8 @@ void setup() {
   pixels.ClearTo(RgbColor(0,10,0));
   pixels.Show();   
 
-  Playlist startupPlaylist;
-  startupPlaylist.addEntry("/system/startup.mp3");
-  player.play(&startupPlaylist);
+  player.playlist.addEntry("/system/startup.mp3");
+  player.play();
 
   #ifdef OTA_ENABLED
     ArduinoOTA.onStart([]() {
@@ -183,9 +182,8 @@ void loop() {
 
   showBatt++;
   if (showBatt > 2000) {
-    Serial.printf("[BATT] %1.2fV (%d)\n", lpf/ADC_DIVISOR, lpf);
     showBatt = 0;
-
+    Serial.printf("[BATT] %1.2fV (%d)\n", lpf/ADC_DIVISOR, lpf);
     Serial.printf("[PLYR] idle time %d\n", player.idleTime);
     Serial.printf("[HEAP] %d\n", ESP.getFreeHeap());
   }
@@ -212,16 +210,31 @@ void loop() {
         }
       
         // Volume Control
-        if (buttons.buttonDown(4)) {
-          player.increaseVolume();
-        }
+        //if (buttons.buttonDown(4)) {
+        //  player.increaseVolume();
+       // }
 
-        if (buttons.buttonDown(0)) {
-          player.decreaseVolume();
-        }        
+        //if (buttons.buttonDown(0)) {
+        //  player.decreaseVolume();
+        //}        
+
+        // Track Control
+        if (changed) {
+          if (buttons.buttonDown(3)) {
+            player.next();
+          } else if (buttons.buttonDown(1)) {
+            player.previous();
+          }        
+        }
               
         switch(cardState) {
           case RFID::CardState::NEW_MEDIA_CARD:
+            
+            char currentCardString[CARD_ID_STRING_LENGTH];
+            rfid.currentCardAsString(currentCardString);
+            mapper.createPlaylist(&player.playlist, currentCardString);
+            player.play();
+
             break;
             //{
               /*
@@ -243,7 +256,7 @@ void loop() {
             //}
 
           case RFID::CardState::NEW_WIFI_CARD:
-            player.stop();
+            player.stop(true);
 
             pixels.ClearTo(RgbColor(30,0,0));
             pixels.Show();
@@ -254,10 +267,10 @@ void loop() {
             break;
             
           case RFID::CardState::REMOVED_CARD:            
-            player.stop();
+            player.stop(true);
             break;
           case RFID::CardState::FAULTY_CARD:
-            player.stop();
+            player.stop(true);
             break;
           case RFID::CardState::NO_CHANGE:
             break;

@@ -61,7 +61,6 @@ void HTTP::handlerCardPost(AsyncWebServerRequest *request) {
 
   for(int i=0;i<params;i++){
     AsyncWebParameter* p = request->getParam(i);
-    Serial.printf("pname: %s\n", p->name());
     if (p->isPost() && p->name().equals("name")) {
       name = (char*) p->value().c_str();
     }  
