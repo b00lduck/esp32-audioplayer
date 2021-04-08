@@ -19,8 +19,7 @@
  *  
  */
 #include "Arduino.h"
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+#include <WebServer.h>
 #include "rfid/rfid.h"
 #include "rfid/ndef.h"
 #include "config.h"
@@ -29,38 +28,35 @@
 
 #define MAX_UPLOAD_PATH_LEN 300
 
-class HTTP {
+class HTTPServer {
 
   public: 
-    HTTP(RFID *rfid, Mapper *mapper, SDCard *sd);
-    
+    HTTPServer(RFID *rfid, Mapper *mapper, SDCard *sd);    
     bool start(NDEF::WifiConfig *wificonfig);
     void shutdown();
 
   private:
-    AsyncWebServer server;
+    WebServer server;
+    TaskHandle_t handleClientTaskHandle;
 
     RFID   *rfid;
     Mapper *mapper;
     SDCard *sd;
 
-    #ifdef ENABLE_CORS
-      void addCorsHeader(AsyncWebServerResponse *response);
-      void handlerCors(AsyncWebServerRequest *request);
-    #endif 
+    void handlerNotFound();
     
-    void handlerCurrentCardGet(AsyncWebServerRequest *request);  
-    void handlerCardGet(AsyncWebServerRequest *request);    
-    void handlerCardPost(AsyncWebServerRequest *request);                             
-    void handlerCardPut(AsyncWebServerRequest *request);   
+    void handlerCurrentCardGet();  
+    
+    void handlerCardGet();    
+    void handlerCardPost();                             
+    void handlerCardPut();   
+    
+    void handlerFileGet();
+    void handlerFileDelete();
+    void handlerFileUpload();
 
-    void handlerFileGet(AsyncWebServerRequest *request);
-    void handlerFileDelete(AsyncWebServerRequest *request);
-    void handlerFilePost(AsyncWebServerRequest *request);
-    void handlerFilePostUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
-    
-    bool uploadInProgress;
-    char uploadPath[MAX_UPLOAD_PATH_LEN]; // "/cards/12341234/<max 255>" 1+5+1+8+255+1=271
+    void sendError(int status, const char* msg);
+
     File uploadFile;
 
 };

@@ -48,12 +48,12 @@ void stringToLower(char *str) {
 }
 
 bool filenameHasExtension(const char *filename, const char *extension) {
-  char upperFilename[MAX_FILENAME_STRING_LENGTH];
-  strncpy(upperFilename, filename, MAX_FILENAME_STRING_LENGTH);
+  char upperFilename[MAX_FILENAME_STRING_BUFFER_LENGTH];
+  strncpy(upperFilename, filename, MAX_FILENAME_STRING_BUFFER_LENGTH);
   stringToUpper(upperFilename);
 
-  char upperExtension[MAX_FILENAME_STRING_LENGTH];
-  snprintf(upperExtension, MAX_FILENAME_STRING_LENGTH, ".%s", extension);
+  char upperExtension[MAX_FILENAME_STRING_BUFFER_LENGTH];
+  snprintf(upperExtension, MAX_FILENAME_STRING_BUFFER_LENGTH, ".%s", extension);
   stringToUpper(upperExtension);
 
   return stringEndsWith(upperFilename, upperExtension);

@@ -91,13 +91,13 @@ void RFID::newCard(byte *buffer, byte bufferSize) {
   
   Serial.print(F("New Card with UID "));
 
-  char buf[CARD_ID_STRING_LENGTH];
+  char buf[CARD_ID_STRING_BUFFER_LENGTH];
   currentCardAsString(buf);
   Serial.print(buf);
   Serial.println(F(" detected."));  
 
 }
 
-void RFID::currentCardAsString(char buf[CARD_ID_STRING_LENGTH]) {    
-  snprintf(buf, CARD_ID_STRING_LENGTH, "%02X%02X%02X%02X", currentCard[0], currentCard[1], currentCard[2], currentCard[3]);
+void RFID::currentCardAsString(char buf[CARD_ID_STRING_BUFFER_LENGTH]) {    
+  snprintf(buf, CARD_ID_STRING_BUFFER_LENGTH, "%02X%02X%02X%02X", currentCard[0], currentCard[1], currentCard[2], currentCard[3]);
 }

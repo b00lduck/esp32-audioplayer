@@ -294,7 +294,7 @@ byte RC522_RFID_Utilities::readByteFromTag(byte blockAddr, MFRC522::MIFARE_Key *
 }
 
 void RC522_RFID_Utilities::writeTextToTag(char *text, byte sector, byte blockAddr, MFRC522::MIFARE_Key *keyB) {
-  byte *NDEFText;
+  byte *NDEFText = NULL;
   byte textLength = textToNDEFMessage(text, NDEFText);
 
   // create an array of data blocks

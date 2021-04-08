@@ -134,6 +134,9 @@ void Player::process() {
 
   switch (state) {
 
+    case INITIALIZING:
+      break;      
+
     case PLAYING:      
       trackElapsed += timeGone;
       // fill ring buffer with MP3 data

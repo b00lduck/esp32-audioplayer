@@ -33,7 +33,7 @@
 #include "player/player.h"
 #include "storage/sd.h"
 #include "storage/mapper.h"
-#include "http/http.h"
+#include "http/httpServer.h"
 
 #include "rfid/ndef.h"
 #include "fatal.h"
@@ -47,7 +47,7 @@ Player    player(fatal, vs1053);
 
 Mapper    mapper;
 Buttons   buttons;
-HTTP      http(&rfid, &mapper, &sd);
+HTTPServer http(&rfid, &mapper, &sd);
 
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> pixels(4, WS2812_DATA_PIN);
 
@@ -154,10 +154,6 @@ enum MAIN_MODE {
 
 MAIN_MODE mode = PLAYER;
 
-
-
-
-
 void loop() {
 
   #ifdef OTA_ENABLED
@@ -230,7 +226,7 @@ void loop() {
         switch(cardState) {
           case RFID::CardState::NEW_MEDIA_CARD:
             
-            char currentCardString[CARD_ID_STRING_LENGTH];
+            char currentCardString[CARD_ID_STRING_BUFFER_LENGTH];
             rfid.currentCardAsString(currentCardString);
             mapper.createPlaylist(&player.playlist, currentCardString);
             player.play();
@@ -288,6 +284,7 @@ void loop() {
       }
       break;
 
-  }
+  }  
+
 
 }

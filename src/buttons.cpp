@@ -33,17 +33,20 @@ void Buttons::init() {
 
 bool Buttons::read() {
 
-    state = (digitalRead(BUTTON0_PIN)) |  
-            (digitalRead(BUTTON1_PIN)) << 1 | 
-            (digitalRead(BUTTON2_PIN)) << 2 |
-            (digitalRead(BUTTON3_PIN)) << 3 |
-            (digitalRead(BUTTON4_PIN)) << 4;
-
+    state = 0;
+    state |= digitalRead(BUTTON0_PIN);
+    state |= digitalRead(BUTTON1_PIN) << 1; 
+    state |= digitalRead(BUTTON2_PIN) << 2;
+    state |= digitalRead(BUTTON3_PIN) << 3;
+    state |= digitalRead(BUTTON4_PIN) << 4;
 
     state ^= 255;
     state &= 0x1f;
 
     if (oldState != state) {
+
+        Serial.printf("%x -> %x\n", oldState, state);     
+
         oldState = state;
         return true;
     }

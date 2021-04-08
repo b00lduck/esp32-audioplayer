@@ -24,11 +24,12 @@
 #include "FS.h"
 #include "playlist.h"
 
-#define MAX_CARD_NAME_STRING_LENGTH    32 
-#define META_FILE_NAME                 "meta.txt"
-#define CARDS_DIRECTORY                "/cards"
-#define META_FILE_PATH_LENGTH          (6+1+8+1+8+1)
-#define CARD_DIRECTORY_PATH_LENGTH     (6+1+8+1)
+#define MAX_CARD_NAME_LENGTH                  32 
+#define MAX_CARD_NAME_STRING_BUFFER_LENGTH    (MAX_CARD_NAME_LENGTH + 1) 
+#define META_FILE_NAME                        "meta.txt"
+#define CARDS_DIRECTORY                       "/cards"
+#define META_FILE_PATH_LENGTH                 (6+1+8+1+8+1)
+#define CARD_DIRECTORY_PATH_LENGTH            (6+1+8+1)
 
 class Mapper {
   public:  
@@ -83,8 +84,8 @@ class Mapper {
     };
 
     struct MappingMeta {
-      char cardId[CARD_ID_STRING_LENGTH];
-      char name[MAX_CARD_NAME_STRING_LENGTH];
+      char cardId[CARD_ID_STRING_BUFFER_LENGTH];
+      char name[MAX_CARD_NAME_STRING_BUFFER_LENGTH];
     };
 
     struct Mapping {
@@ -96,21 +97,21 @@ class Mapper {
 
     MapperError createMappingIterator(File *file);
     MapperError nextMapping(File *file, Mapper::Mapping *mapping);
-    MapperError createPlaylist(Playlist *playlist, const char cardIdString[CARD_ID_STRING_LENGTH]);
+    MapperError createPlaylist(Playlist *playlist, const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]);
 
-    MapperError initializeCard(const char cardIdString[CARD_ID_STRING_LENGTH], const char cardName[MAX_CARD_NAME_STRING_LENGTH]);
-    MapperError writeNameToMetaFile(const char cardIdString[CARD_ID_STRING_LENGTH], const char cardName[MAX_CARD_NAME_STRING_LENGTH]);
+    MapperError initializeCard(const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH], const char cardName[MAX_CARD_NAME_STRING_BUFFER_LENGTH]);
+    MapperError writeNameToMetaFile(const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH], const char cardName[MAX_CARD_NAME_STRING_BUFFER_LENGTH]);
 
-    MapperError createFileIterator(File *it, const char *dir);
+    //MapperError createFileIterator(File *it, const char *dir);
     MapperError nextFile(File *it, char name[256], char type[16]);
 
-    MapperError readMetaFile(MappingMeta *meta, const char cardIdString[CARD_ID_STRING_LENGTH]);
+    MapperError readMetaFile(MappingMeta *meta, const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]);
     
   private:
     
-    uint16_t readNameFromMetaFile(File *stream, char str[MAX_CARD_NAME_STRING_LENGTH]);
+    uint16_t readNameFromMetaFile(File *stream, char str[MAX_CARD_NAME_STRING_BUFFER_LENGTH]);
     bool stringEndsWith(const char *str, const char *suffix);
 
-    void metaFilePath(char metaFilePath[META_FILE_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_LENGTH]);
-    void cardDirPath(char cardDirPath[CARD_DIRECTORY_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_LENGTH]);    
+    void metaFilePath(char metaFilePath[META_FILE_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]);
+    void cardDirPath(char cardDirPath[CARD_DIRECTORY_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]);    
 };

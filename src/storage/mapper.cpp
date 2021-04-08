@@ -30,7 +30,7 @@ Mapper::MapperError Mapper::init() {
   return MapperError::OK;
 }
 
-Mapper::MapperError Mapper::writeNameToMetaFile(const char cardIdString[CARD_ID_STRING_LENGTH], const char cardName[MAX_CARD_NAME_STRING_LENGTH]) {  
+Mapper::MapperError Mapper::writeNameToMetaFile(const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH], const char cardName[MAX_CARD_NAME_STRING_BUFFER_LENGTH]) {  
 
   char cardDirPath[CARD_DIRECTORY_PATH_LENGTH];
   this->cardDirPath(cardDirPath, cardIdString);
@@ -53,14 +53,14 @@ Mapper::MapperError Mapper::writeNameToMetaFile(const char cardIdString[CARD_ID_
   return MapperError::OK;
 }
 
-Mapper::MapperError Mapper::initializeCard(const char cardIdString[CARD_ID_STRING_LENGTH], const char cardName[MAX_CARD_NAME_STRING_LENGTH]) {
+Mapper::MapperError Mapper::initializeCard(const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH], const char cardName[MAX_CARD_NAME_STRING_BUFFER_LENGTH]) {
   char cardDirPath[CARD_DIRECTORY_PATH_LENGTH];
   this->cardDirPath(cardDirPath, cardIdString);
   SDCard::assureDirectory(cardDirPath);
   return this->writeNameToMetaFile(cardIdString, cardName);
 }
 
-Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char cardIdString[CARD_ID_STRING_LENGTH]) {
+Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]) {
   
   playlist->reset();
 
@@ -74,11 +74,10 @@ Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char cardId
   }
 
   File file = dir.openNextFile();
-  uint8_t n = 0;
   while(file) {
       if(!file.isDirectory()){
           char entry[MAX_PLAYLIST_ENTRY_LENGTH];
-          snprintf(entry, MAX_PLAYLIST_ENTRY_LENGTH, file.name() + strlen(CARDS_DIRECTORY) + CARD_ID_STRING_LENGTH + 1);
+          snprintf(entry, MAX_PLAYLIST_ENTRY_LENGTH, file.name() + strlen(CARDS_DIRECTORY) + CARD_ID_STRING_BUFFER_LENGTH + 1);
 
           // omit mapping file
           if (strncmp(entry, META_FILE_NAME, strlen(META_FILE_NAME)) != 0) {
@@ -92,13 +91,13 @@ Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char cardId
   return MapperError::OK;
 }
 
-Mapper::MapperError Mapper::readMetaFile(MappingMeta *meta, const char cardIdString[CARD_ID_STRING_LENGTH]) {
+Mapper::MapperError Mapper::readMetaFile(MappingMeta *meta, const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]) {
 
   char metaFilePath[META_FILE_PATH_LENGTH];
   this->metaFilePath(metaFilePath, cardIdString);
 
   // Set card ID
-  strncpy(meta->cardId, cardIdString, CARD_ID_STRING_LENGTH);
+  strncpy(meta->cardId, cardIdString, CARD_ID_STRING_BUFFER_LENGTH);
   
   // Try to open the meta file
   if (!SD.exists(metaFilePath)) {
@@ -111,7 +110,7 @@ Mapper::MapperError Mapper::readMetaFile(MappingMeta *meta, const char cardIdStr
     // if no name could be read, use card ID as name  
     if (nameLen == 0) {
       Serial.println(F("Card name not found. Using card ID as name."));
-      strncpy(meta->name, cardIdString, CARD_ID_STRING_LENGTH);
+      strncpy(meta->name, cardIdString, CARD_ID_STRING_BUFFER_LENGTH);
     }    
     return MapperError::OK;
   } else {
@@ -119,10 +118,10 @@ Mapper::MapperError Mapper::readMetaFile(MappingMeta *meta, const char cardIdStr
   } 
 }
 
-uint16_t Mapper::readNameFromMetaFile(File *stream, char str[MAX_CARD_NAME_STRING_LENGTH]) {
+uint16_t Mapper::readNameFromMetaFile(File *stream, char str[MAX_CARD_NAME_STRING_BUFFER_LENGTH]) {
   uint16_t i = 0;  
-  memset(str, 0, MAX_CARD_NAME_STRING_LENGTH); 
-  while (i < (MAX_CARD_NAME_STRING_LENGTH - 1)) {   
+  memset(str, 0, MAX_CARD_NAME_STRING_BUFFER_LENGTH); 
+  while (i < (MAX_CARD_NAME_STRING_BUFFER_LENGTH - 1)) {   
     int16_t ch = stream->read();
     if ((ch < 0) || (ch == 10) || (ch == 13)) {
       break;
@@ -156,8 +155,8 @@ Mapper::MapperError Mapper::nextMapping(File *it, Mapper::Mapping *mapping) {
 
     if (entry.isDirectory()) {
 
-      char cardId[CARD_ID_STRING_LENGTH];
-      strncpy(cardId, entry.name() + strlen(CARDS_DIRECTORY) + 1, CARD_ID_STRING_LENGTH);
+      char cardId[CARD_ID_STRING_BUFFER_LENGTH];
+      strncpy(cardId, entry.name() + strlen(CARDS_DIRECTORY) + 1, CARD_ID_STRING_BUFFER_LENGTH);
       MapperError err;
             
       err = readMetaFile(&mapping->mappingMeta, cardId);
@@ -180,9 +179,9 @@ Mapper::MapperError Mapper::nextMapping(File *it, Mapper::Mapping *mapping) {
 
 /**
  * Create directory iterator to be used from the HTTP interface to get a list of all files and directories in the given path.
- */
+ *
 Mapper::MapperError Mapper::createFileIterator(File *it, const char *dir) {  
-  *it = SD.open(dir, FILE_READ);  
+  *it = SD.open(dir, FILE_READ);    
   if (!*it) {    
     return DIRECTORY_NOT_FOUND;
   }  
@@ -192,7 +191,7 @@ Mapper::MapperError Mapper::createFileIterator(File *it, const char *dir) {
 /**
  * Get next entry from directory handle
  */
-Mapper::MapperError Mapper::nextFile(File *it, char name[MAX_FILENAME_STRING_LENGTH], char type[16]) {
+Mapper::MapperError Mapper::nextFile(File *it, char name[MAX_FILENAME_STRING_BUFFER_LENGTH], char type[16]) {
      
   while(true) {
     File entry = it->openNextFile();
@@ -200,7 +199,7 @@ Mapper::MapperError Mapper::nextFile(File *it, char name[MAX_FILENAME_STRING_LEN
       return NO_MORE_FILES;  
     }
 
-    strncpy(name, entry.name(), MAX_FILENAME_STRING_LENGTH);
+    strncpy(name, entry.name(), MAX_FILENAME_STRING_BUFFER_LENGTH);
     if (entry.isDirectory()) {
       strncpy(type, "directory", 16);
     } else {
@@ -224,10 +223,10 @@ Mapper::MapperError Mapper::nextFile(File *it, char name[MAX_FILENAME_STRING_LEN
   }
 }
 
-void Mapper::metaFilePath(char metaFilePath[META_FILE_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_LENGTH]) {
+void Mapper::metaFilePath(char metaFilePath[META_FILE_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]) {
   snprintf(metaFilePath, META_FILE_PATH_LENGTH, "%s/%8s/%s", CARDS_DIRECTORY, cardIdString, META_FILE_NAME);
 }
 
-void Mapper::cardDirPath(char cardDirPath[CARD_DIRECTORY_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_LENGTH]) {
+void Mapper::cardDirPath(char cardDirPath[CARD_DIRECTORY_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]) {
   snprintf(cardDirPath, CARD_DIRECTORY_PATH_LENGTH, "%s/%8s", CARDS_DIRECTORY, cardIdString);
 }

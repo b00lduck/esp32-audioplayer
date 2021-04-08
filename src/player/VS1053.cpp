@@ -83,9 +83,8 @@ void VS1053::sdi_send_buffer(uint8_t *data, size_t len)
   {                       // More to do?
     await_data_request(); // Wait for space available
     size_t chunk_length = len;
-    if (len > vs1053ChunkSize)
-    {
-      size_t chunk_length = vs1053ChunkSize;
+    if (len > vs1053ChunkSize) {
+      chunk_length = vs1053ChunkSize;
     }
     len -= chunk_length;
     SPI.writeBytes(data, chunk_length);

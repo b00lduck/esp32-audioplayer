@@ -3,12 +3,14 @@
     <h1>MP3 Duck</h1>
     <Cardview />
     <Filebrowser />
+    <Backup />
   </div>
 </template>
 
 <script>
 import Cardview from './components/Cardview.vue'
 import Filebrowser from './components/Filebrowser.vue'
+import Backup from './components/Backup.vue'
 import '@progress/kendo-ui' 
 import '@progress/kendo-theme-default/dist/all.css'
 
@@ -16,7 +18,8 @@ export default {
   name: 'App',
   components: {
     Cardview,
-    Filebrowser
+    Filebrowser,
+    Backup
   }
 }
 </script>
