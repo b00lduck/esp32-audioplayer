@@ -42,24 +42,6 @@ void HTTPServer::handlerNotFound() {
     server.send(404, "text/plain", "not found");  
 }
 
-/*
-#ifdef ENABLE_CORS
-void HTTP::addCorsHeader(AsyncWebServerResponse *response) {
-  response->addHeader(F("Access-Control-Allow-Origin"),"*");
-  response->addHeader(F("Access-Control-Allow-Methods"),"*");
-  response->addHeader(F("Access-Control-Allow-Headers"),"*");
-}
-
-void HTTP::handlerCors(AsyncWebServerRequest *request) {
-  AsyncWebServerResponse *response = request->beginResponse(204);
-  #ifdef ENABLE_CORS
-    addCorsHeader(response);
-  #endif
-  request->send(response);
-}
-#endif
-*/
-
 bool HTTPServer::start(NDEF::WifiConfig *wifiConfig) {    
 
   WiFi.persistent(false);
@@ -82,6 +64,12 @@ bool HTTPServer::start(NDEF::WifiConfig *wifiConfig) {
   }
 
   Serial.println(WiFi.localIP());  
+
+
+  const UriRegex everything = UriRegex("^.*$");
+  server.on(everything, HTTP_OPTIONS, [this]() {
+    server.send(200, "", "");
+  });
 
   // create server and routes
   const Uri currentCardUrl = Uri("/api/card/current");

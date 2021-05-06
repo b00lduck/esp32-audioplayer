@@ -26,16 +26,30 @@ void HTTPServer::handlerFileUpload() {
  
   HTTPUpload& upload = server.upload();
   if (upload.status == UPLOAD_FILE_START) {
-    Serial.printf("[HTTP] Starting file upload to folder %s\n", path);
-    String filename = upload.filename;
-    if (!filename.startsWith("/")) {
-      filename = path + "/" + filename;
+    Serial.printf("[HTTP] Starting file upload to folder %s\n", path.c_str());
+    String absoluteFilename = path + "/" + upload.filename;
+
+    bool created = SD.mkdir(path);
+    if (!created) {
+      Serial.printf("[HTTP] File upload: directory %s was created\n", path.c_str());
+    } else {
+      Serial.printf("[HTTP] File upload: directory %s was not created\n", path.c_str());
     }
-    uploadFile = SD.open(filename, "w");
-    filename = String();
+
+    uploadFile = SD.open(absoluteFilename, "w");
+    if (!uploadFile) {
+      sendError(500, "File upload error: could not open file");
+      return;
+    }
+
+    absoluteFilename = String();
   } else if (upload.status == UPLOAD_FILE_WRITE) {    
     if (uploadFile) {
-      uploadFile.write(upload.buf, upload.currentSize);
+      size_t written = uploadFile.write(upload.buf, upload.currentSize);
+      if (written != upload.currentSize) {
+        sendError(500, "File upload error: could write file");
+        return;
+      }
     }
   } else if (upload.status == UPLOAD_FILE_END) {
     if (uploadFile) {
@@ -65,8 +79,9 @@ void HTTPServer::handlerFileGet() {
     
     char name[MAX_FILENAME_STRING_BUFFER_LENGTH];
     char type[16];
+    size_t size;
     
-    Mapper::MapperError err = mapper->nextFile(&file, name, type);
+    Mapper::MapperError err = mapper->nextFile(&file, name, type, &size);
       
     while (err != Mapper::MapperError::NO_MORE_FILES) {       
       if (err == Mapper::MapperError::OK) {        
@@ -74,9 +89,11 @@ void HTTPServer::handlerFileGet() {
         ret += type;
         ret += "\",\"name\":\"";
         ret += name;
+        ret += "\",\"size\":\"";
+        ret += size;
         ret += "\"}";
       }
-      err = mapper->nextFile(&file, name, type);
+      err = mapper->nextFile(&file, name, type, &size);
       if (err == Mapper::MapperError::OK) {
         ret += ",";
       }    

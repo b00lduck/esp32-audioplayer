@@ -2,6 +2,8 @@
 
   <b-card class="filebrowser" header="Filebrowser">
 
+    <div v-if="error">HTTP error<br>{{error}}</div>
+
     <b-button-toolbar>
       <b-button-group class="mx-2">
         <b-button  class="loading" variant="primary">
@@ -19,8 +21,7 @@
       </b-button-group>      
     </b-button-toolbar>
 
-    <br/>
-    
+    <br/>   
 
     <b-list-group v-if="!loading">
       <b-list-group-item 
@@ -82,27 +83,27 @@
       fetchData: function() {
         this.loading = true
 
-        return fetch("http://192.168.2.149/api/file" + this.path, {
+        return fetch(this.api + "/file" + this.path, {
           method: "get"
         })
-          .then((res) => {
-            if (!res.ok) {
-              const error = new Error(res.statusText);
-              throw error;
-            }
-            return res.json()
-          })
-          .then((data) => {
-            this.data = data
-          })
-          .catch((err) => {
-            this.error = true
-            this.path = this.oldPath
-            console.log(err)
-          })
-          .then(() => {
-            this.loading = false;
-          });
+        .then((res) => {
+          if (!res.ok) {
+            const error = new Error(res.statusText);
+            throw error;
+          }
+          return res.json()
+        })
+        .then((data) => {
+          this.data = data
+        })
+        .catch((err) => {
+          this.error = true
+          this.path = this.oldPath
+          console.log(err)
+        })
+        .then(() => {
+          this.loading = false;
+        })
       }
     },
 
@@ -120,13 +121,19 @@
       this.fetchData()
     },
 
+    watch: {      
+      api() {
+        this.fetchData()
+      }
+    },    
+
+    props: ['api'],
     name: "Filebrowser",
   }; 
 </script>
 
 <style scoped>
   .filebrowser {
-    width: 600px; 
   }
 
   .directory {

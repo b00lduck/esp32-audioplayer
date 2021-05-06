@@ -178,20 +178,9 @@ Mapper::MapperError Mapper::nextMapping(File *it, Mapper::Mapping *mapping) {
 }
 
 /**
- * Create directory iterator to be used from the HTTP interface to get a list of all files and directories in the given path.
- *
-Mapper::MapperError Mapper::createFileIterator(File *it, const char *dir) {  
-  *it = SD.open(dir, FILE_READ);    
-  if (!*it) {    
-    return DIRECTORY_NOT_FOUND;
-  }  
-  return OK;
-}
-
-/**
  * Get next entry from directory handle
  */
-Mapper::MapperError Mapper::nextFile(File *it, char name[MAX_FILENAME_STRING_BUFFER_LENGTH], char type[16]) {
+Mapper::MapperError Mapper::nextFile(File *it, char name[MAX_FILENAME_STRING_BUFFER_LENGTH], char type[16], size_t *size) {
      
   while(true) {
     File entry = it->openNextFile();
@@ -199,11 +188,12 @@ Mapper::MapperError Mapper::nextFile(File *it, char name[MAX_FILENAME_STRING_BUF
       return NO_MORE_FILES;  
     }
 
+    *size = entry.size();
+
     strncpy(name, entry.name(), MAX_FILENAME_STRING_BUFFER_LENGTH);
     if (entry.isDirectory()) {
       strncpy(type, "directory", 16);
-    } else {
-      
+    } else {      
       if (
         filenameHasExtension(entry.name(), "mp3") || 
         filenameHasExtension(entry.name(), "wav") ||
@@ -216,8 +206,7 @@ Mapper::MapperError Mapper::nextFile(File *it, char name[MAX_FILENAME_STRING_BUF
         strncpy(type, "file_text", 16);
       } else {
         strncpy(type, "file_other", 16);
-      }      
-      
+      }            
     }
     return OK;
   }

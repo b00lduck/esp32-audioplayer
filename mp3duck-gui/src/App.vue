@@ -1,25 +1,48 @@
 <template>
   <div id="app">
     <h1>MP3 Duck</h1>
-    <Cardview />
-    <Filebrowser />
-    <Backup />
+    <b-container>
+      <b-row>
+        <b-col><BoxManager @apiChange="changeApi1" /></b-col>
+        <b-col cols="1">vs.</b-col>
+        <b-col><BoxManager @apiChange="changeApi2" /></b-col>
+      </b-row>
+      <b-row>
+        <b-col cols="3"></b-col>
+        <b-col><Sync v-bind:api1="api1" v-bind:api2="api2" /></b-col>
+        <b-col cols="3"></b-col>
+      </b-row>
+    </b-container>
   </div>
+
 </template>
 
 <script>
-import Cardview from './components/Cardview.vue'
-import Filebrowser from './components/Filebrowser.vue'
-import Backup from './components/Backup.vue'
+
+import BoxManager from './components/BoxManager/BoxManager'
+import Sync from './components/Sync'
 import '@progress/kendo-ui' 
 import '@progress/kendo-theme-default/dist/all.css'
 
 export default {
   name: 'App',
+    methods: {
+    changeApi1(api) {
+      this.api1 = api
+    },
+    changeApi2(api) {
+      this.api2 = api
+    }
+  },
+  data() {
+    return {
+      api1: "",
+      api2: ""
+    }
+  },  
   components: {
-    Cardview,
-    Filebrowser,
-    Backup
+    BoxManager,
+    Sync
   }
 }
 </script>

@@ -102,8 +102,7 @@ class Mapper {
     MapperError initializeCard(const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH], const char cardName[MAX_CARD_NAME_STRING_BUFFER_LENGTH]);
     MapperError writeNameToMetaFile(const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH], const char cardName[MAX_CARD_NAME_STRING_BUFFER_LENGTH]);
 
-    //MapperError createFileIterator(File *it, const char *dir);
-    MapperError nextFile(File *it, char name[256], char type[16]);
+    MapperError nextFile(File *it, char name[256], char type[16], size_t *size);
 
     MapperError readMetaFile(MappingMeta *meta, const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]);
     

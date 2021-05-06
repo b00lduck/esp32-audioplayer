@@ -207,7 +207,7 @@ void VS1053::begin()
   write_register(SCI_CLOCKF, 6 << 12); // Normal clock settings multiplier 3.0 = 12.2 MHz
 
   //SPI Clock to 4 MHz
-  VS1053_SPI = SPISettings(4000000, MSBFIRST, SPI_MODE0);
+  VS1053_SPI = SPISettings(8000000, MSBFIRST, SPI_MODE0);
   write_register(SCI_MODE, _BV(SM_SDINEW) | _BV(SM_LINE1));
 
   testComm("Fast SPI, Testing VS1053 read/write registers again...");

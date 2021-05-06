@@ -9,18 +9,25 @@
 </template>
 
 <script>
+
+  import axios from 'axios'
+
   export default {
-    props: ['entry'],
+    props: ['entry', 'api'],
     methods: {
-      deleteEntry: function() {
-        return fetch("http://192.168.2.149/api/file" + this.entry.path, {
-          method: "delete"
-        })
+      deleteEntry: function() {       
+
+        const segments = this.entry.path.substr(1).split("/")
+        let url = this.api + "/file"
+        for (const segment of segments) {
+          url += "/" +  encodeURIComponent(segment)
+        }        
+
+        return axios.delete(url)
         .then((res) => {
-          if (!res.ok) {
-            const error = new Error(res.statusText);
-            throw error;
-          }            
+          if (res.status !== 204) {
+            this.$emit('error', new Error("deleting playlist entry failed: HTTP " + res.statusText))
+          }          
         })
       }
     },
