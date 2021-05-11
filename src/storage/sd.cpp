@@ -27,10 +27,8 @@ SDCard::SDCard(uint8_t _csPin) :
   {}
 
 bool SDCard::init() {
-  if (SD.begin(csPin, SPI, 8000000)){
+  if (SD.begin(csPin, SPI, 4000000)){
      Serial.println(F("[SD-Card] media initialized"));
-     assureDirectory("/cards");
-     assureDirectory("/system");
      //printDirectory();
   }  
   return false;      

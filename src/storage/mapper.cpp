@@ -27,6 +27,7 @@
 
 Mapper::MapperError Mapper::init() {
   SDCard::assureDirectory("/cards");
+  SDCard::assureDirectory("/system");
   return MapperError::OK;
 }
 

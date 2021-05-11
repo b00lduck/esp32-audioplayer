@@ -92,6 +92,8 @@ void setup() {
     pixels.Show();
     fatal.fatal("SD card error", "init failed");
   }
+  SDCard::assureDirectory("/cards");
+  SDCard::assureDirectory("/system");
   Serial.println("[ OK ] SD/MMC init completed");
 
   Mapper::MapperError err = mapper.init(); 
@@ -182,6 +184,7 @@ void loop() {
     Serial.printf("[BATT] %1.2fV (%d)\n", lpf/ADC_DIVISOR, lpf);
     Serial.printf("[PLYR] idle time %d\n", player.idleTime);
     Serial.printf("[HEAP] %d\n", ESP.getFreeHeap());
+    Serial.printf("[PRAM] %d\n", ESP.getFreePsram());
   }
 
   NDEF::WifiConfig wifiConfig;

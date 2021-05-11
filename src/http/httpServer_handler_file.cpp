@@ -25,15 +25,21 @@ void HTTPServer::handlerFileUpload() {
   String path = server.urlDecode(server.pathArg(0));
  
   HTTPUpload& upload = server.upload();
+   String absoluteFilename = path + "/" + upload.filename;
+
   if (upload.status == UPLOAD_FILE_START) {
     Serial.printf("[HTTP] Starting file upload to folder %s\n", path.c_str());
-    String absoluteFilename = path + "/" + upload.filename;
 
     bool created = SD.mkdir(path);
-    if (!created) {
+    if (created) {
       Serial.printf("[HTTP] File upload: directory %s was created\n", path.c_str());
     } else {
       Serial.printf("[HTTP] File upload: directory %s was not created\n", path.c_str());
+    }
+
+    if (SD.exists(absoluteFilename)) {
+      Serial.printf("[HTTP] File already exists, deleting %s\n", absoluteFilename.c_str());
+      SD.remove(absoluteFilename);
     }
 
     uploadFile = SD.open(absoluteFilename, "w");
@@ -41,20 +47,26 @@ void HTTPServer::handlerFileUpload() {
       sendError(500, "File upload error: could not open file");
       return;
     }
+    uploadFile.close();
 
-    absoluteFilename = String();
   } else if (upload.status == UPLOAD_FILE_WRITE) {    
+
+    uploadFile = SD.open(absoluteFilename, "a");   
     if (uploadFile) {
       size_t written = uploadFile.write(upload.buf, upload.currentSize);
+      
       if (written != upload.currentSize) {
-        sendError(500, "File upload error: could write file");
-        return;
+        Serial.printf("File upload error: could not write file (bytes expected: %d, bytes written: %d, total: %d)\n", upload.currentSize, written, upload.totalSize);
       }
-    }
-  } else if (upload.status == UPLOAD_FILE_END) {
-    if (uploadFile) {
       uploadFile.close();
-    }
+    } else {
+      Serial.printf("Could not open file for writing! %d\n", upload.totalSize);
+    } 
+
+  } else if (upload.status == UPLOAD_FILE_END) {
+
+    Serial.println("File upload finished");
+
   }
 
 }

@@ -34,6 +34,7 @@
         <b-icon v-bind:icon="icon(file.type)" scale="2" />
 
         <div>{{ file.name }}</div>
+        <div>{{ file.size }}</div>
       </b-list-group-item>
     </b-list-group>
 

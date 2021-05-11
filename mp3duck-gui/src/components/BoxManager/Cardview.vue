@@ -70,7 +70,7 @@ import axios from 'axios'
   export default {
   components: { PlaylistEntry, CopyProgress },
     beforeMount() {
-      setTimeout(this.fetchData, 2000);
+      this.interval = setInterval(this.fetchData, 2000);
     },
     methods: {
       onError (err) {
@@ -130,7 +130,7 @@ import axios from 'axios'
           body: "name=" + encodeURIComponent(this.cardName)
         })
         .then((res) => {
-            if (!res.ok) {
+            if (!res.ok) { 
               const error = new Error(res.statusText);
               throw error;
             }            
@@ -153,18 +153,19 @@ import axios from 'axios'
                 resolve(null)
               })
             } else {
+              console.log(res)
               return res.json()
             }            
           })
           .then((data) => {
+            this.error = null
             if (data === null) {
               this.card = null
             } else {              
-              //if (this.card === null || this.card.id != data.id) {
+              if (this.card === null || this.card.id != data.id) {
                 this.card = data
-                this.cardName = data.name
-                
-              //}
+                this.cardName = data.name                
+              }
             }
           })
           .catch((err) => {
@@ -194,11 +195,15 @@ import axios from 'axios'
           },
           canceled: false,
           running: false
-        }
+        },
+        interval: null
       }
     },
     created() {
       this.fetchData()
+    },
+    beforeDestroy() {
+      clearInterval(this.interval)
     },
     props: ['api'],
     name: "Cardview",
