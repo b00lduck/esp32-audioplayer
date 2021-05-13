@@ -38,9 +38,10 @@ void Playlist::addEntry(const char *entry) {
  * Bubblesort
  */
 void Playlist::sort() {
-  bool swapped = false;
+  bool swapped;
   do {
-    for(unsigned char i=0;i<numEntries-1;i++) {      
+    swapped = false;
+    for(unsigned char i=0;i<numEntries-1;i++) {
       if(strncmp(entries[i], entries[i+1], MAX_PLAYLIST_ENTRY_LENGTH) > 0) {
         char buf[MAX_PLAYLIST_ENTRY_LENGTH];
         strncpy(buf, entries[i+1], MAX_PLAYLIST_ENTRY_LENGTH);
@@ -49,7 +50,7 @@ void Playlist::sort() {
         swapped = true;
       }
     }
-  } while (!swapped);
+  } while (swapped);
 }
 
 char* Playlist::getNextEntry() {

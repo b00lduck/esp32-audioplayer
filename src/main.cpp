@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <Wire.h>
-#include <NeoPixelBus.h>
 #ifdef OTA_ENABLED
   #include <ArduinoOTA.h>
 #endif
@@ -33,37 +32,34 @@
 #include "player/player.h"
 #include "storage/sd.h"
 #include "storage/mapper.h"
+#include "display/display.h"
 #include "http/httpServer.h"
 
 #include "rfid/ndef.h"
 #include "fatal.h"
 
+Display   display;
+Fatal     fatal;
+
 VS1053    vs1053(VS1053_XCS_PIN, VS1053_XDCS_PIN, VS1053_DREQ_PIN, VS1053_XRESET_PIN);
 RFID      rfid(MFRC522_CS_PIN, MFRC522_RST_PIN);
 SDCard    sd(SD_CS_PIN);
 
-Fatal     fatal;
-Player    player(fatal, vs1053);
+Player    player(&fatal, &vs1053, &sd);
 
-Mapper    mapper;
+Mapper    mapper(&sd);
 Buttons   buttons;
 HTTPServer http(&rfid, &mapper, &sd);
 
-NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> pixels(4, WS2812_DATA_PIN);
+void switchToPlayerMode();
+void switchToAdminMode(NDEF::WifiConfig *wifiConfig);
 
 void setup() {
  
   Serial.begin(115200);                            
   Serial.println("MP3 player V2 now Booting...");
 
-  pixels.Begin();
-  pixels.ClearTo(RgbColor(10,0,10));
-  pixels.Show();
-
-  //http.init();
-
-  pixels.ClearTo(RgbColor(0,10,10));
-  pixels.Show();
+  display.init();  
 
   // Set shutdown pin to input
   pinMode(SHUTDOWN_PIN, INPUT);
@@ -76,44 +72,7 @@ void setup() {
   buttons.init();
 
   // Initialize GPIO for battery voltage
-  pinMode(ADC_BATT, ANALOG);
-
-  // Initialize SPI bus
-  SPI.begin(SPI_SCK_PIN, SPI_MISO_PIN, SPI_MOSI_PIN);
-  Serial.println("[ OK ] SPI init completed");
-
-  // Initialize RFID reader
-  rfid.init();
-  Serial.println("[ OK ] RFID init completed");
- 
-  // Initialize SD card reader
-  if (!sd.init()) {
-    pixels.ClearTo(RgbColor(0,30,0));
-    pixels.Show();
-    fatal.fatal("SD card error", "init failed");
-  }
-  SDCard::assureDirectory("/cards");
-  SDCard::assureDirectory("/system");
-  Serial.println("[ OK ] SD/MMC init completed");
-
-  Mapper::MapperError err = mapper.init(); 
-  if (err != Mapper::MapperError::OK) {
-    pixels.ClearTo(RgbColor(0,30,0));
-    pixels.Show();
-    switch(err) {
-      default:
-        break;
-    }    
-  }
-
-  // initialize player
-  player.init();
-  Serial.println("[ OK ] MP3 init completed");
-  pixels.ClearTo(RgbColor(0,10,0));
-  pixels.Show();   
-
-  player.playlist.addEntry("/system/startup.mp3");
-  player.play();
+  pinMode(ADC_BATT, ANALOG); 
 
   #ifdef OTA_ENABLED
     ArduinoOTA.onStart([]() {
@@ -144,10 +103,18 @@ void setup() {
 
     ArduinoOTA.begin();  
   #endif
+
+  SPI.begin(SPI_SCK_PIN, SPI_MISO_PIN, SPI_MOSI_PIN);
+  Serial.println("[ OK ] SPI init completed");
+
+  switchToPlayerMode();
 }
 
 uint16_t lpf = 0;
-uint16_t showBatt = 5000;
+uint32_t showBattTimer = 0;
+uint32_t lastTime = 0;
+uint32_t uptime = 0;
+uint32_t uptimeSecs = 0;
 
 enum MAIN_MODE {
   PLAYER,
@@ -156,11 +123,70 @@ enum MAIN_MODE {
 
 MAIN_MODE mode = PLAYER;
 
+void switchToPlayerMode() {
+  display.setMode(Display::DisplayMode::INITIALIZING);
+  
+  // Initialize RFID reader
+  rfid.init();
+  Serial.println("[ OK ] RFID init completed");
+
+  // Initialize SD card reader
+  if (!sd.init(false)) {
+    display.setMode(Display::DisplayMode::ERROR_SD_INIT);
+    fatal.fatal("SD card error", "init failed");
+  }
+  Serial.println("[ OK ] SD/MMC init completed");  
+
+  // initialize player
+  player.init();
+  Serial.println("[ OK ] MP3 init completed");
+  display.setMode(Display::DisplayMode::IDLE);
+
+  mode = PLAYER;
+  display.setMode(Display::DisplayMode::IDLE);
+
+  player.playlist.addEntry("/system/startup.mp3");
+  player.play();
+}
+
+void switchToAdminMode( NDEF::WifiConfig *wifiConfig) {
+  display.setMode(Display::DisplayMode::ADMIN_INIT);
+
+  player.stop(true);
+
+  // Initialize RFID reader
+  rfid.init();
+  Serial.println("[ OK ] RFID init completed");  
+
+  // Initialize SD card reader
+  if (!sd.init(false)) {
+    display.setMode(Display::DisplayMode::ERROR_SD_INIT);
+    fatal.fatal("SD card error", "init failed");
+  }
+  Serial.println("[ OK ] SD/MMC init completed");
+
+  if (http.start(wifiConfig)) {
+    mode = ADMIN;
+    display.setMode(Display::DisplayMode::ADMIN_IDLE);
+  } else {
+    switchToPlayerMode();
+  }
+}
+
+
 void loop() {
 
   #ifdef OTA_ENABLED
     ArduinoOTA.handle();  
   #endif
+
+  uint32_t timeGone = 0;
+  if (lastTime > 0){
+    timeGone = millis() - lastTime;
+  } 
+  lastTime = millis();
+  uptime += timeGone;
+  uptimeSecs = uptime / 1000;
 
   bool changed = buttons.read();
 
@@ -177,16 +203,15 @@ void loop() {
 
   // ADC Reference: 4096 = 3300mV
   // Divider: 4.2V batt -> 980mV
-
-  showBatt++;
-  if (showBatt > 2000) {
-    showBatt = 0;
-    Serial.printf("[BATT] %1.2fV (%d)\n", lpf/ADC_DIVISOR, lpf);
-    Serial.printf("[PLYR] idle time %d\n", player.idleTime);
-    Serial.printf("[HEAP] %d\n", ESP.getFreeHeap());
-    Serial.printf("[PRAM] %d\n", ESP.getFreePsram());
+  
+  showBattTimer += timeGone;
+  if (showBattTimer > 10000) {
+    showBattTimer -= 10000;
+    Serial.printf("[BATT] %04d %1.2fV (%d)\n", uptimeSecs, lpf/ADC_DIVISOR, lpf);
+    Serial.printf("[PLYR] %04d idle time %d\n", uptimeSecs, player.idleTime);
+    Serial.printf("[HEAP] %04d %d\n", uptimeSecs, ESP.getFreeHeap());
   }
-
+  
   NDEF::WifiConfig wifiConfig;
 
   // Read card
@@ -195,10 +220,6 @@ void loop() {
   switch(mode) {
 
     case PLAYER:
-
-      pixels.ClearTo(RgbColor(0,30,0));
-      pixels.Show();
-
       if (player.idleTime > IDLE_SHUTDOWN_FADE_START) {
           if (player.idleTime > IDLE_SHUTDOWN_TIMEOUT) { //  shutdown timer
             Serial.println("[HALT] idle shutdown");
@@ -206,16 +227,7 @@ void loop() {
             digitalWrite(SHUTDOWN_PIN, HIGH);
             sleep(30);
           }
-        }
-      
-        // Volume Control
-        //if (buttons.buttonDown(4)) {
-        //  player.increaseVolume();
-       // }
-
-        //if (buttons.buttonDown(0)) {
-        //  player.decreaseVolume();
-        //}        
+        } 
 
         // Track Control
         if (changed) {
@@ -227,67 +239,38 @@ void loop() {
         }
               
         switch(cardState) {
-          case RFID::CardState::NEW_MEDIA_CARD:
-            
+          case RFID::CardState::NEW_MEDIA_CARD:            
             char currentCardString[CARD_ID_STRING_BUFFER_LENGTH];
             rfid.currentCardAsString(currentCardString);
             mapper.createPlaylist(&player.playlist, currentCardString);
             player.play();
-
             break;
-            //{
-              /*
-              char filename[MAX_FILENAME_STRING_LENGTH];
-              Mapper::MapperError err = mapper.resolveIdToFilename(rfid.currentCard, filename);    
-              switch(err) {
-                case Mapper::MapperError::CARD_ID_NOT_FOUND:
-                  Serial.println(F("Card not found in mapping"));
-                  player.stop();
-                  break;     
-                case OK:
-                  player.play(filename);
-                  break;
-                default:
-                  fatal.fatal("Mapping error", "Unknown error");
-                  break;
-              } 
-            */
-            //}
 
           case RFID::CardState::NEW_WIFI_CARD:
-            player.stop(true);
+            switchToAdminMode(&wifiConfig);
+            break;            
 
-            pixels.ClearTo(RgbColor(30,0,0));
-            pixels.Show();
-
-            if (http.start(&wifiConfig)) {
-              mode = ADMIN;
-            }
-            break;
-            
           case RFID::CardState::REMOVED_CARD:            
             player.stop(true);
             break;
+
           case RFID::CardState::FAULTY_CARD:
             player.stop(true);
             break;
+
           case RFID::CardState::NO_CHANGE:
             break;
         }
-
-        player.process();
+        player.process(timeGone);
       break;
 
     case ADMIN:
-      pixels.ClearTo(RgbColor(30,30,0));
-      pixels.Show();
-      if (changed) {
+      display.setMode(Display::DisplayMode::ADMIN_IDLE);
+      if (changed) {        
         http.shutdown();
-        mode = PLAYER;
+        switchToPlayerMode();      
       }
       break;
 
   }  
-
-
 }

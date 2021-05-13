@@ -30,7 +30,19 @@ void RFID::init() {
   mfrc522.PCD_SetAntennaGain(mfrc522.RxGain_max);
 }
 
+void RFID::sleep() {
+  mfrc522.PCD_SoftPowerDown();
+  sleeping = true;
+}
+
+void RFID::wakeup() {
+  mfrc522.PCD_SoftPowerUp();
+  sleeping = false;
+}
+
 RFID::CardState RFID::checkCardState(NDEF::WifiConfig *wifiConfig) {
+
+  if (sleeping) return CardState::NO_CHANGE;
 
   if (mfrc522.PICC_IsNewCardPresent()) {
     if (mfrc522.PICC_ReadCardSerial()) {

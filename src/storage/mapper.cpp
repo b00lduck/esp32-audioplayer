@@ -20,34 +20,30 @@
  */
 #include "mapper.h"
 #include "config.h"
-#include "FS.h"
 #include "sd.h"
 #include "playlist.h"
 #include "../utils.h"
 
-Mapper::MapperError Mapper::init() {
-  SDCard::assureDirectory("/cards");
-  SDCard::assureDirectory("/system");
-  return MapperError::OK;
-}
+
+Mapper::Mapper(SDCard *sdCard) : sdCard(sdCard) {}
 
 Mapper::MapperError Mapper::writeNameToMetaFile(const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH], const char cardName[MAX_CARD_NAME_STRING_BUFFER_LENGTH]) {  
 
   char cardDirPath[CARD_DIRECTORY_PATH_LENGTH];
   this->cardDirPath(cardDirPath, cardIdString);
 
-  if (!SD.exists(cardDirPath)) {
+  if (!sdCard->sd.exists(cardDirPath)) {
     return Mapper::CARD_ID_NOT_FOUND;
   }
 
   char metaFilePath[META_FILE_PATH_LENGTH];
   this->metaFilePath(metaFilePath, cardIdString);
 
-  if (SD.exists(metaFilePath)) {
-    SD.remove(metaFilePath);
+  if (sdCard->sd.exists(metaFilePath)) {
+    sdCard->sd.remove(metaFilePath);
   }
 
-  File f = SD.open(metaFilePath, FILE_WRITE);
+  FILETYPE f = sdCard->sd.open(metaFilePath, O_WRONLY | O_CREAT);
   f.println(cardName);
   f.close();
 
@@ -57,7 +53,7 @@ Mapper::MapperError Mapper::writeNameToMetaFile(const char cardIdString[CARD_ID_
 Mapper::MapperError Mapper::initializeCard(const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH], const char cardName[MAX_CARD_NAME_STRING_BUFFER_LENGTH]) {
   char cardDirPath[CARD_DIRECTORY_PATH_LENGTH];
   this->cardDirPath(cardDirPath, cardIdString);
-  SDCard::assureDirectory(cardDirPath);
+  sdCard->assureDirectory(cardDirPath);
   return this->writeNameToMetaFile(cardIdString, cardName);
 }
 
@@ -68,27 +64,29 @@ Mapper::MapperError Mapper::createPlaylist(Playlist *playlist, const char cardId
   char cardDirPath[CARD_DIRECTORY_PATH_LENGTH];
   this->cardDirPath(cardDirPath, cardIdString);  
 
-  File dir = SD.open(cardDirPath, FILE_READ);
+  FILETYPE dir = sdCard->sd.open(cardDirPath);
   if(!dir){
       Serial.println("Could not open path for playlist creation! Proceeding with empty plalist.");
       return OK;
   }
 
-  File file = dir.openNextFile();
+  FILETYPE file = dir.openNextFile();
   while(file) {
       if(!file.isDirectory()){
-          char entry[MAX_PLAYLIST_ENTRY_LENGTH];
-          snprintf(entry, MAX_PLAYLIST_ENTRY_LENGTH, file.name() + strlen(CARDS_DIRECTORY) + CARD_ID_STRING_BUFFER_LENGTH + 1);
+          char fileName[MAX_FILENAME_STRING_BUFFER_LENGTH];          
+          file.getName(fileName, MAX_FILENAME_STRING_BUFFER_LENGTH);
 
           // omit mapping file
-          if (strncmp(entry, META_FILE_NAME, strlen(META_FILE_NAME)) != 0) {
-            playlist->addEntry(file.name());
+          if (!stringEndsWith(fileName, "meta.txt")) {
+            char fullFileName[MAX_FILENAME_STRING_BUFFER_LENGTH];          
+            snprintf(fullFileName, MAX_FILENAME_STRING_BUFFER_LENGTH, "%s/%s", cardDirPath, fileName);
+            playlist->addEntry(fullFileName);
           }
       }
       file = dir.openNextFile();
   }
 
-  //playlist->sort();
+  playlist->sort();
   return MapperError::OK;
 }
 
@@ -99,13 +97,17 @@ Mapper::MapperError Mapper::readMetaFile(MappingMeta *meta, const char cardIdStr
 
   // Set card ID
   strncpy(meta->cardId, cardIdString, CARD_ID_STRING_BUFFER_LENGTH);
-  
+
+  Serial.println(metaFilePath);
+
   // Try to open the meta file
-  if (!SD.exists(metaFilePath)) {
+  if (!sdCard->sd.exists(metaFilePath)) {
     return MapperError::META_FILE_NOT_FOUND;
   }
 
-  File metaFile = SD.open(metaFilePath, FILE_READ);
+  Serial.println(metaFilePath);
+
+  FILETYPE metaFile = sdCard->sd.open(metaFilePath, O_READ);
   if (metaFile) {
     uint8_t nameLen = readNameFromMetaFile(&metaFile, meta->name);
     // if no name could be read, use card ID as name  
@@ -119,7 +121,7 @@ Mapper::MapperError Mapper::readMetaFile(MappingMeta *meta, const char cardIdStr
   } 
 }
 
-uint16_t Mapper::readNameFromMetaFile(File *stream, char str[MAX_CARD_NAME_STRING_BUFFER_LENGTH]) {
+uint16_t Mapper::readNameFromMetaFile(FILETYPE *stream, char str[MAX_CARD_NAME_STRING_BUFFER_LENGTH]) {
   uint16_t i = 0;  
   memset(str, 0, MAX_CARD_NAME_STRING_BUFFER_LENGTH); 
   while (i < (MAX_CARD_NAME_STRING_BUFFER_LENGTH - 1)) {   
@@ -135,8 +137,8 @@ uint16_t Mapper::readNameFromMetaFile(File *stream, char str[MAX_CARD_NAME_STRIN
 /**
  * Create mapping iterator to be used from the HTTP interface to get al list of available mappings.
  */
-Mapper::MapperError Mapper::createMappingIterator(File *it) {
-  *it = SD.open(CARDS_DIRECTORY, FILE_READ);
+Mapper::MapperError Mapper::createMappingIterator(FILETYPE *it) {
+  *it = sdCard->sd.open(CARDS_DIRECTORY, O_READ);
   if (!*it) {    
     return CARDS_DIRECTORY_NOT_FOUND;
   } 
@@ -146,18 +148,20 @@ Mapper::MapperError Mapper::createMappingIterator(File *it) {
 /**
  * Get next mapping entry from directory handle
  */
-Mapper::MapperError Mapper::nextMapping(File *it, Mapper::Mapping *mapping) {
+Mapper::MapperError Mapper::nextMapping(FILETYPE *it, Mapper::Mapping *mapping) {
      
   while(true) {
-    File entry = it->openNextFile();
+    FILETYPE entry = it->openNextFile();
     if (!entry) {
       return NO_MORE_CARDS;  
     }
 
     if (entry.isDirectory()) {
-
       char cardId[CARD_ID_STRING_BUFFER_LENGTH];
-      strncpy(cardId, entry.name() + strlen(CARDS_DIRECTORY) + 1, CARD_ID_STRING_BUFFER_LENGTH);
+      char entryName[MAX_FILENAME_STRING_BUFFER_LENGTH];
+      entryName[0] = '/';
+      entry.getName(entryName+1, sizeof(entryName-1));
+      strncpy(cardId, entryName + strlen(CARDS_DIRECTORY) + 1, CARD_ID_STRING_BUFFER_LENGTH);
       MapperError err;
             
       err = readMetaFile(&mapping->mappingMeta, cardId);
@@ -166,8 +170,8 @@ Mapper::MapperError Mapper::nextMapping(File *it, Mapper::Mapping *mapping) {
         return err;
       }
 
-      Serial.printf("creating playlist for %s\n", entry.name());
-      err = createPlaylist(&mapping->playlist, entry.name());
+      Serial.printf("creating playlist for %s\n", entryName);
+      err = createPlaylist(&mapping->playlist, entryName);
       if (err != OK) {
         Serial.println("Could not create playlist");
         return err;
@@ -181,28 +185,26 @@ Mapper::MapperError Mapper::nextMapping(File *it, Mapper::Mapping *mapping) {
 /**
  * Get next entry from directory handle
  */
-Mapper::MapperError Mapper::nextFile(File *it, char name[MAX_FILENAME_STRING_BUFFER_LENGTH], char type[16], size_t *size) {
-     
-  while(true) {
-    File entry = it->openNextFile();
-    if (!entry) {
-      return NO_MORE_FILES;  
-    }
+Mapper::MapperError Mapper::nextFile(FILETYPE *it, char name[MAX_FILENAME_STRING_BUFFER_LENGTH], char type[16], size_t *size) {
 
+  FILETYPE entry;  
+
+  while(entry.openNext(it)) {
+    
     *size = entry.size();
+    entry.getName(name, MAX_FILENAME_STRING_BUFFER_LENGTH);
 
-    strncpy(name, entry.name(), MAX_FILENAME_STRING_BUFFER_LENGTH);
     if (entry.isDirectory()) {
       strncpy(type, "directory", 16);
     } else {      
       if (
-        filenameHasExtension(entry.name(), "mp3") || 
-        filenameHasExtension(entry.name(), "wav") ||
-        filenameHasExtension(entry.name(), "wma")
+        filenameHasExtension(name, "mp3") || 
+        filenameHasExtension(name, "wav") ||
+        filenameHasExtension(name, "wma")
       ) {
         strncpy(type, "file_audio", 16);
       } else if (
-        filenameHasExtension(entry.name(), "txt")
+        filenameHasExtension(name, "txt")
       ) {
         strncpy(type, "file_text", 16);
       } else {
@@ -211,6 +213,8 @@ Mapper::MapperError Mapper::nextFile(File *it, char name[MAX_FILENAME_STRING_BUF
     }
     return OK;
   }
+
+  return NO_MORE_FILES;
 }
 
 void Mapper::metaFilePath(char metaFilePath[META_FILE_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]) {

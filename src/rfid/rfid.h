@@ -37,14 +37,20 @@ class RFID {
  
     RFID(uint8_t _csPin, uint8_t _rstPin);
     void init();
+
+    void sleep();
+    void wakeup();
     
     CardState checkCardState(NDEF::WifiConfig *wifiConfig);
     void currentCardAsString(char *buf);
     byte currentCard[CARD_ID_BYTE_ARRAY_LENGTH];    
     MFRC522 mfrc522;
 
+
   private:
     NDEF ndef;
+
+    bool sleeping = false;
 
     bool cardPresent = false;    
     bool cardError = false;

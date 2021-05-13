@@ -32,11 +32,12 @@ void handleClientTask(void *parameter){
   } 
 }
 
-HTTPServer::HTTPServer(RFID *rfid, Mapper *mapper, SDCard *sd) : 
+HTTPServer::HTTPServer(RFID *rfid, Mapper *mapper, SDCard *sdCard) : 
   server(80),
   rfid(rfid),
   mapper(mapper),
-  sd(sd) {} 
+  sdCard(sdCard),
+  bufferedWriter(*sdCard) {} 
 
 void HTTPServer::handlerNotFound() {
     server.send(404, "text/plain", "not found");  

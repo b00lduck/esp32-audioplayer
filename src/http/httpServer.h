@@ -25,6 +25,7 @@
 #include "config.h"
 #include "storage/sd.h"
 #include "storage/mapper.h"
+#include "bufferedWriter.h"
 
 #define MAX_UPLOAD_PATH_LEN 300
 
@@ -38,10 +39,12 @@ class HTTPServer {
   private:
     WebServer server;
     TaskHandle_t handleClientTaskHandle;
-
+    
     RFID   *rfid;
     Mapper *mapper;
-    SDCard *sd;
+    SDCard *sdCard;
+
+    BufferedWriter bufferedWriter;
 
     void handlerNotFound();
     
@@ -57,6 +60,6 @@ class HTTPServer {
 
     void sendError(int status, const char* msg);
 
-    File uploadFile;
+    FILETYPE uploadFile;
 
 };

@@ -20,6 +20,7 @@
  */
 #pragma once
 #include "Arduino.h"
+#include "display/display.h"
 
 class Fatal {
 

@@ -21,30 +21,21 @@
 #pragma once
 #include "Arduino.h"
 #include "config.h"
-#include <SD.h>
+#include "SdFat.h"
 
 class SDCard {
 
   public:  
     SDCard(uint8_t _csPin);
-    bool init();
+    bool init(bool turbo);
+    void format();
 
-    static bool assureDirectory(const char path[]) {
-        Serial.printf("[SD-Card] Assuring directory %s\n", path);        
-        if (!SD.exists(path)) {
-          return SD.mkdir(path);
-        }
-        File chk = SD.open(path);
-        if (!chk.isDirectory()) {
-            Serial.printf("[SD-Card] There is a file named %s on the SD card. Please remove this file from the card.", path);
-            return false;
-        }
-        return true;
-    }
+    bool assureDirectory(const char path[]);
     
+    SdFat32 sd;
+
   private:
-    uint8_t csPin;
-    void printDirectory();
+    uint8_t csPin;    
 };
 
 

@@ -21,7 +21,7 @@
 #pragma once
 #include "Arduino.h"
 #include "config.h"
-#include "FS.h"
+#include "sd.h"
 #include "playlist.h"
 
 #define MAX_CARD_NAME_LENGTH                  32 
@@ -93,23 +93,26 @@ class Mapper {
       Playlist playlist;
     };  
 
+    Mapper(SDCard *sdCard);
+
     MapperError init();   
 
-    MapperError createMappingIterator(File *file);
-    MapperError nextMapping(File *file, Mapper::Mapping *mapping);
+    MapperError createMappingIterator(FILETYPE *file);
+    MapperError nextMapping(FILETYPE *file, Mapper::Mapping *mapping);
     MapperError createPlaylist(Playlist *playlist, const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]);
 
     MapperError initializeCard(const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH], const char cardName[MAX_CARD_NAME_STRING_BUFFER_LENGTH]);
     MapperError writeNameToMetaFile(const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH], const char cardName[MAX_CARD_NAME_STRING_BUFFER_LENGTH]);
 
-    MapperError nextFile(File *it, char name[256], char type[16], size_t *size);
+    MapperError nextFile(FILETYPE *it, char name[256], char type[16], size_t *size);
 
     MapperError readMetaFile(MappingMeta *meta, const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]);
-    
+
+    SDCard *sdCard;
+
   private:
     
-    uint16_t readNameFromMetaFile(File *stream, char str[MAX_CARD_NAME_STRING_BUFFER_LENGTH]);
-    bool stringEndsWith(const char *str, const char *suffix);
+    uint16_t readNameFromMetaFile(FILETYPE *stream, char str[MAX_CARD_NAME_STRING_BUFFER_LENGTH]);
 
     void metaFilePath(char metaFilePath[META_FILE_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]);
     void cardDirPath(char cardDirPath[CARD_DIRECTORY_PATH_LENGTH], const char cardIdString[CARD_ID_STRING_BUFFER_LENGTH]);    

@@ -20,6 +20,7 @@
  */
 #include "httpServer.h"
 
+
 void HTTPServer::handlerFileUpload() {
 
   String path = server.urlDecode(server.pathArg(0));
@@ -30,42 +31,34 @@ void HTTPServer::handlerFileUpload() {
   if (upload.status == UPLOAD_FILE_START) {
     Serial.printf("[HTTP] Starting file upload to folder %s\n", path.c_str());
 
-    bool created = SD.mkdir(path);
+    rfid->sleep();
+    sdCard->init(true); // go TURBO
+
+    bool created = sdCard->sd.mkdir(path);
     if (created) {
       Serial.printf("[HTTP] File upload: directory %s was created\n", path.c_str());
     } else {
       Serial.printf("[HTTP] File upload: directory %s was not created\n", path.c_str());
     }
 
-    if (SD.exists(absoluteFilename)) {
+    if (sdCard->sd.exists(absoluteFilename)) {
       Serial.printf("[HTTP] File already exists, deleting %s\n", absoluteFilename.c_str());
-      SD.remove(absoluteFilename);
+      sdCard->sd.remove(absoluteFilename);
     }
 
-    uploadFile = SD.open(absoluteFilename, "w");
-    if (!uploadFile) {
-      sendError(500, "File upload error: could not open file");
-      return;
-    }
-    uploadFile.close();
+    bufferedWriter.open(absoluteFilename.c_str());
 
-  } else if (upload.status == UPLOAD_FILE_WRITE) {    
+  } else if (upload.status == UPLOAD_FILE_WRITE) {
 
-    uploadFile = SD.open(absoluteFilename, "a");   
-    if (uploadFile) {
-      size_t written = uploadFile.write(upload.buf, upload.currentSize);
-      
-      if (written != upload.currentSize) {
-        Serial.printf("File upload error: could not write file (bytes expected: %d, bytes written: %d, total: %d)\n", upload.currentSize, written, upload.totalSize);
-      }
-      uploadFile.close();
-    } else {
-      Serial.printf("Could not open file for writing! %d\n", upload.totalSize);
-    } 
+    bufferedWriter.write(upload.buf, upload.currentSize);
 
   } else if (upload.status == UPLOAD_FILE_END) {
 
+    bufferedWriter.flush();
     Serial.println("File upload finished");
+        
+    sdCard->init(false); // disable TURBO
+    rfid->wakeup();
 
   }
 
@@ -79,8 +72,8 @@ void HTTPServer::handlerFileGet() {
     path = path.substring(0,path.length()-1);
   }
 
-  File file = SD.open(path);
-  if (!SD.exists(path) || (!file)) {
+  FILETYPE file = sdCard->sd.open(path);
+  if (!sdCard->sd.exists(path) || (!file)) {
     sendError(404, "File could not be found on SD-card");
     return;
   }  
@@ -100,7 +93,11 @@ void HTTPServer::handlerFileGet() {
         ret += "{\"type\":\"";
         ret += type;
         ret += "\",\"name\":\"";
-        ret += name;
+        if (path.equals("/")) {
+          ret += path + name;
+        } else {
+          ret += path + "/" + name;
+        }        
         ret += "\",\"size\":\"";
         ret += size;
         ret += "\"}";
@@ -114,9 +111,16 @@ void HTTPServer::handlerFileGet() {
     ret += "]";
     server.send(200, "application/json", ret);
 
-  } else {                   
+  } else {                 
+
     Serial.printf("[HTTP] Streaming %s\n", path.c_str());
+
+    rfid->sleep();
+    //sdCard->init(true); // go TURBO    
     server.streamFile(file, "application/octet-stream");    
+    //sdCard->init(false); // disable TURBO
+    rfid->wakeup();
+    Serial.printf("[HTTP] Streaming finished\n", path.c_str());
   }
 
   file.close();
@@ -131,12 +135,12 @@ void HTTPServer::handlerFileDelete() {
     return;
   }
 
-  if (!SD.exists(path)) {    
+  if (!sdCard->sd.exists(path)) {    
     sendError(404, "File could not be found on SD-card");
     return;
   }
   
-  if (!SD.remove(path)) {
+  if (!sdCard->sd.remove(path)) {
     sendError(500, "Error deleting file on SD-card");
     return;
   }

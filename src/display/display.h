@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright 2018-2021 D.Zerlett <daniel@zerlett.eu>
+ * Copyright 2018 D.Zerlett <daniel@zerlett.eu>
  * 
  * This file is part of esp32-audioplayer.
  * 
@@ -18,20 +18,30 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
+#pragma once
+#include "Arduino.h"
 #include "config.h"
-#include "fatal.h"
+#include <NeoPixelBus.h>
 
-Fatal::Fatal() {}
+class Display {
 
-void Fatal::fatal(const char* title, const char* message) {
-  Serial.println(F("[AAAH] Oh noes. A fatal error occured:"));
-  Serial.println(title);
-  Serial.println(message);
-  sleep(10);
-  
-  // Power down
-  pinMode(SHUTDOWN_PIN, OUTPUT);
-  digitalWrite(SHUTDOWN_PIN, HIGH);
-  sleep(60);  
-}
+  public:  
 
+    enum DisplayMode {
+      INITIALIZING,
+      ERROR_SD_INIT,
+      IDLE,
+      ADMIN_INIT,
+      ADMIN_IDLE
+    };
+
+    Display();
+    void init();
+    void render();
+    void setMode(DisplayMode mode);
+
+  private:
+    NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> pixels;
+    DisplayMode mode;
+    
+};

@@ -18,20 +18,27 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
+#include "Arduino.h"
 #include "config.h"
-#include "fatal.h"
+#include "../storage/sd.h"
 
-Fatal::Fatal() {}
+#define WRITE_BUFFER_SIZE 4096*4
 
-void Fatal::fatal(const char* title, const char* message) {
-  Serial.println(F("[AAAH] Oh noes. A fatal error occured:"));
-  Serial.println(title);
-  Serial.println(message);
-  sleep(10);
-  
-  // Power down
-  pinMode(SHUTDOWN_PIN, OUTPUT);
-  digitalWrite(SHUTDOWN_PIN, HIGH);
-  sleep(60);  
-}
+class BufferedWriter {
 
+  public: 
+    BufferedWriter(SDCard sdCard);
+    void write(uint8_t* data, size_t length);
+    void open(const char* filename);
+    void flush();
+
+  private:
+    size_t flushCount = 0;
+    FILETYPE file;
+    char filename[255];
+    uint8_t *writeBuffer;
+    size_t writeBufferPos = 0;
+    size_t currentFileWritePos = 0;
+    SDCard sdCard;
+
+};

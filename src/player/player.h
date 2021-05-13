@@ -19,7 +19,6 @@
  *  
  */
 #pragma once
-#include <FS.h>
 #include "Arduino.h"
 #include "fatal.h"
 #include "VS1053.h"
@@ -31,33 +30,33 @@ enum playerState_t {INITIALIZING, PLAYING, STOPPED};
 class Player {
 
   private:
+    Fatal *fatal;
+    VS1053 *vs1053;
+    SDCard *sdCard;
+
     playerState_t state;
     playerState_t oldState;
-    Fatal fatal;
-    VS1053 vs1053;
     RingBuffer ringBuffer;
-
-    File dataFile;    
-
-    uint8_t currentVolume;
+    
+    FILETYPE dataFile;    
 
     void playNextFile();    
     
     void setVolume(uint8_t volume);
 
-    uint32_t lastTime;
-
     uint16_t trackElapsed;
+    uint8_t currentVolume;
+    uint32_t lastTime;
 
   public:
 
     Playlist playlist;
 
-    Player(Fatal fatal, VS1053 vs1053);
+    Player(Fatal *fatal, VS1053 *vs1053, SDCard *sdCard);
     void init();
     void play();
     void stop(bool disableAmp);
-    void process();
+    void process(uint32_t timeGone);
     void next();
     void previous();
 

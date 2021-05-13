@@ -21,13 +21,13 @@
 #include "config.h"
 #include "player.h"
 #include "VS1053.h"
-#include <SD.h>
 
-Player::Player(Fatal fatal, VS1053 vs1053) : 
-    state(STOPPED), 
-    oldState(INITIALIZING),
+Player::Player(Fatal *fatal, VS1053 *vs1053, SDCard *sdCard) : 
     fatal(fatal),     
     vs1053(vs1053),
+    sdCard(sdCard),
+    state(STOPPED), 
+    oldState(INITIALIZING),
     ringBuffer(20000),
     dataFile(),
     currentVolume(80),      
@@ -36,9 +36,9 @@ Player::Player(Fatal fatal, VS1053 vs1053) :
 
 void Player::init() {
   // Initialize audio decoder
-  vs1053.begin();
+  vs1053->begin();
   #ifndef FAST_BOOT
-    vs1053.printDetails();
+    vs1053->printDetails();
   #endif
 }
 
@@ -61,7 +61,7 @@ void Player::playNextFile() {
   
   char* filename = entry;
 
-  dataFile = SD.open(filename, FILE_READ);
+  dataFile = sdCard->sd.open(filename, O_READ);
   if (!dataFile) {
     Serial.printf("Error opening file, skipping.");
     next();
@@ -82,10 +82,10 @@ void Player::playNextFile() {
 
   trackElapsed = 0;
   state = PLAYING;
-  vs1053.setVolume(currentVolume);                 
+  vs1053->setVolume(currentVolume);                 
 
   uint8_t tone[4] = {0,0,15,15};
-  vs1053.setTone(tone);
+  vs1053->setTone(tone);
 
 }
 
@@ -100,8 +100,12 @@ void Player::previous() {
 }
 
 void Player::next() {
-  stop(false);
-  playNextFile();
+  if (playlist.currentEntryIndex < playlist.numEntries) {
+    stop(false); 
+    playNextFile();
+  } else {
+    stop(true); 
+  }
 }
 
 void Player::stop(bool disableAmp) {  
@@ -109,32 +113,26 @@ void Player::stop(bool disableAmp) {
     digitalWrite(AMP_ENABLE_PIN, LOW);  // disable amplifier
   }
   dataFile.close();
-  vs1053.processByte(0, true);
-  vs1053.setVolume(0);                  
-  vs1053.stopSong();                       
+  vs1053->processByte(0, true);
+  vs1053->setVolume(0);                  
+  vs1053->stopSong();                       
   ringBuffer.empty();                            
   state = STOPPED;    
 }
 
-void Player::process() {
+void Player::process(uint32_t timeGone) {
 
-  uint32_t maxfilechunk;
+  uint32_t maxfilechunk;  
 
   if (oldState != state) {
     Serial.printf("Player state is now %d, was %d.\n", state, oldState);
     oldState = state;
-  }
-        
-  uint32_t timeGone = 0;
-  if (lastTime > 0){
-    timeGone = millis() - lastTime;
-  } 
-  lastTime = millis();
-  
+  }  
 
   switch (state) {
 
     case INITIALIZING:
+      idleTime += timeGone;
       break;      
 
     case PLAYING:      
@@ -149,8 +147,8 @@ void Player::process() {
       } 
       
       // Try to keep VS1053 filled
-      while (vs1053.data_request() && ringBuffer.avail()) { 
-        vs1053.processByte(ringBuffer.get(), false);
+      while (vs1053->data_request() && ringBuffer.avail()) { 
+        vs1053->processByte(ringBuffer.get(), false);
       }
 
       // stop if data ends
@@ -175,7 +173,7 @@ void Player::setVolume(uint8_t volume) {
   if (currentVolume < 1) {
     currentVolume = 1;
   }
-  vs1053.setVolume(currentVolume);
+  vs1053->setVolume(currentVolume);
  }
 
 void Player::increaseVolume() {

@@ -80,17 +80,15 @@ void HTTPServer::handlerCardPost() {
 }
 
 void HTTPServer::handlerCardGet() {  
-  File it;
+  FILETYPE it;
   Mapper::MapperError err = mapper->createMappingIterator(&it);
   if (err != Mapper::MapperError::OK) {
     sendError(500, "Could not create cards list");    
     return;
   }
    
-  String json = "";
+  String json = "[";
   
-  json += "[";
-
   bool first = true;
   do {
 

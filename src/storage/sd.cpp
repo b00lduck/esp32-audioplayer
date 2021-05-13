@@ -19,42 +19,52 @@
  *  
  */
 #include "sd.h"
-#include <FS.h>
 #include "config.h"
+#include "sdios.h"
+#include "SdFat.h"
 
-SDCard::SDCard(uint8_t _csPin) : 
-  csPin(_csPin) 
-  {}
+#define SD_NORMAL_CONFIG SdSpiConfig(csPin, SHARED_SPI, SPI_SPEED_PLAYER)
+#define SD_TURBO_CONFIG SdSpiConfig(csPin, DEDICATED_SPI, SPI_SPEED_ADMIN)
 
-bool SDCard::init() {
-  if (SD.begin(csPin, SPI, 4000000)){
-     Serial.println(F("[SD-Card] media initialized"));
-     //printDirectory();
-  }  
-  return false;      
+SDCard::SDCard(uint8_t _csPin) : csPin(_csPin) {}
+
+bool SDCard::init(bool turbo) {
+
+  if (!sd.begin(turbo ? SD_TURBO_CONFIG : SD_NORMAL_CONFIG)) {
+    sd.initErrorHalt(&Serial);
+  }
+
+  if (turbo) {
+    Serial.println(F("[SD-Card] media initialized with TURBO"));
+  } else {
+    Serial.println(F("[SD-Card] media initialized (slow)"));
+  }
+  
+  assureDirectory("/cards");
+  assureDirectory("/system");
+  return true;
 }
 
-void SDCard::printDirectory() {
-  
-    Serial.println("Listing directory");
+void SDCard::format() {
+    Serial.println("Formatting in 10 secs...");
+    sleep(10);
+    SdCardFactory cardFactory;
+    SdCard* m_card = cardFactory.newCard(SD_NORMAL_CONFIG);
+    FatFormatter fatFormatter;
+    uint8_t sectorBuffer[512];
+    fatFormatter.format(m_card, sectorBuffer, &Serial);
+    Serial.println("done");
+}
 
-    File root = SD.open("/");
-    if(!root){
-        Serial.println("Failed to open root directory");
-        return;
+bool SDCard::assureDirectory(const char path[]) {
+    Serial.printf("[SD-Card] Assuring directory %s\n", path);        
+    if (!sd.exists(path)) {
+        return sd.mkdir(path);
     }
-
-    File file = root.openNextFile();
-    while(file){
-        if(file.isDirectory()){
-            Serial.print("  DIR : ");
-            Serial.println(file.name());
-        } else {
-            Serial.print("  FILE: ");
-            Serial.print(file.name());
-            Serial.print("  SIZE: ");
-            Serial.println(file.size());
-        }
-        file = root.openNextFile();
+    FILETYPE chk = sd.open(path);
+    if (!chk.isDirectory()) {
+        Serial.printf("[SD-Card] There is a file named %s on the SD card. Please remove this file from the card.", path);
+        return false;
     }
+    return true;
 }
