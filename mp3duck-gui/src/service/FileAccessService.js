@@ -46,16 +46,22 @@ export default class FileAccessService {
     }
 
     fileExistsInList(file, list) {
-        for (const entry of list) {
-            if (entry.name === file.name) return true
+        for (const entry of list) {            
+            if (entry.name === file.name) {                
+                return true
+            }
         }
+        console.log("Adding " + file.name)
         return false
     }
 
     fileExistsInListSameSize(file, list) {
-        for (const entry of list) {
-            if ((entry.name === file.name) && (entry.size === file.size)) return true
-        }
+        for (const entry of list) {            
+            if ((entry.name === file.name) && (entry.size === file.size)) {                
+                return true
+            } 
+        }     
+        console.log("Adding " + file.name + " because size differs")   
         return false
     }    
 
@@ -71,7 +77,7 @@ export default class FileAccessService {
                     cause: "new"
                 }
                 fileList.push(file)
-            } else if (!this.fileExistsInListSameSize(file, fileList2)) {
+            } else if (!this.fileExistsInListSameSize(file, fileList2)) {                
                 file.action = {
                     action: "copy",
                     cause: "size"

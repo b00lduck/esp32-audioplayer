@@ -25,7 +25,7 @@
 #include "config.h"
 #include "storage/sd.h"
 #include "storage/mapper.h"
-#include "bufferedWriter.h"
+#include "unbufferedWriter.h"
 
 #define MAX_UPLOAD_PATH_LEN 300
 
@@ -44,7 +44,7 @@ class HTTPServer {
     Mapper *mapper;
     SDCard *sdCard;
 
-    BufferedWriter bufferedWriter;
+    UnbufferedWriter writer;
 
     void handlerNotFound();
     

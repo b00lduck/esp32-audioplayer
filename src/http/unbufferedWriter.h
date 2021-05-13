@@ -22,21 +22,14 @@
 #include "config.h"
 #include "../storage/sd.h"
 
-#define WRITE_BUFFER_SIZE 4096*4
-
-class BufferedWriter {
+class UnbufferedWriter {
 
   public: 
-    BufferedWriter(SDCard sdCard);
+    UnbufferedWriter();
     void write(uint8_t* data, size_t length);
     void open(const char* filename);    
     void close();
 
   private:  
     FILETYPE file;
-    char filename[255];
-    uint8_t *writeBuffer;
-    size_t writeBufferPos = 0;
-    SDCard sdCard;
-    void flush();
 };

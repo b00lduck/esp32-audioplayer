@@ -18,25 +18,29 @@
  * along with esp32-audioplayer. If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-#include "Arduino.h"
-#include "config.h"
-#include "../storage/sd.h"
+#include "unbufferedWriter.h"
 
-#define WRITE_BUFFER_SIZE 4096*4
+UnbufferedWriter::UnbufferedWriter() {} 
 
-class BufferedWriter {
+void UnbufferedWriter::open(const char* filename) {
+  Serial.printf("[FBUF] Open %s\n", filename);
+  if (!file.open(filename, O_CREAT | O_TRUNC | O_RDWR)) {
+    Serial.printf("[FBUF] Error opening %s\n", filename);  
+  } else {
+    Serial.printf("[FBUF] Opened %s\n", filename);
+  }  
+}
 
-  public: 
-    BufferedWriter(SDCard sdCard);
-    void write(uint8_t* data, size_t length);
-    void open(const char* filename);    
-    void close();
+void UnbufferedWriter::write(uint8_t* data, size_t length) {
+  size_t written = file.write(data, length);
+  if (written != length) {
+    Serial.printf("ERROR writing %d/%d\n", written, length);
+  }
+ }
 
-  private:  
-    FILETYPE file;
-    char filename[255];
-    uint8_t *writeBuffer;
-    size_t writeBufferPos = 0;
-    SDCard sdCard;
-    void flush();
-};
+void UnbufferedWriter::close() {
+  bool res = file.close();
+  if (!res) {
+      Serial.printf("ERROR closing file");
+  }
+}

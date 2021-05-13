@@ -26,19 +26,16 @@ BufferedWriter::BufferedWriter(SDCard sdCard) : sdCard(sdCard) {
 
 void BufferedWriter::open(const char* filename) {
   Serial.printf("[FBUF] Open %s\n", filename);
-  if (!file.open(filename, O_CREAT | O_TRUNC | O_RDWR)) {
+
+  if (!file.open(filename, O_RDWR | O_CREAT)) {
     Serial.printf("[FBUF] Error open %s\n", filename);  
   } else {
     Serial.printf("[FBUF] Opened %s\n", filename);
   }  
-  file.seek(0);
-  currentFileWritePos = 0;
 }
 
 void BufferedWriter::write(uint8_t* data, size_t length) {
-
-  //Serial.printf("[FBUF] Write %d\n", length);
-  
+   
   if (writeBufferPos + length > WRITE_BUFFER_SIZE) {
 
     // fill up to end of buffer
@@ -61,17 +58,25 @@ void BufferedWriter::write(uint8_t* data, size_t length) {
   }
  }
 
-void BufferedWriter::flush() {       
-  file.seekSet(currentFileWritePos);    
-  size_t written = file.write(writeBuffer, writeBufferPos);      
-  while (written != writeBufferPos) {      
-    Serial.printf("RETRY %d/%d\n", written, writeBufferPos);
-    delay(2000);     
-    written = file.write(writeBuffer, writeBufferPos);            
-  } 
-  currentFileWritePos += writeBufferPos;
+void BufferedWriter::flush() {
+
+  size_t written = file.write(writeBuffer, writeBufferPos);
+
+  while (written != writeBufferPos) {
+    Serial.printf("ERROR writing %d/%d\n", written, writeBufferPos);
+    delay(2000);
+    written = file.write(writeBuffer, writeBufferPos);
+  }
+
   Serial.printf(".");
   
   writeBufferPos = 0;
   file.flush();
+}
+
+void BufferedWriter::close() {
+  bool res = file.close();
+  if (!res) {
+      Serial.printf("ERROR closing file");
+  }
 }

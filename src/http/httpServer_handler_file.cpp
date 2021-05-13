@@ -23,10 +23,9 @@
 
 void HTTPServer::handlerFileUpload() {
 
+  HTTPUpload& upload = server.upload();   
   String path = server.urlDecode(server.pathArg(0));
- 
-  HTTPUpload& upload = server.upload();
-   String absoluteFilename = path + "/" + upload.filename;
+  String absoluteFilename = path + "/" + upload.filename; 
 
   if (upload.status == UPLOAD_FILE_START) {
     Serial.printf("[HTTP] Starting file upload to folder %s\n", path.c_str());
@@ -44,24 +43,23 @@ void HTTPServer::handlerFileUpload() {
     if (sdCard->sd.exists(absoluteFilename)) {
       Serial.printf("[HTTP] File already exists, deleting %s\n", absoluteFilename.c_str());
       sdCard->sd.remove(absoluteFilename);
-    }
+    }    
 
-    bufferedWriter.open(absoluteFilename.c_str());
+    writer.open(absoluteFilename.c_str());
 
   } else if (upload.status == UPLOAD_FILE_WRITE) {
 
-    bufferedWriter.write(upload.buf, upload.currentSize);
+    writer.write(upload.buf, upload.currentSize);
 
   } else if (upload.status == UPLOAD_FILE_END) {
-
-    bufferedWriter.flush();
+    
+    writer.close();
     Serial.println("File upload finished");
         
     sdCard->init(false); // disable TURBO
     rfid->wakeup();
 
   }
-
 }
 
 void HTTPServer::handlerFileGet() {  
@@ -120,7 +118,7 @@ void HTTPServer::handlerFileGet() {
     server.streamFile(file, "application/octet-stream");    
     //sdCard->init(false); // disable TURBO
     rfid->wakeup();
-    Serial.printf("[HTTP] Streaming finished\n", path.c_str());
+    Serial.printf("[HTTP] Streaming finished\n");
   }
 
   file.close();
@@ -133,17 +131,17 @@ void HTTPServer::handlerFileDelete() {
   if (path.length() == 0) {    
     sendError(400, "Path length can not be 0");
     return;
-  }
+  }  
 
   if (!sdCard->sd.exists(path)) {    
     sendError(404, "File could not be found on SD-card");
     return;
   }
-  
-  if (!sdCard->sd.remove(path)) {
+
+  if (!sdCard->sd.rmdir(path) && !sdCard->sd.remove(path)) {
     sendError(500, "Error deleting file on SD-card");
     return;
   }
-
+  
   server.send(204);
 }

@@ -36,8 +36,7 @@ HTTPServer::HTTPServer(RFID *rfid, Mapper *mapper, SDCard *sdCard) :
   server(80),
   rfid(rfid),
   mapper(mapper),
-  sdCard(sdCard),
-  bufferedWriter(*sdCard) {} 
+  sdCard(sdCard) {} 
 
 void HTTPServer::handlerNotFound() {
     server.send(404, "text/plain", "not found");  
