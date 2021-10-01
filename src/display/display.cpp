@@ -26,7 +26,6 @@
 #define GREEN RgbColor(0,10,0)
 #define OFF RgbColor(0,0,0)
 
-
 void renderTask(void *parameter){
   while (true) {
     Display *display = (Display*)parameter;
@@ -38,7 +37,7 @@ void renderTask(void *parameter){
 Display::Display() : pixels(4, WS2812_DATA_PIN), mode(INITIALIZING) {}
 
 void Display::init() {
-  xTaskCreate(renderTask, "", 20000, this, 1, NULL);
+  xTaskCreate(renderTask, "", 20000, this, 0, NULL);
 }
 
 void Display::setMode(DisplayMode _mode) {
@@ -46,6 +45,7 @@ void Display::setMode(DisplayMode _mode) {
 }
 
 void Display::render() {
+
   pixels.Begin();
   switch(mode) {
     case INITIALIZING:
@@ -54,6 +54,14 @@ void Display::render() {
     case IDLE:
       pixels.ClearTo(RgbColor(0,7,0));
       break;
+    case PLAYING: 
+      for (int i=0; i< 4; i++) {
+        uint8_t red = (sin(millis() / 70.0f + i * 300) + 1) / 2.0f * 15.0f;
+        uint8_t green = (sin(millis() / 230.0f + i * 300) + 1) / 2.0f * 15.0f;
+        uint8_t blue = (sin(millis() / 120.0f + i * 300) + 1) / 2.0f * 15.0f;
+        pixels.SetPixelColor(i, RgbColor(red,green,blue));
+      }
+      break;      
     case ERROR_SD_INIT:
       pixels.SetPixelColor(0, RED);
       pixels.SetPixelColor(1, OFF);

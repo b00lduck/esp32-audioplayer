@@ -21,16 +21,18 @@
 #include "config.h"
 #include "player.h"
 #include "VS1053.h"
+#include "../display/display.h"
 
-Player::Player(Fatal *fatal, VS1053 *vs1053, SDCard *sdCard) : 
+Player::Player(Fatal *fatal, VS1053 *vs1053, SDCard *sdCard, Display *display) : 
     fatal(fatal),     
     vs1053(vs1053),
     sdCard(sdCard),
+    display(display),
     state(STOPPED), 
     oldState(INITIALIZING),
     ringBuffer(20000),
     dataFile(),
-    currentVolume(80),      
+    currentVolume(VOLUME),      
     lastTime(0),
     idleTime(0) {}
 
@@ -43,6 +45,7 @@ void Player::init() {
 }
 
 void Player::play() {
+  display->setMode(Display::DisplayMode::PLAYING);
   playNextFile();
 }
 
@@ -57,7 +60,7 @@ void Player::playNextFile() {
 
   Serial.printf("Playing next file in playlist (%d/%d): %s\n", playlist.currentEntryIndex, playlist.numEntries, entry);
  
-  digitalWrite(AMP_ENABLE_PIN, HIGH);  // enable amplifier
+  enableAmp();
   
   char* filename = entry;
 
@@ -108,9 +111,44 @@ void Player::next() {
   }
 }
 
-void Player::stop(bool disableAmp) {  
-  if (disableAmp) {
-    digitalWrite(AMP_ENABLE_PIN, LOW);  // disable amplifier
+void Player::initAmp() {
+  // Initialize GPIOs for "amplifier enable"
+  pinMode(AMP_ENABLE_PIN, OUTPUT);
+  digitalWrite(AMP_ENABLE_PIN, HIGH); 
+  
+  // Lower volume
+  pinMode(BUTTON0_PIN, OUTPUT);
+  digitalWrite(BUTTON0_PIN, HIGH); 
+  delay(VOLUME_CLICKS_DELAY);
+  for(uint8_t i=0;i<VOLUME_CLICKS;i++) {
+    digitalWrite(BUTTON0_PIN, LOW); 
+    delay(VOLUME_CLICKS_DELAY);
+    digitalWrite(BUTTON0_PIN, HIGH); 
+    delay(VOLUME_CLICKS_DELAY);
+  }
+
+  // Disable amp
+  digitalWrite(AMP_ENABLE_PIN, LOW); 
+  ampEnabled = false;
+}
+
+void Player::disableAmp() {
+  digitalWrite(AMP_ENABLE_PIN, LOW);
+  ampEnabled = false;
+}
+
+void Player::enableAmp() {
+  if (!ampEnabled) {
+    delay(200);
+    digitalWrite(AMP_ENABLE_PIN, HIGH);
+    ampEnabled = true;
+  }
+}
+
+void Player::stop(bool _disableAmp) {  
+  display->setMode(Display::DisplayMode::IDLE);
+  if (_disableAmp) {
+    disableAmp();
   }
   dataFile.close();
   vs1053->processByte(0, true);

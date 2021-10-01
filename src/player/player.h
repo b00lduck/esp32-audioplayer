@@ -24,6 +24,7 @@
 #include "VS1053.h"
 #include "ringbuffer.h"
 #include "../storage/mapper.h"
+#include "../display/display.h"
 
 enum playerState_t {INITIALIZING, PLAYING, STOPPED};
 
@@ -33,6 +34,7 @@ class Player {
     Fatal *fatal;
     VS1053 *vs1053;
     SDCard *sdCard;
+    Display *display;
 
     playerState_t state;
     playerState_t oldState;
@@ -48,11 +50,13 @@ class Player {
     uint8_t currentVolume;
     uint32_t lastTime;
 
+    bool ampEnabled = false;
+
   public:
 
     Playlist playlist;
 
-    Player(Fatal *fatal, VS1053 *vs1053, SDCard *sdCard);
+    Player(Fatal *fatal, VS1053 *vs1053, SDCard *sdCard, Display *display);
     void init();
     void play();
     void stop(bool disableAmp);
@@ -62,6 +66,11 @@ class Player {
 
     void increaseVolume();
     void decreaseVolume();
+
+    void initAmp();
+    void enableAmp();
+    void disableAmp();    
+
 
     uint32_t idleTime;
 };

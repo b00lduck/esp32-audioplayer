@@ -30,8 +30,9 @@ SDCard::SDCard(uint8_t _csPin) : csPin(_csPin) {}
 
 bool SDCard::init(bool turbo) {
 
-  if (!sd.begin(turbo ? SD_TURBO_CONFIG : SD_NORMAL_CONFIG)) {
-    sd.initErrorHalt(&Serial);
+  if (!sd.begin(turbo ? SD_TURBO_CONFIG : SD_NORMAL_CONFIG)) {    
+    sd.initErrorPrint(&Serial);
+    return false;
   }
 
   if (turbo) {

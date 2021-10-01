@@ -32,7 +32,8 @@ class Display {
       ERROR_SD_INIT,
       IDLE,
       ADMIN_INIT,
-      ADMIN_IDLE
+      ADMIN_IDLE,
+      PLAYING
     };
 
     Display();

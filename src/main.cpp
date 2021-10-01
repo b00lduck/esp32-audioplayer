@@ -45,7 +45,7 @@ VS1053    vs1053(VS1053_XCS_PIN, VS1053_XDCS_PIN, VS1053_DREQ_PIN, VS1053_XRESET
 RFID      rfid(MFRC522_CS_PIN, MFRC522_RST_PIN);
 SDCard    sd(SD_CS_PIN);
 
-Player    player(&fatal, &vs1053, &sd);
+Player    player(&fatal, &vs1053, &sd, &display);
 
 Mapper    mapper(&sd);
 Buttons   buttons;
@@ -63,11 +63,9 @@ void setup() {
 
   // Set shutdown pin to input
   pinMode(SHUTDOWN_PIN, INPUT);
-  
-  // Initialize GPIOs for "amplifier enable" and shut it down
-  pinMode(AMP_ENABLE_PIN, OUTPUT);
-  digitalWrite(AMP_ENABLE_PIN, LOW); 
 
+  player.initAmp();
+  
   // Initialize buttons
   buttons.init();
 
@@ -217,7 +215,7 @@ void loop() {
   // Read card
   RFID::CardState cardState = rfid.checkCardState(&wifiConfig);
   
-  switch(mode) {
+   switch(mode) {
 
     case PLAYER:
       if (player.idleTime > IDLE_SHUTDOWN_FADE_START) {
@@ -235,7 +233,9 @@ void loop() {
             player.next();
           } else if (buttons.buttonDown(1)) {
             player.previous();
-          }        
+          } else if (buttons.buttonDown(2)) {
+            player.stop(true);
+          }
         }
               
         switch(cardState) {
@@ -251,7 +251,7 @@ void loop() {
             break;            
 
           case RFID::CardState::REMOVED_CARD:            
-            player.stop(true);
+            //player.stop(true);
             break;
 
           case RFID::CardState::FAULTY_CARD:
