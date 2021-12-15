@@ -61,6 +61,6 @@
 #define VOLUME_CLICKS_DELAY 40
 #define VOLUME 65
 
-#define ANTENNA_GAIN mfrc522.RxGain_23dB
+#define ANTENNA_GAIN mfrc522.RxGain_max
 
 #define FILETYPE File32
