@@ -256,7 +256,7 @@ void loop() {
             break;
 
           case RFID::CardState::FAULTY_CARD:
-            player.stop(true);
+            //player.stop(true);
             break;
 
           case RFID::CardState::NO_CHANGE:

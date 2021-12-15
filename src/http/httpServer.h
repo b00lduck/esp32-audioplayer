@@ -19,7 +19,7 @@
  *  
  */
 #include "Arduino.h"
-#include <WebServer.h>
+#include "WebServerPatched.h"
 #include "rfid/rfid.h"
 #include "rfid/ndef.h"
 #include "config.h"
@@ -37,7 +37,7 @@ class HTTPServer {
     void shutdown();
 
   private:
-    WebServer server;
+    WebServerPatched server;
     TaskHandle_t handleClientTaskHandle;
     
     RFID   *rfid;

@@ -141,8 +141,8 @@ void Player::disableAmp() {
 
 void Player::enableAmp() {
   if (!ampEnabled) {
-    delay(200);
     digitalWrite(AMP_ENABLE_PIN, HIGH);
+    delay(200);    
     ampEnabled = true;
   }
 }

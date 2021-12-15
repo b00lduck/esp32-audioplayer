@@ -76,4 +76,4 @@ see src/config.h
 
 ## 3D printing
 I used black 1.75 PETG filament for all parts.
-Layer height was 0.15mm at a printign speed of 30mm/s.
+Layer height was 0.15mm at a printing speed of 30mm/s.

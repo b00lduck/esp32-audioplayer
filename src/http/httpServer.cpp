@@ -22,11 +22,11 @@
 #include <WiFi.h>
 #include <uri/UriBraces.h>
 #include <uri/UriRegex.h>
+#include "WebServerPatched.h"
 
 void handleClientTask(void *parameter){
   while (true) {
-    WebServer *server = (WebServer*)parameter;
-    //Serial.println(uxTaskGetStackHighWaterMark( NULL ));
+    WebServerPatched *server = (WebServerPatched*)parameter;
     server->handleClient();
     delay(2);
   } 

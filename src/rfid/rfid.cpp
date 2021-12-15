@@ -57,12 +57,13 @@ RFID::CardState RFID::checkCardState(NDEF::WifiConfig *wifiConfig) {
       }      
     } else {
         Serial.println(F("Error reading card"));
-        cardPresent = false;
-        cardError = true;
-        memset(currentCard, 0, sizeof(currentCard));
+        //cardPresent = false;
+        //cardError = true;
+        //memset(currentCard, 0, sizeof(currentCard));
         return CardState::FAULTY_CARD;                   
     }
   } else {
+    /*
     if (cardPresent) {
       cardFailCount++;
       if (cardFailCount > 1) {
@@ -73,6 +74,7 @@ RFID::CardState RFID::checkCardState(NDEF::WifiConfig *wifiConfig) {
           return CardState::REMOVED_CARD;                 
       }     
     }
+    */
   } 
 
   return CardState::NO_CHANGE;
