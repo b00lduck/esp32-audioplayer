@@ -229,6 +229,7 @@ void loop() {
 
         // Track Control
         if (changed) {
+          player.idleTime = 0;
           if (buttons.buttonDown(3)) {
             player.next();
           } else if (buttons.buttonDown(1)) {

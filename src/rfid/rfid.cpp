@@ -27,7 +27,7 @@ RFID::RFID(uint8_t _csPin, uint8_t _rstPin) :
 void RFID::init() {
   mfrc522.PCD_Init();  
   mfrc522.PCD_DumpVersionToSerial();
-  mfrc522.PCD_SetAntennaGain(mfrc522.RxGain_max);
+  mfrc522.PCD_SetAntennaGain(ANTENNA_GAIN);
 }
 
 void RFID::sleep() {

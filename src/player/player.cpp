@@ -58,6 +58,8 @@ void Player::playNextFile() {
     return;
   }
 
+  display->setMode(Display::DisplayMode::PLAYING);
+
   Serial.printf("Playing next file in playlist (%d/%d): %s\n", playlist.currentEntryIndex, playlist.numEntries, entry);
  
   enableAmp();
@@ -146,6 +148,7 @@ void Player::enableAmp() {
 }
 
 void Player::stop(bool _disableAmp) {  
+  idleTime = 0;
   display->setMode(Display::DisplayMode::IDLE);
   if (_disableAmp) {
     disableAmp();

@@ -37,7 +37,7 @@ void renderTask(void *parameter){
 Display::Display() : pixels(4, WS2812_DATA_PIN), mode(INITIALIZING) {}
 
 void Display::init() {
-  xTaskCreate(renderTask, "", 20000, this, 0, NULL);
+  xTaskCreate(renderTask, "", 20000, this, 1, NULL);
 }
 
 void Display::setMode(DisplayMode _mode) {

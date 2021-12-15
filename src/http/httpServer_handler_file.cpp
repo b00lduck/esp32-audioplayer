@@ -115,7 +115,9 @@ void HTTPServer::handlerFileGet() {
 
     rfid->sleep();
     //sdCard->init(true); // go TURBO    
-    server.streamFile(file, "application/octet-stream");    
+
+    // DISABLED BECAUSE OF INCOMPATIBILITY
+    //server.streamFile(file, "application/octet-stream");    
     //sdCard->init(false); // disable TURBO
     rfid->wakeup();
     Serial.printf("[HTTP] Streaming finished\n");
