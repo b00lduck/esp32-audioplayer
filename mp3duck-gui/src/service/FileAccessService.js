@@ -133,6 +133,42 @@ export default class FileAccessService {
         return fileList
     }
 
+    async getCardMetaData(api, cardId) {
+        try {
+            const metaContents = await fetch(api + "/file/cards/" + cardId + "/meta.txt", {
+                method: "get",
+            })
+            if (metaContents.status !== 200) {
+                throw(new Error("No meta.txt found for card " + cardId))
+            }
+            return metaContents.text()
+        } catch (error) {
+            console.log("No meta.txt found for card " + cardId)
+            return ""
+        }
+        
+    }
+
+    async getListCards(api) {
+
+        const cardsList = await this.fetchFileList(api, "/cards");
+        const cardsListWithMeta = [];        
+  
+        for (const card of cardsList) {
+            const cardId = card.name.split("/")[2]
+            if (card.type === "directory") {
+            const metaContents = await this.getCardMetaData(api, cardId)
+            cardsListWithMeta.push({
+                id: cardId,
+                name: metaContents.replace(/(\r\n|\n|\r)/gm, ""),
+                numtracks: 0
+            })
+          }
+        }
+
+        return cardsListWithMeta
+    }
+
     async getDeepListSystem(api) {
         const sourceList = await this.fetchFileList(api, "/system");
         const fileList = [];        
